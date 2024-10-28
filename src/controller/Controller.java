@@ -12,8 +12,15 @@ public class Controller {
         sendReponse(exchange, jsonResponse);
     }
 
+
+    // GET SINGLE REQUEST 
+    public void getSingleTask(HttpExchange exchange, String id) throws IOException{
+        String jsonResponse = "{\"id\": " + id + ", \"message\": \"Task details for ID " + id + "\"}";
+        sendReponse(exchange, jsonResponse);
+    }
+
     
-    // POSR REQUEST
+    // POST REQUEST
     public void createTask(HttpExchange exchange) throws IOException{
         String jsonResponse = "{\"message\": \"Hello World! POST /tasks\"}";
         sendReponse(exchange, jsonResponse);
@@ -21,14 +28,14 @@ public class Controller {
 
 
     // PUT REQUEST
-    public void updateTask(HttpExchange exchange) throws IOException{
-        String jsonResponse = "{\"message\": \"Hello World! PUT /tasks\"}";
+    public void updateTask(HttpExchange exchange, String id) throws IOException{
+        String jsonResponse = "{\"id\": " + id + ", \"message\": \"Task details for PUT Task " + id + "\"}";
         sendReponse(exchange, jsonResponse);
     }
 
     
     // DELETE REQUEST
-    public void deleteTask(HttpExchange exchange) throws IOException{
+    public void deleteTask(HttpExchange exchange, String id) throws IOException{
         String jsonResponse = "{\"message\": \"Hello World! DELETE /tasks\"}";
         sendReponse(exchange, jsonResponse);
     }
