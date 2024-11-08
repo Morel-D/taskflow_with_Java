@@ -32,7 +32,6 @@ public class TaskContoller extends HttpServlet {
         objectMapper.writeValue(res.getWriter(), responseMap);
     }
 
-
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
         res.setContentType("application/json");
