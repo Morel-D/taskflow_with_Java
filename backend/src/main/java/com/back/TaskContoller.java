@@ -1,6 +1,9 @@
 package com.back;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +14,12 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class TaskContoller extends HttpServlet {
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private final Connection connection;
+
+    public TaskContoller(Connection connection){
+        this.connection = connection;
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
@@ -36,11 +45,39 @@ public class TaskContoller extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
         res.setContentType("application/json");
 
-        // Creating a JSON response 
-        Map<String, String> responseMap = new HashMap<>();
+        // Parse the JSON input into a TaskModel Object
+        TaskModel task = objectMapper.readValue(req.getReader(), TaskModel.class);
 
-        // Write the Json response
-        objectMapper.writeValue(res.getWriter(), responseMap);
+        // Insert task into the database 
+        String sql = "INSERT INTO task (title, content) VALUES (?, ?)";
+        try(PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, task.getTitle());
+            statement.setString(2, task.getContent());
+            statement.executeUpdate();
+
+            // Creating a JSON response 
+            Map<String, String> responseMap = new HashMap<>();
+            responseMap.put("staus", "true");
+            responseMap.put("message", "Data has been inserted successfully");
+
+            // Write the Json response
+            objectMapper.writeValue(res.getWriter(), responseMap);
+
+        }catch(SQLException e){
+            e.printStackTrace();
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            // Creating a JSON response 
+            Map<String, String> responseMap = new HashMap<>();
+            responseMap.put("staus", "false");
+            responseMap.put("message", "Failed to insert data");
+            responseMap.put("error", e.getMessage());
+
+            // Write the Json response
+            objectMapper.writeValue(res.getWriter(), responseMap);
+        }
+
+
+
     }
 
     @Override
