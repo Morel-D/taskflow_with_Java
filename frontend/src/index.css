@@ -23,23 +23,60 @@
 
 body {
   background-color: var(--greyColor);
+  color: var(--grey2Color);
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
 
 h1 {
-  font-size: 3.2em;
+  color: var(--secondaryColor);
+  font-size: 2.8em;
+  font-weight: bold;
   line-height: 1.1;
 }
 
 
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+/****************** widgets ****************/
+.custom-card{
+  background-color: var(--whiteColor);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  border-radius: 8px;
+  line-height: 10px;
 }
+
+.custom-card h5{
+  color: var(--secondaryColor);
+}
+
+.custom-card .small-cont{
+  border: solid;
+  border-color: var(--grey2Color);
+  border-width: 0.2px;
+  border-radius: 4px;
+}
+
+.task-conatiner{
+  background-color: var(--greyColor);
+  padding: 10px 0px 10px 18px;
+  border-style: solid;
+  border-width: 0px 0px 0px 4px;
+  line-height: 8px;
+}
+
+.task-conatiner  h6{
+  color: var(--secondaryColor);
+  font-size: 18px;
+}
+
+
+
+
+
+
+
+
 
 @media (prefers-color-scheme: light) {
   :root {
@@ -50,11 +87,5 @@ button:focus-visible {
   --grey2Color: #BDC0C9;
   --whiteColor: #FFFFFF;
     background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
   }
 }

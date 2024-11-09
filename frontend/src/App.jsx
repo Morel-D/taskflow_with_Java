@@ -1,14 +1,22 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import Header from "./components/modules/header"
+import Home from "./components/views/home"
+
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <div>
-      This is the normal one
+    <div className="app container-fluid py-4">
+      <div className="row">
+        <div className="col col-2">Row 1</div>
+        <div className="col container-fluid">
+            <div className="header">
+                <Header />
+            </div>
+            <div className="content">
+                <Home />
+            </div>
+        </div>
+      </div>
     </div>
   )
 }
