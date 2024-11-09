@@ -70,7 +70,56 @@ h1 {
   font-size: 18px;
 }
 
+.icon-btn{
+  height: 60px;
+  width: 60px;
+}
 
+
+
+/* Modal.css */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  border-style: solid;
+  border-color: var(--grey2Color);
+  border-width: 8px 0px 0px 0px;
+  background: white;
+  padding:  0px 20px 20px 20px; 
+  border-radius: 1px;
+  max-width: 500px;
+  width: 100%;
+  position: relative;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.fade-out {
+  opacity: 0;
+  transform: translateY(-20px); /* Adjust to desired exit effect */
+}
+
+.modal-close {
+  position: absolute;
+  top: 0px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
 
 
 

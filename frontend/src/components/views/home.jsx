@@ -1,12 +1,11 @@
 import CustomContainer from "../widgets/customConatiner";
 import TaskContainer from "../widgets/taskConatiner";
-
 const Home = () => {
     return ( 
         <div className="home">
             <div className="row">
                 <div className="col">
-                    <CustomContainer children={
+                    <CustomContainer  children={
                         <div>
                             <TaskContainer />
                         </div>
