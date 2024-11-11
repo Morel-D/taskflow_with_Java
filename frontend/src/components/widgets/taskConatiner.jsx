@@ -1,8 +1,8 @@
 import { colors } from "../tools/color";
 
-const TaskContainer = () => {
+const TaskContainer = ({color}) => {
     return ( 
-        <div className="task-conatiner" style={{borderColor: colors.primaryColor}}>                
+        <div className="task-conatiner" style={{borderColor: color ?? colors.grey2Color}}>                
             <h6>This is the use of the task</h6>
             <p>Task 2</p>
         </div>

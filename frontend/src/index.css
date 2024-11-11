@@ -75,6 +75,19 @@ h1 {
   width: 60px;
 }
 
+.input-text {  border-style: solid;  border-radius: 6px;  padding: 10px 0px 10px 10px; }
+.input-text:focus {  outline: none;  box-shadow: 0 0 0 1px var(--primaryColor);}
+.input-text::placeholder {color: var(--grey2Color);}
+
+.has-search .form-control {padding-left: 2.375rem;}
+
+.input-secondary-text {  border-style: none;  border-radius: 70px;  padding: 14px 0px 18px 10px; background-color: #F0F1F5; }
+.input-secondary-text:focus {  outline: none;  box-shadow: 0 0 0 1px var(--darkColor); background-color: #F0F1F5;}
+.input-secondary-text::placeholder {color: var(--grey2Color);}
+
+.has-search .form-control-feedback { position: absolute; z-index: 3; display: block; width: 2rem; height: 1.375rem; line-height: 2.8rem; text-align: center; pointer-events: none; padding-left: 10px; color: #aaa;}
+.has-search .form-control-feedback-two { position: absolute; z-index: 3; display: block; width: 2rem; height: 1.375rem; line-height: 2.8rem; text-align: center; pointer-events: none; padding-left: 10px; color: #aaa; right: 900px;}
+
 
 
 /* Modal.css */
@@ -92,13 +105,14 @@ h1 {
 }
 
 .modal-content {
-  border-style: solid;
-  border-color: var(--grey2Color);
-  border-width: 8px 0px 0px 0px;
+   border-style: solid;
+ /* border-color: var(--grey2Color);*/
+ border-color: white;
+  /* border-width: 8px 0px 0px 0px;  */
   background: white;
   padding:  0px 20px 20px 20px; 
-  border-radius: 1px;
-  max-width: 500px;
+  border-radius: 8px 8px 8px 8px; 
+  /* max-width: 500px; */
   width: 100%;
   position: relative;
   opacity: 1;
