@@ -36,6 +36,21 @@ h1 {
   line-height: 1.1;
 }
 
+h2 {
+  color: var(--secondaryColor);
+  font-weight: bold;
+  line-height: 1.1;
+}
+
+.active-link { color: white; font-size: 18px; font-weight: 400;}
+.link { color: var(--secondDarkColor); font-size: 18px; font-weight: 400; }
+.active-li { font-size: 18px; font-weight: 400; background-color: var(--whiteColor); padding: 12px 12px 12px 12px; border-radius: 4px 0px 0px 4px; a { color: var(--secondaryColor); font-weight: 500; }}
+li{ padding: 12px 12px 12px 0px; border-radius: 4px; transition: padding 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out; }
+li:hover{ background-color: var(--hoverColor); padding: 12px 12px 12px 12px; border-radius: 4px; a { color: rgb(167, 167, 167); }}
+li > a {text-decoration: none;}
+.icon-link{ height: auto; width: 14%;}
+
+
 
 /****************** widgets ****************/
 .custom-card{
@@ -79,14 +94,13 @@ h1 {
 .input-text:focus {  outline: none;  box-shadow: 0 0 0 1px var(--primaryColor);}
 .input-text::placeholder {color: var(--grey2Color);}
 
-.has-search .form-control {padding-left: 2.375rem;}
+.has-search .form-control {padding-left: 3.375rem;}
 
 .input-secondary-text {  border-style: none;  border-radius: 70px;  padding: 14px 0px 18px 10px; background-color: #F0F1F5; }
 .input-secondary-text:focus {  outline: none;  box-shadow: 0 0 0 1px var(--darkColor); background-color: #F0F1F5;}
 .input-secondary-text::placeholder {color: var(--grey2Color);}
 
-.has-search .form-control-feedback { position: absolute; z-index: 3; display: block; width: 2rem; height: 1.375rem; line-height: 2.8rem; text-align: center; pointer-events: none; padding-left: 10px; color: #aaa;}
-.has-search .form-control-feedback-two { position: absolute; z-index: 3; display: block; width: 2rem; height: 1.375rem; line-height: 2.8rem; text-align: center; pointer-events: none; padding-left: 10px; color: #aaa; right: 900px;}
+.has-search .form-control-feedback { position: absolute; z-index: 3; display: block; width: 2.8rem; height: 2rem; line-height: 2.8rem; text-align: center; pointer-events: none; padding-left: 20px; color: #aaa;}
 
 
 
