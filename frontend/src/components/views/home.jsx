@@ -3,6 +3,7 @@ import { colors } from "../tools/color";
 import CustomContainer from "../widgets/customConatiner";
 import TaskContainer from "../widgets/taskConatiner";
 import HighFeild from "./forms/highForm";
+import { ErrorMessage, SuccessMessage } from "../widgets/message";
 const Home = () => {
 
     const [highModal, setHighModal] = useState(false);
@@ -28,8 +29,8 @@ const Home = () => {
                     color={colors.primaryColor}
                     closeModal={closeHighModal}
                     onClick={openHighModal}
-                    modalTitle="High title"
-                    modalChildren={<HighFeild />}
+                    modalTitle="Add a task"
+                    modalChildren={<HighFeild closeModal={closeHighModal} />}
                     children={
                         <div>
                             <TaskContainer color={colors.primaryColor} />
@@ -68,6 +69,8 @@ const Home = () => {
                     />
                 </div>
             </div>
+            {/* <SuccessMessage /> */}
+            {/* <ErrorMessage /> */}
         </div>
      );
 }

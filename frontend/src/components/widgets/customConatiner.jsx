@@ -27,7 +27,7 @@ const CustomContainer = ({ isModal, closeModal, title, children, onClick, color,
                 {children}
             </div>
         </div>
-        <Modal isOpen={isModal} onClose={closeModal} children={modalChildren} title={modalTitle} col="col-5" />
+        <Modal isOpen={isModal} onClose={closeModal} children={modalChildren} title={modalTitle} col="col-4" />
         </>
      );
 }

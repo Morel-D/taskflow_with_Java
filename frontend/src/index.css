@@ -18,6 +18,7 @@
   --greyColor: #F7F8FA;
   --grey2Color: #BDC0C9;
   --whiteColor: #FFFFFF;
+  --dangerColor: #E14C7E;
   
 }
 
@@ -49,6 +50,9 @@ li{ padding: 12px 12px 12px 0px; border-radius: 4px; transition: padding 0.15s e
 li:hover{ background-color: var(--hoverColor); padding: 12px 12px 12px 12px; border-radius: 4px; a { color: rgb(167, 167, 167); }}
 li > a {text-decoration: none;}
 .icon-link{ height: auto; width: 14%;}
+
+.primaryButton { text-decoration: none;  background-color: var(--primaryColor); color: var(--whiteColor); border-style: none; font-size: 18px; border-radius: 8px; padding: 10px 22px 10px 22px; cursor: pointer; transition: background-color 0.8s ease-out, padding 0.3s ease-out;  }
+.primaryButton:hover { background-color: #19abb3; color: white }
 
 
 
@@ -90,6 +94,10 @@ li > a {text-decoration: none;}
   width: 60px;
 }
 
+.input-danger-text {  border-style: solid;  border-radius: 6px;  padding: 10px 0px 10px 10px; box-shadow: 0 0 0 1.5px var(--dangerColor); }
+.input-danger-text:focus {  outline: none;  box-shadow: 0 0 0 2.5px var(--dangerColor);}
+
+
 .input-text {  border-style: solid;  border-radius: 6px;  padding: 10px 0px 10px 10px; }
 .input-text:focus {  outline: none;  box-shadow: 0 0 0 1px var(--primaryColor);}
 .input-text::placeholder {color: var(--grey2Color);}
@@ -101,6 +109,20 @@ li > a {text-decoration: none;}
 .input-secondary-text::placeholder {color: var(--grey2Color);}
 
 .has-search .form-control-feedback { position: absolute; z-index: 3; display: block; width: 2.8rem; height: 2rem; line-height: 2.8rem; text-align: center; pointer-events: none; padding-left: 20px; color: #aaa;}
+
+.notif
+{
+  border-style: solid;
+  border-width: 0px 0px 0px 4px;
+  padding: 20px;
+  background-color: white;
+  width: 450px;
+  border-radius: 2px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  position: absolute; /* Position the element absolutely */
+  bottom: 10px; /* Distance from the top of the screen */
+  right: 20px; 
+}
 
 
 
@@ -125,7 +147,7 @@ li > a {text-decoration: none;}
   /* border-width: 8px 0px 0px 0px;  */
   background: white;
   padding:  0px 20px 20px 20px; 
-  border-radius: 8px 8px 8px 8px; 
+  border-radius: 14px; 
   /* max-width: 500px; */
   width: 100%;
   position: relative;

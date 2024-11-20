@@ -19,6 +19,16 @@ const TextFeild = ({label, type, placeholder, onChange, value, maxLength}) =>
                 </div>
                 )
         }
+
+        const TextAreaFeild = ({label, placeholder, onChange, value, maxLength, row, error}) =>
+            {
+                return(
+                    <div>
+                        <p className="text-dark">{label}</p>
+                        <textarea className={error == true ? "form-control input-danger-text" : "form-control input-text"} value={value} maxLength={maxLength} placeholder={placeholder} rows={row} onChange={onChange}></textarea>
+                    </div>
+                )
+            }
         
 
-export {TextFeild, TextIconFeild}
+export {TextFeild, TextIconFeild, TextAreaFeild}
