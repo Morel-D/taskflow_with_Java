@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServlet;
@@ -23,6 +24,11 @@ public class TaskContoller extends HttpServlet {
     public TaskContoller(Connection connection){
         this.connection = connection;
     }
+
+    public static String generateUuid(){
+        return UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+    }
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
@@ -43,8 +49,10 @@ public class TaskContoller extends HttpServlet {
                 while (rs.next()) {
                     Map<String, Object> task = new HashMap<>();
                     task.put("id", rs.getInt("id"));
+                    task.put("uid", rs.getString("uid"));
                     task.put("title", rs.getString("title"));
-                    task.put("content", rs.getString("content"));
+                    task.put("category", rs.getString("category"));
+                    task.put("status", rs.getString("status"));
                     task.put("dateof", rs.getString("dateof"));
 
                     tasks.add(task);
@@ -81,10 +89,11 @@ public class TaskContoller extends HttpServlet {
 
                 if(rs.next()){
                     Map<String, Object> responseMap = new HashMap<>();
-                    responseMap.put("status", "true");
                     responseMap.put("id", rs.getInt("id"));
+                    responseMap.put("uid", rs.getString("uid"));
                     responseMap.put("title", rs.getString("title"));
-                    responseMap.put("content", rs.getString("content"));
+                    responseMap.put("category", rs.getString("category"));
+                    responseMap.put("status", rs.getString("status"));
                     responseMap.put("dateof", rs.getString("dateof"));
                     objectMapper.writeValue(res.getWriter(), responseMap);
                 }else{
@@ -117,16 +126,20 @@ public class TaskContoller extends HttpServlet {
         // Parse the JSON input into a TaskModel Object
         TaskModel task = objectMapper.readValue(req.getReader(), TaskModel.class);
 
+        task.setUId(generateUuid());
+
         // Insert task into the database 
-        String sql = "INSERT INTO task (title, content) VALUES (?, ?)";
+        String sql = "INSERT INTO task (uid, title, category, status) VALUES (?, ?, ?, ?)";
         try(PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, task.getTitle());
-            statement.setString(2, task.getContent());
+            statement.setString(1, task.getUid());
+            statement.setString(2, task.getTitle());
+            statement.setString(3, task.getCategory());
+            statement.setString(4, task.getStatus());
             statement.executeUpdate();
 
             // Creating a JSON response 
             Map<String, String> responseMap = new HashMap<>();
-            responseMap.put("staus", "true");
+            responseMap.put("status", "true");
             responseMap.put("message", "Data has been inserted successfully");
 
             // Write the Json response
@@ -137,7 +150,7 @@ public class TaskContoller extends HttpServlet {
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             // Creating a JSON response 
             Map<String, String> responseMap = new HashMap<>();
-            responseMap.put("staus", "false");
+            responseMap.put("status", "false");
             responseMap.put("message", "Failed to insert data");
             responseMap.put("error", e.getMessage());
 
@@ -169,11 +182,12 @@ public class TaskContoller extends HttpServlet {
         taskId = Integer.parseInt(pathInfo.substring(1));
         TaskModel task = objectMapper.readValue(req.getReader(), TaskModel.class);
 
-        String sql = "UPDATE task SET title = ?, content = ? WHERE id = ?";
+        String sql = "UPDATE task SET title = ?, category = ?, status = ? WHERE id = ?";
         try(PreparedStatement statement = connection.prepareStatement(sql)){
             statement.setString(1, task.getTitle());
-            statement.setString(2, task.getContent());
-            statement.setInt(3, taskId);
+            statement.setString(2, task.getCategory());
+            statement.setString(3, task.getStatus());
+            statement.setInt(4, taskId);
 
             int rowsUpdated = statement.executeUpdate();
             Map<String, String> responseMap = new HashMap<>();

@@ -2,8 +2,9 @@ import { colors } from "../tools/color";
 import addIcon from "../../assets/icons/add.png";
 import { useState } from "react";
 import Modal from "./modal";
+import Skeleton from "react-loading-skeleton";
 
-const CustomContainer = ({ isModal, closeModal, title, children, onClick, color, modalTitle, modalChildren}) => {
+const CustomContainer = ({ isModal, closeModal, title, children, onClick, color, modalTitle, modalChildren, loading}) => {
 
 
     return ( 
@@ -16,9 +17,11 @@ const CustomContainer = ({ isModal, closeModal, title, children, onClick, color,
                     </div>
                     <div className="col text-start">
                         <h5 className="fw-bold">{title}</h5>
-                        <p className="">3 tickets, 8 tasks</p>
+                         {loading ? <Skeleton height={15} /> : <p className="">3 tickets, 8 tasks</p>} 
                     </div>
-                    <div className="col text-end"><button onClick={onClick} className="btn icon-btn"><img src={addIcon} className="img-fluid" /></button></div>
+                    <div className="col text-end">
+                        {loading ? <div className="mt-2"><Skeleton circle width={30} height={30} /></div> : <button onClick={onClick} className="btn icon-btn"><img src={addIcon} className="img-fluid" /></button>}
+                    </div>
                 <hr />
 
                 </div>
