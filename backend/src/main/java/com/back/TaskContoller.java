@@ -31,6 +31,17 @@ public class TaskContoller extends HttpServlet {
 
 
     @Override
+protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    // Handle preflight requests
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+    res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.setHeader("Access-Control-Max-Age", "3600");
+    res.setStatus(HttpServletResponse.SC_OK);
+}
+
+
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
         res.setContentType("application/json");
 
@@ -121,12 +132,18 @@ public class TaskContoller extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        // Set CORS headers
+        res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+        res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        res.setHeader("Access-Control-Max-Age", "3600");
+        res.setStatus(HttpServletResponse.SC_OK);
+
+        // Set response type
         res.setContentType("application/json");
 
         // Parse the JSON input into a TaskModel Object
         TaskModel task = objectMapper.readValue(req.getReader(), TaskModel.class);
-
-        task.setUId(generateUuid());
 
         // Insert task into the database 
         String sql = "INSERT INTO task (uid, title, category, status) VALUES (?, ?, ?, ?)";
@@ -136,6 +153,8 @@ public class TaskContoller extends HttpServlet {
             statement.setString(3, task.getCategory());
             statement.setString(4, task.getStatus());
             statement.executeUpdate();
+
+            
 
             // Creating a JSON response 
             Map<String, String> responseMap = new HashMap<>();

@@ -1,20 +1,46 @@
 import { useState } from "react";
 import { PrimaryButton } from "../../widgets/button";
 import { TextAreaFeild, TextFeild } from "../../widgets/textFeilds";
+import { userTaskService } from "../../service/taskService";
 
 const HighFeild = ({closeModal}) => {
+
+    function generateUniqueId() {
+        const now = Date.now(); // Current time in milliseconds
+        const random = Math.floor(Math.random() * 1000); // Random number between 0 and 999
+        return `${now}${random}`; // Combine milliseconds and random for uniqueness
+    }
+    
+
+    const {createTask} = userTaskService();
 
     const [error, setError] = useState(false);
     const [content, setContent] = useState();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('The content here is : ', content);
         if(content == "" || content == undefined){
             setError(true);
             return;
         }
-        closeModal();
+
+        const uniqueId = generateUniqueId();
+
+        const data = {
+            "uid": uniqueId,
+            "title": content,
+            "category": "high",
+            "status": "true"
+        };
+
+        
+        try{
+            const response = await createTask(data);
+            console.log('VIEW : ', response);
+             closeModal();
+        }catch(error){
+            console.error('Something went wrong');
+        }
     }
 
     const handleDefault = (e) => {

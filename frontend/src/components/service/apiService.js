@@ -8,6 +8,7 @@ export const useApiServce = () => {
 
     const postData = async(endpoint, data) => {
         try{
+            console.log("POST : endpoint ", endpoint);
             setLoading(true);
             const response = await axiosInstance.post(endpoint, data);
             console.log('POST DATA : ', response);
