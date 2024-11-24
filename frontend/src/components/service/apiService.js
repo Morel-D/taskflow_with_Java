@@ -1,5 +1,6 @@
 import {useState} from "react";
 import axiosInstance from "../utils/axiosInstance";
+import { errorMessages } from "../utils/errorMessage";
 
 export const useApiServce = () => {
     const [loading, setLoading] = useState(false);
@@ -14,7 +15,16 @@ export const useApiServce = () => {
             console.log('POST DATA : ', response);
             return response.data;
         }catch(error){
-            console.log('ERR - POST DATA : ', error);
+            // if backend retrun error 
+            if(error.response){
+                const status = error.response.message;
+                return errorMessages[status];
+            }else if (error.request){
+                // Request made but no response was received
+                return errorMessages.NETWORK_ERROR
+            }else {
+                return errorMessages.UNKNOWN_ERROR
+            }
         }finally{
             setLoading(false);
         }

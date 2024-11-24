@@ -3,7 +3,7 @@ import { PrimaryButton } from "../../widgets/button";
 import { TextAreaFeild, TextFeild } from "../../widgets/textFeilds";
 import { userTaskService } from "../../service/taskService";
 
-const HighFeild = ({closeModal}) => {
+const TaskForm = ({closeModal, category, setAlert}) => {
 
     function generateUniqueId() {
         const now = Date.now(); // Current time in milliseconds
@@ -29,7 +29,7 @@ const HighFeild = ({closeModal}) => {
         const data = {
             "uid": uniqueId,
             "title": content,
-            "category": "high",
+            "category": category,
             "status": "true"
         };
 
@@ -37,9 +37,16 @@ const HighFeild = ({closeModal}) => {
         try{
             const response = await createTask(data);
             console.log('VIEW : ', response);
-             closeModal();
+            if(response.status == "true")
+            {
+                setAlert({showMessage: true, messageType: "success", message: "New task created"});
+                closeModal();
+            }else {
+                setAlert({showMessage: true, messageType: "fail", message: response});
+                closeModal();
+            }
         }catch(error){
-            console.error('Something went wrong');
+            console.error('Something went wrong: ', error);
         }
     }
 
@@ -64,4 +71,4 @@ const HighFeild = ({closeModal}) => {
      );
 }
  
-export default HighFeild;
+export default TaskForm;

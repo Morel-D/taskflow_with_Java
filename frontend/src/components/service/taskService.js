@@ -3,7 +3,7 @@ import { useApiServce } from "./apiService"
 export const userTaskService = () => {
     const {loading, postData, getAllData, getDataByID, upateData, deleteData} = useApiServce();
 
-    const endpoint = "task";
+    const endpoint = "tasks";
 
     const createTask = (data) => postData(endpoint, data);
     const fetchTasks = () => getAllData(endpoint);

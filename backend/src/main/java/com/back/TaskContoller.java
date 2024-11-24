@@ -159,7 +159,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
             // Creating a JSON response 
             Map<String, String> responseMap = new HashMap<>();
             responseMap.put("status", "true");
-            responseMap.put("message", "Data has been inserted successfully");
+            responseMap.put("message", "data-inserted");
 
             // Write the Json response
             objectMapper.writeValue(res.getWriter(), responseMap);
@@ -170,7 +170,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
             // Creating a JSON response 
             Map<String, String> responseMap = new HashMap<>();
             responseMap.put("status", "false");
-            responseMap.put("message", "Failed to insert data");
+            responseMap.put("message", "data-not-inserted");
             responseMap.put("error", e.getMessage());
 
             // Write the Json response

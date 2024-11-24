@@ -1,19 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { colors } from "../tools/color";
 import CustomContainer from "../widgets/customConatiner";
 import TaskContainer from "../widgets/taskConatiner";
-import HighFeild from "./forms/highForm";
+import HighFeild from "./forms/taskForm";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { ErrorMessage, SuccessMessage } from "../widgets/message";
 import { useApiServce } from "../service/apiService";
 import Loading from "../widgets/loading";
+import TaskForm from "./forms/taskForm";
 const Home = () => {
 
     const  {loading} = useApiServce();
 
     const [highModal, setHighModal] = useState(false);
-    const [urgentModal, setUrgentModal] = useState(false);
+    const [lowModal, setLowModal] = useState(false);
     const [meduimModal, setMeduimModal] = useState(false);
 
     const [alert, setAlert] = useState({showMessage: false, messageType: "", message: ""});
@@ -22,12 +23,20 @@ const Home = () => {
     const openHighModal = () => setHighModal(true);
     const closeHighModal = () => setHighModal(false);
 
-    const openUrgentModal = () => setUrgentModal(true);
-    const closeUrgentModal = () => setUrgentModal(false);
+    const openLowModal = () => setLowModal(true);
+    const closeLowModal = () => setLowModal(false);
 
     const openMeduimModal = () => setMeduimModal(true);
     const closeMeduimModal = () => setMeduimModal(false);
+
+
+    useEffect(() => {
+        console.log("The alert is : ", alert)
+    }, [alert])
     
+    const handleCloseMessage = () => {
+        setAlert({showMessage: false, messageType: "", message: ""});
+    }
 
     return ( 
         <div className="home">
@@ -41,7 +50,7 @@ const Home = () => {
                     closeModal={closeHighModal}
                     onClick={openHighModal}
                     modalTitle="High Priority Task"
-                    modalChildren={<HighFeild closeModal={closeHighModal} />}
+                    modalChildren={<TaskForm closeModal={closeHighModal} category="high" setAlert={setAlert} />}
                     children={
                         <div>
                             {loading ? <div>
@@ -53,16 +62,17 @@ const Home = () => {
                         </div>
                         } />
                 </div>
+
                 <div className="col">
                     <CustomContainer
                     loading={loading}
-                    isModal={urgentModal}
-                    title={loading ? <Skeleton height={25} /> : "Urgent"}
+                    isModal={meduimModal}
+                    title={loading ? <Skeleton height={25} /> : "Meduim"}
                     color={loading ? colors.greyColor : colors.secondaryColor}
-                    closeModal={closeUrgentModal}
-                    onClick={openUrgentModal}
-                    modalTitle="Urgent task"
-                    modalChildren="This is the uregnt title"
+                    closeModal={closeMeduimModal}
+                    onClick={openMeduimModal}
+                    modalTitle="Meduim task"
+                    modalChildren={<TaskForm closeModal={closeMeduimModal} category="meduim" setAlert={setAlert} />}
                     children={
                         <div>
                             {loading ? <div>
@@ -75,16 +85,17 @@ const Home = () => {
                     
                     />
                 </div>
+
                 <div className="col">
                     <CustomContainer 
                     loading={loading}
-                    isModal={meduimModal}
-                    title={loading ? <Skeleton height={25} /> : "Meduim"}
+                    isModal={lowModal}
+                    title={loading ? <Skeleton height={25} /> : "Low"}
                     color={loading ? colors.greyColor : colors.grey2Color}
-                    closeModal={closeMeduimModal}
-                    onClick={openMeduimModal}
-                    modalTitle="Meduim title"
-                    modalChildren="This is the meduim title"
+                    closeModal={closeLowModal}
+                    onClick={openLowModal}
+                    modalTitle="Low task"
+                    modalChildren={<TaskForm closeModal={closeLowModal} category="low" setAlert={setAlert} />}
                     children={
                         <div>
                         {loading ? <div>
@@ -98,7 +109,8 @@ const Home = () => {
                     />
                 </div>
             </div>
-            {/* <SuccessMessage /> */}
+            {alert.showMessage &&  alert.messageType == "success" ? <SuccessMessage onClick={handleCloseMessage} message={alert.message} /> : null}
+            {alert.showMessage &&  alert.messageType == "fail" ? <ErrorMessage onClick={handleCloseMessage} message={alert.message} /> : null}
             {/* <ErrorMessage /> */}
         </div>
      );
