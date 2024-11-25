@@ -19,7 +19,9 @@ const Home = () => {
     const [meduimModal, setMeduimModal] = useState(false);
 
     const [alert, setAlert] = useState({showMessage: false, messageType: "", message: ""});
-    const [fetch, setFetch] = useState({fetchData: false, fetchType: ""});
+    const [fetch, setFetch] = useState(false);
+    const [loadingType, setLoadingType] = useState({showLoading: false, type: ""});
+    const [load, setLoad] = useState(true);
 
     const [dataHigh, setDataHigh] = useState([]);
     const [dataMeduim, setDataMeduim] = useState([]);
@@ -40,37 +42,38 @@ const Home = () => {
 
     useEffect(() => {
 
-        const getHighData = async () => {
-            setAlert({showMessage: false, messageType: "", message: ""});
 
+
+        const getHighData = async () => {
             try{
                 const response = await fetchHighTasks();
-                // console.log('The data is : ', response);
                 setDataHigh(response.data);
+                setFetch(false);
+                setLoad(false);
             }catch(error){
                 console.log('Smething went wrong : ', error);
             }
         }
 
         const getMeduimData = async () => {
-            setAlert({showMessage: false, messageType: "", message: ""});
-
             try{
                 const response = await fetchMeduimTasks();
                 console.log('The meduim data is : ', response);
                 setDataMeduim(response.data);
+                setFetch(false);
+
             }catch(error){
                 console.log('Smething went wrong : ', error);
             }
         }
 
         const getLowData = async () => {
-            setAlert({showMessage: false, messageType: "", message: ""});
-
             try{
                 const response = await fetchLowTasks();
                 // console.log('The data is : ', response);
                 setDataLow(response.data);
+                setFetch(false);
+
             }catch(error){
                 console.log('Smething went wrong : ', error);
             }
@@ -80,10 +83,11 @@ const Home = () => {
         getMeduimData();
         getLowData();
 
-    }, [])
+    }, [fetch])
 
 
     useEffect(() => {
+        console.log('The general laoding is : ', load);
         console.log("The alert is : ", alert)
     }, [alert])
     
@@ -96,23 +100,25 @@ const Home = () => {
             <div className="row">
                 <div className="col">
                     <CustomContainer
-                    loading={loading}
+                    taskLength={dataHigh.length+" tickets,  No task"}
+                    loading={load && loading}
                     isModal={highModal}
-                    title={loading ? <Skeleton height={25} /> : "High Priority"}
-                    color={loading ? colors.greyColor : colors.primaryColor}
+                    title={load && loading ? <Skeleton height={25} /> : "High Priority"}
+                    color={load && loading ? colors.greyColor : colors.primaryColor}
                     closeModal={closeHighModal}
                     onClick={openHighModal}
                     modalTitle="High Priority Task"
-                    modalChildren={<TaskForm closeModal={closeHighModal} category="high" setAlert={setAlert} />}
+                    modalChildren={<TaskForm closeModal={closeHighModal} setFetch={setFetch} setLoadingType={setLoadingType} category="high" setAlert={setAlert} />}
                     children={
                         <div>
-                            {loading ? <div>
+                            {load && loading ? <div>
                                 <Skeleton height={70} /><br />
                                 <Skeleton height={70} /><br />
                                 <Skeleton height={70} />
                             </div> : 
                             
                             <>
+                            {loadingType && loadingType.type == "high" ? <div><Skeleton height={70} /><br /></div> : null}
                             {dataHigh && dataHigh.map((data) => (
                                 <div className="mb-2">
                                     <TaskContainer child={data.title} color={colors.primaryColor} />
@@ -126,25 +132,27 @@ const Home = () => {
 
                 <div className="col">
                     <CustomContainer
-                    loading={loading}
+                    taskLength={dataMeduim.length+" tickets, No task"}
+                    loading={load && loading}
                     isModal={meduimModal}
-                    title={loading ? <Skeleton height={25} /> : "Meduim"}
-                    color={loading ? colors.greyColor : colors.secondaryColor}
+                    title={load && loading ? <Skeleton height={25} /> : "Meduim"}
+                    color={load && loading ? colors.greyColor : colors.secondaryColor}
                     closeModal={closeMeduimModal}
                     onClick={openMeduimModal}
                     modalTitle="Meduim task"
-                    modalChildren={<TaskForm closeModal={closeMeduimModal} category="meduim" setAlert={setAlert} />}
+                    modalChildren={<TaskForm closeModal={closeMeduimModal} setFetch={setFetch} setLoadingType={setLoadingType} category="meduim" setAlert={setAlert} />}
                     children={
                         <div>
-                            {loading ? <div>
+                            {load && loading ? <div>
                                 <Skeleton height={70} /><br />
                                 <Skeleton height={70} /><br />
                                 <Skeleton height={70} />
                             </div> : 
                                 <>
+                                {loadingType && loadingType.type == "meduim" ? <div><Skeleton height={70} /><br /></div> : null}
                                 {dataMeduim && dataMeduim.map((data) => (
                                     <div className="mb-2">
-                                        <TaskContainer child={data.title} color={colors.secondaryColor} />
+                                        <TaskContainer child={data.title}  color={colors.secondaryColor} />
                                     </div>
                                 ))}
                                 </>}
@@ -156,22 +164,24 @@ const Home = () => {
 
                 <div className="col">
                     <CustomContainer 
-                    loading={loading}
+                    taskLength={dataLow.length+" tickets, No task"}
+                    loading={load && loading}
                     isModal={lowModal}
-                    title={loading ? <Skeleton height={25} /> : "Low"}
-                    color={loading ? colors.greyColor : colors.grey2Color}
+                    title={load && loading ? <Skeleton height={25} /> : "Low"}
+                    color={load && loading ? colors.greyColor : colors.grey2Color}
                     closeModal={closeLowModal}
                     onClick={openLowModal}
                     modalTitle="Low task"
-                    modalChildren={<TaskForm closeModal={closeLowModal} category="low" setAlert={setAlert} />}
+                    modalChildren={<TaskForm closeModal={closeLowModal} setFetch={setFetch} setLoadingType={setLoadingType} category="low" setAlert={setAlert} />}
                     children={
                         <div>
-                        {loading ? <div>
+                        {load && loading ? <div>
                             <Skeleton height={70} /><br />
                             <Skeleton height={70} /><br />
                             <Skeleton height={70} />
                         </div> : 
                         <>
+                        {loadingType && loadingType.type == "low" ? <div><Skeleton height={70} /><br /></div> : null}
                         {dataLow && dataLow.map((data) => (
                             <div className="mb-2">
                                 <TaskContainer child={data.title} />

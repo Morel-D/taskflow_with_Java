@@ -4,7 +4,7 @@ import { useState } from "react";
 import Modal from "./modal";
 import Skeleton from "react-loading-skeleton";
 
-const CustomContainer = ({ isModal, closeModal, title, children, onClick, color, modalTitle, modalChildren, loading}) => {
+const CustomContainer = ({ isModal, closeModal, title, children, onClick, color, modalTitle, modalChildren, loading, taskLength}) => {
 
 
     return ( 
@@ -17,7 +17,7 @@ const CustomContainer = ({ isModal, closeModal, title, children, onClick, color,
                     </div>
                     <div className="col text-start">
                         <h5 className="fw-bold">{title}</h5>
-                         {loading ? <Skeleton height={15} /> : <p className="">3 tickets, 8 tasks</p>} 
+                         {loading ? <Skeleton height={15} /> : <p className="">{taskLength}</p>} 
                     </div>
                     <div className="col text-end">
                         {loading ? <div className="mt-2"><Skeleton circle width={30} height={30} /></div> : <button onClick={onClick} className="btn icon-btn"><img src={addIcon} className="img-fluid" /></button>}

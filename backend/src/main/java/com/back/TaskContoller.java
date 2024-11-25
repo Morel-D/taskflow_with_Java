@@ -57,7 +57,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
 
         // Retrive all the data 
         if(pathInfo == null || pathInfo.equals("/")){
-            String sql = "SELECT * FROM task";
+            String sql = "SELECT * FROM task ORDER BY dateof DESC";
 
             try(PreparedStatement statement = connection.prepareStatement(sql); 
                 ResultSet rs = statement.executeQuery()){
@@ -145,7 +145,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
 
 
     private void fetchHighTask (HttpServletResponse res) throws IOException {
-        String sql = "SELECT * FROM task WHERE category = 'high'";
+        String sql = "SELECT * FROM task WHERE category = 'high' ORDER BY dateof DESC";
         try(PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet rs = statement.executeQuery()){
 
@@ -188,7 +188,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
     }
 
     private void fetchMedumTask (HttpServletResponse res) throws IOException {
-        String sql = "SELECT * FROM task WHERE category = 'meduim'";
+        String sql = "SELECT * FROM task WHERE category = 'meduim' ORDER BY dateof DESC";
         try(PreparedStatement statement = connection.prepareStatement(sql);
         ResultSet rs = statement.executeQuery()
         ){
@@ -230,7 +230,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
     }
 
     private void fetchLowTask (HttpServletResponse res) throws IOException {
-        String sql = "SELECT * FROM task WHERE category = 'low'";
+        String sql = "SELECT * FROM task WHERE category = 'low' ORDER BY dateof DESC";
         try(PreparedStatement statement = connection.prepareStatement(sql);
         ResultSet rs = statement.executeQuery()
         ){

@@ -3,7 +3,7 @@ import { PrimaryButton } from "../../widgets/button";
 import { TextAreaFeild, TextFeild } from "../../widgets/textFeilds";
 import {  useTaskService } from "../../service/taskService";
 
-const TaskForm = ({closeModal, category, setAlert}) => {
+const TaskForm = ({closeModal, setLoadingType, category, setFetch, setAlert}) => {
 
     function generateUniqueId() {
         const now = Date.now(); // Current time in milliseconds
@@ -35,11 +35,14 @@ const TaskForm = ({closeModal, category, setAlert}) => {
 
         
         try{
+            setAlert({showMessage: false, messageType: "", message: ""});
+            setLoadingType({showLoading: true, type: category});
             const response = await createTask(data);
             console.log('VIEW : ', response);
             if(response.status == "true")
             {
                 setAlert({showMessage: true, messageType: "success", message: "New task created"});
+                setFetch(true);
                 closeModal();
             }else {
                 setAlert({showMessage: true, messageType: "fail", message: response});
@@ -47,6 +50,8 @@ const TaskForm = ({closeModal, category, setAlert}) => {
             }
         }catch(error){
             console.error('Something went wrong: ', error);
+        }finally {
+            setLoadingType({showLoading: false, type: ""});
         }
     }
 
