@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { PrimaryButton } from "../../widgets/button";
 import { TextAreaFeild, TextFeild } from "../../widgets/textFeilds";
-import { userTaskService } from "../../service/taskService";
+import {  useTaskService } from "../../service/taskService";
 
 const TaskForm = ({closeModal, category, setAlert}) => {
 
@@ -12,7 +12,7 @@ const TaskForm = ({closeModal, category, setAlert}) => {
     }
     
 
-    const {createTask} = userTaskService();
+    const {createTask} = useTaskService();
 
     const [error, setError] = useState(false);
     const [content, setContent] = useState();

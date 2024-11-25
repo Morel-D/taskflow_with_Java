@@ -9,16 +9,24 @@ import { ErrorMessage, SuccessMessage } from "../widgets/message";
 import { useApiServce } from "../service/apiService";
 import Loading from "../widgets/loading";
 import TaskForm from "./forms/taskForm";
+import { useTaskService } from "../service/taskService";
 const Home = () => {
 
-    const  {loading} = useApiServce();
+    const  {loading, fetchHighTasks, fetchMeduimTasks, fetchLowTasks} = useTaskService();
 
     const [highModal, setHighModal] = useState(false);
     const [lowModal, setLowModal] = useState(false);
     const [meduimModal, setMeduimModal] = useState(false);
 
     const [alert, setAlert] = useState({showMessage: false, messageType: "", message: ""});
-    const [fetch, setFetch] = useState(false);
+    const [fetch, setFetch] = useState({fetchData: false, fetchType: ""});
+
+    const [dataHigh, setDataHigh] = useState([]);
+    const [dataMeduim, setDataMeduim] = useState([]);
+    const [dataLow, setDataLow] = useState([]);
+
+
+
 
     const openHighModal = () => setHighModal(true);
     const closeHighModal = () => setHighModal(false);
@@ -28,6 +36,51 @@ const Home = () => {
 
     const openMeduimModal = () => setMeduimModal(true);
     const closeMeduimModal = () => setMeduimModal(false);
+
+
+    useEffect(() => {
+
+        const getHighData = async () => {
+            setAlert({showMessage: false, messageType: "", message: ""});
+
+            try{
+                const response = await fetchHighTasks();
+                // console.log('The data is : ', response);
+                setDataHigh(response.data);
+            }catch(error){
+                console.log('Smething went wrong : ', error);
+            }
+        }
+
+        const getMeduimData = async () => {
+            setAlert({showMessage: false, messageType: "", message: ""});
+
+            try{
+                const response = await fetchMeduimTasks();
+                console.log('The meduim data is : ', response);
+                setDataMeduim(response.data);
+            }catch(error){
+                console.log('Smething went wrong : ', error);
+            }
+        }
+
+        const getLowData = async () => {
+            setAlert({showMessage: false, messageType: "", message: ""});
+
+            try{
+                const response = await fetchLowTasks();
+                // console.log('The data is : ', response);
+                setDataLow(response.data);
+            }catch(error){
+                console.log('Smething went wrong : ', error);
+            }
+        }
+        
+        getHighData();
+        getMeduimData();
+        getLowData();
+
+    }, [])
 
 
     useEffect(() => {
@@ -57,7 +110,15 @@ const Home = () => {
                                 <Skeleton height={70} /><br />
                                 <Skeleton height={70} /><br />
                                 <Skeleton height={70} />
-                            </div> : <TaskContainer color={colors.primaryColor} />}
+                            </div> : 
+                            
+                            <>
+                            {dataHigh && dataHigh.map((data) => (
+                                <div className="mb-2">
+                                    <TaskContainer child={data.title} color={colors.primaryColor} />
+                                </div>
+                            ))}
+                            </>  }
                             
                         </div>
                         } />
@@ -79,7 +140,14 @@ const Home = () => {
                                 <Skeleton height={70} /><br />
                                 <Skeleton height={70} /><br />
                                 <Skeleton height={70} />
-                            </div> : <TaskContainer color={colors.secondaryColor} />}
+                            </div> : 
+                                <>
+                                {dataMeduim && dataMeduim.map((data) => (
+                                    <div className="mb-2">
+                                        <TaskContainer child={data.title} color={colors.secondaryColor} />
+                                    </div>
+                                ))}
+                                </>}
                         </div>
                         }
                     
@@ -102,7 +170,16 @@ const Home = () => {
                             <Skeleton height={70} /><br />
                             <Skeleton height={70} /><br />
                             <Skeleton height={70} />
-                        </div> : <TaskContainer />}
+                        </div> : 
+                        <>
+                        {dataLow && dataLow.map((data) => (
+                            <div className="mb-2">
+                                <TaskContainer child={data.title} />
+                            </div>
+                        ))}
+                        </>
+                        
+                        }
                     </div>
                         
                     }
