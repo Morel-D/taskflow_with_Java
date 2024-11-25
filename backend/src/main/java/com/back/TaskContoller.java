@@ -43,6 +43,13 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        // Set CORS headers
+        res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+        res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        res.setHeader("Access-Control-Max-Age", "3600");
+        res.setStatus(HttpServletResponse.SC_OK);
+
         res.setContentType("application/json");
 
         String pathInfo = req.getPathInfo();
@@ -89,6 +96,12 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
 
                 objectMapper.writeValue(res.getWriter(), responseMap);
             }
+        }else if(pathInfo.equals("/high")){
+            fetchHighTask(res);
+        }else if(pathInfo.equals("/medium")){
+            fetchMedumTask(res);
+        }else if(pathInfo.equals("/low")){
+            fetchLowTask(res);
         }else {
             // Retrive single data by ID
             taskId = Integer.parseInt(pathInfo.substring(1).trim());
@@ -129,6 +142,136 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
             }
         }
     }
+
+
+    private void fetchHighTask (HttpServletResponse res) throws IOException {
+        String sql = "SELECT * FROM task WHERE category = 'high'";
+        try(PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet rs = statement.executeQuery()){
+
+            List<Map<String, Object>> tasks = new ArrayList<>();
+
+            while(rs.next()){
+                Map<String, Object> task = new HashMap<>();
+                task.put("id", rs.getInt("id"));
+                task.put("uid", rs.getString("uid"));
+                task.put("title", rs.getString("title"));
+                task.put("category", rs.getString("category"));
+                task.put("status", rs.getString("status"));
+                task.put("dateof", rs.getString("dateof"));
+
+                tasks.add(task);
+                }
+
+                Map<String, Object> repsoneMap = new HashMap<>();
+                repsoneMap.put("status", "true");
+                repsoneMap.put("data", tasks);
+
+                objectMapper.writeValue(res.getWriter(), repsoneMap);
+
+
+                // return all the task in a JSON array
+                objectMapper.writeValue(res.getWriter(), tasks);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            Map<String, String> responseMap = new HashMap<>();
+
+            responseMap.put("status", "false");
+            responseMap.put("message", "Failed to fetch data");
+            responseMap.put("error", e.getMessage());
+
+            objectMapper.writeValue(res.getWriter(), responseMap);
+            
+        }
+    }
+
+    private void fetchMedumTask (HttpServletResponse res) throws IOException {
+        String sql = "SELECT * FROM task WHERE category = 'meduim'";
+        try(PreparedStatement statement = connection.prepareStatement(sql);
+        ResultSet rs = statement.executeQuery()
+        ){
+            List<Map<String, Object>> tasks = new ArrayList<>();
+            while(rs.next()){
+                Map<String, Object> task = new HashMap<>();
+                task.put("id", rs.getInt("id"));
+                task.put("uid", rs.getString("uid"));
+                task.put("title", rs.getString("title"));
+                task.put("category", rs.getString("category"));
+                task.put("status", rs.getString("status"));
+                task.put("dateof", rs.getString("dateof"));
+
+                tasks.add(task);
+                }
+
+                Map<String, Object> repsoneMap = new HashMap<>();
+                repsoneMap.put("status", "true");
+                repsoneMap.put("data", tasks);
+
+                objectMapper.writeValue(res.getWriter(), repsoneMap);
+
+
+                // return all the task in a JSON array
+                objectMapper.writeValue(res.getWriter(), tasks);
+
+        }catch (SQLException e) {
+            e.printStackTrace();
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            Map<String, String> responseMap = new HashMap<>();
+
+            responseMap.put("status", "false");
+            responseMap.put("message", "Failed to fetch data");
+            responseMap.put("error", e.getMessage());
+
+            objectMapper.writeValue(res.getWriter(), responseMap);
+            
+        }
+    }
+
+    private void fetchLowTask (HttpServletResponse res) throws IOException {
+        String sql = "SELECT * FROM task WHERE category = 'low'";
+        try(PreparedStatement statement = connection.prepareStatement(sql);
+        ResultSet rs = statement.executeQuery()
+        ){
+            List<Map<String, Object>> tasks = new ArrayList<>();
+            while(rs.next()){
+                Map<String, Object> task = new HashMap<>();
+                task.put("id", rs.getInt("id"));
+                task.put("uid", rs.getString("uid"));
+                task.put("title", rs.getString("title"));
+                task.put("category", rs.getString("category"));
+                task.put("status", rs.getString("status"));
+                task.put("dateof", rs.getString("dateof"));
+
+                tasks.add(task);
+                }
+
+                Map<String, Object> repsoneMap = new HashMap<>();
+                repsoneMap.put("status", "true");
+                repsoneMap.put("data", tasks);
+
+                objectMapper.writeValue(res.getWriter(), repsoneMap);
+
+
+                // return all the task in a JSON array
+                objectMapper.writeValue(res.getWriter(), tasks);
+
+        }catch (SQLException e) {
+            e.printStackTrace();
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            Map<String, String> responseMap = new HashMap<>();
+
+            responseMap.put("status", "false");
+            responseMap.put("message", "Failed to fetch data");
+            responseMap.put("error", e.getMessage());
+
+            objectMapper.writeValue(res.getWriter(), responseMap);
+            
+        }
+    }
+
+
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
