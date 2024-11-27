@@ -6,5 +6,12 @@ const Loading = () => {
         </div>
      );
 }
+
+
+const ButtonLoading = () => {
+    return (
+        <span class="loader-btn"></span>
+    )
+}
  
-export default Loading;
+export {Loading, ButtonLoading};

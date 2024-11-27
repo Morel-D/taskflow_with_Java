@@ -54,7 +54,7 @@ export const useApiServce = () => {
     const getDataByID = async(endpoint, id) => {
         try{
             setLoading(true);
-            const response = await axiosInstance.get(`${endpoint}/${id}`);
+            const response = await axiosInstance.get(endpoint);
             if(response){
                 console.log('GET DATA BY ID : ', response);
                 return response.data;
@@ -71,7 +71,7 @@ export const useApiServce = () => {
     const upateData = async (endpoint, id, data) => {
         try {
             setLoading(true);
-            const response = await axiosInstance.put(`${endpoint}/${id}`, data);
+            const response = await axiosInstance.put(endpoint, data);
             if(response){
                 console.log('UPDATE DATA : ', response);
                 return response.data;
@@ -84,10 +84,10 @@ export const useApiServce = () => {
     }
 
     // DELETE DATA BY ID**********************************
-    const deleteData = async (endpoint, id) => {
+    const deleteData = async (endpoint) => {
         try{
             setLoading(true);
-            const response = await axiosInstance.delete(`${endpoint}/${id}`);
+            const response = await axiosInstance.delete(endpoint);
             if(response){
                 console.log('DATA DELETED : ', response);
                 return response.data;

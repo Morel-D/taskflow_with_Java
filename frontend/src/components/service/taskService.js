@@ -10,9 +10,9 @@ export const useTaskService = () => {
     const fetchHighTasks = () => getAllData(`${endpoint}/high`);
     const fetchMeduimTasks = () => getAllData(`${endpoint}/medium`);
     const fetchLowTasks = () => getAllData(`${endpoint}/low`);
-    const fetchTaskById = (id) => getDataByID(endpoint, id);
+    const fetchTaskById = (id) => getDataByID(`${endpoint}/${id}`);
     const updateTask = (data, id) => upateData(endpoint, id, data);
-    const deleteTask = (id) => deleteData(id);
+    const deleteTask = (id) => deleteData(`${endpoint}/${id}`);
 
     return {loading, createTask, fetchTasks, fetchHighTasks, fetchMeduimTasks, fetchLowTasks, fetchTaskById, updateTask, deleteTask}
 }

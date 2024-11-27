@@ -326,6 +326,13 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse res) throws IOException{
+        // Set CORS headers
+        res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+        res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        res.setHeader("Access-Control-Max-Age", "3600");
+        res.setStatus(HttpServletResponse.SC_OK);
+
         res.setContentType("application/json");
 
         String pathInfo = req.getPathInfo();
@@ -383,6 +390,14 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse res) throws IOException{
+
+        // Set CORS headers
+        res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+        res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        res.setHeader("Access-Control-Max-Age", "3600");
+        res.setStatus(HttpServletResponse.SC_OK);
+
         res.setContentType("application/json");
 
 

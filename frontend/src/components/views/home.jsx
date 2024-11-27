@@ -7,7 +7,6 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { ErrorMessage, SuccessMessage } from "../widgets/message";
 import { useApiServce } from "../service/apiService";
-import Loading from "../widgets/loading";
 import TaskForm from "./forms/taskForm";
 import { useTaskService } from "../service/taskService";
 const Home = () => {
@@ -121,7 +120,7 @@ const Home = () => {
                             {loadingType && loadingType.type == "high" ? <div><Skeleton height={70} /><br /></div> : null}
                             {dataHigh && dataHigh.map((data) => (
                                 <div className="mb-2">
-                                    <TaskContainer child={data.title} color={colors.primaryColor} />
+                                    <TaskContainer child={data.title} color={colors.primaryColor} id={data.id} setFetch={setFetch} setAlert={setAlert} />
                                 </div>
                             ))}
                             </>  }
@@ -140,7 +139,7 @@ const Home = () => {
                     closeModal={closeMeduimModal}
                     onClick={openMeduimModal}
                     modalTitle="Meduim task"
-                    modalChildren={<TaskForm closeModal={closeMeduimModal} setFetch={setFetch} setLoadingType={setLoadingType} category="meduim" setAlert={setAlert} />}
+                    modalChildren={<TaskForm closeModal={closeMeduimModal} setFetch={setFetch} category="meduim" setAlert={setAlert} />}
                     children={
                         <div>
                             {load && loading ? <div>
@@ -152,7 +151,7 @@ const Home = () => {
                                 {loadingType && loadingType.type == "meduim" ? <div><Skeleton height={70} /><br /></div> : null}
                                 {dataMeduim && dataMeduim.map((data) => (
                                     <div className="mb-2">
-                                        <TaskContainer child={data.title}  color={colors.secondaryColor} />
+                                        <TaskContainer child={data.title}  color={colors.secondaryColor} id={data.id} setFetch={setFetch} />
                                     </div>
                                 ))}
                                 </>}
@@ -184,7 +183,7 @@ const Home = () => {
                         {loadingType && loadingType.type == "low" ? <div><Skeleton height={70} /><br /></div> : null}
                         {dataLow && dataLow.map((data) => (
                             <div className="mb-2">
-                                <TaskContainer child={data.title} />
+                                <TaskContainer child={data.title} id={data.id} setFetch={setFetch} setAlert={setAlert} />
                             </div>
                         ))}
                         </>

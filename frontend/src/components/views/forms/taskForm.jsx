@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PrimaryButton } from "../../widgets/button";
 import { TextAreaFeild, TextFeild } from "../../widgets/textFeilds";
 import {  useTaskService } from "../../service/taskService";
+import { Loading } from "../../widgets/loading";
 
-const TaskForm = ({closeModal, setLoadingType, category, setFetch, setAlert}) => {
+const TaskForm = ({closeModal, setLoadingType, category, setFetch, setAlert, id}) => {
 
     function generateUniqueId() {
         const now = Date.now(); // Current time in milliseconds
@@ -12,10 +13,37 @@ const TaskForm = ({closeModal, setLoadingType, category, setFetch, setAlert}) =>
     }
     
 
-    const {createTask} = useTaskService();
+    const {createTask, fetchTaskById} = useTaskService();
 
     const [error, setError] = useState(false);
     const [content, setContent] = useState();
+    const [editLoading, setEditLoading] = useState(false);
+    const [singledata, setSingleData] = useState(null);
+
+    useEffect(() => {
+        const getSingleTask = async () => {
+            if(id)
+            {
+                console.log("The id is present : ", id);
+                try{
+                    setEditLoading(true);
+                    const response = await fetchTaskById(id);
+                    if(response.status == "true"){
+                        console.log("The response is present : ", response);
+                        setContent(response.title);
+                    }
+                }catch(error){
+                    console.log('Something went wrong  : ', error);
+                }finally {
+                    setEditLoading(false);
+
+                }
+            }
+        }
+
+        getSingleTask();
+    }, [singledata])
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -45,7 +73,7 @@ const TaskForm = ({closeModal, setLoadingType, category, setFetch, setAlert}) =>
                 setFetch(true);
                 closeModal();
             }else {
-                setAlert({showMessage: true, messageType: "fail", message: response});
+                setAlert({showMessage: true, messageType: "fail", message: response.error});
                 closeModal();
             }
         }catch(error){
@@ -62,16 +90,22 @@ const TaskForm = ({closeModal, setLoadingType, category, setFetch, setAlert}) =>
 
     return ( 
         <div>
-            <TextAreaFeild 
-            row={3} 
-            placeholder="Add a task description.." 
-            error={error} 
-            onChange={handleDefault}  
-            value={content}
-            />
-            <div className="footer mt-4 text-end">
-                <PrimaryButton children="Save a task" onClick={handleSubmit} />
-            </div>
+            {editLoading ? (
+                <Loading />
+            ): (
+                <>
+                <TextAreaFeild 
+                    row={3} 
+                    placeholder="Add a task description.." 
+                    error={error} 
+                    onChange={handleDefault}  
+                    value={content}
+                    />
+                    <div className="footer mt-4 text-end">
+                        <PrimaryButton children={!id ? "Save a task" : "Upadate Data"} onClick={handleSubmit} />
+                    </div>
+                </>
+            )}
         </div>
      );
 }
