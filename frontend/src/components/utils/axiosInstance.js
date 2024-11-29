@@ -9,7 +9,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
     (config) => {
-        console.log('Request interceptors : ', config);
+        // console.log('Request interceptors : ', config);
 
         return config;
     }

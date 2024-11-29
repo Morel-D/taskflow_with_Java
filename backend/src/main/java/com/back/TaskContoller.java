@@ -34,7 +34,7 @@ public class TaskContoller extends HttpServlet {
 protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws IOException {
     // Handle preflight requests
     res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-    res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+    res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
     res.setHeader("Access-Control-Max-Age", "3600");
     res.setStatus(HttpServletResponse.SC_OK);
@@ -45,7 +45,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
         // Set CORS headers
         res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-        res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+        res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
         res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
         res.setHeader("Access-Control-Max-Age", "3600");
         res.setStatus(HttpServletResponse.SC_OK);
@@ -277,7 +277,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
         // Set CORS headers
         res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-        res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+        res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
         res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
         res.setHeader("Access-Control-Max-Age", "3600");
         res.setStatus(HttpServletResponse.SC_OK);
@@ -328,12 +328,14 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
     protected void doPut(HttpServletRequest req, HttpServletResponse res) throws IOException{
         // Set CORS headers
         res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-        res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+        res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
         res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
         res.setHeader("Access-Control-Max-Age", "3600");
         res.setStatus(HttpServletResponse.SC_OK);
 
         res.setContentType("application/json");
+
+        System.out.print("The data here is : "+ res);
 
         String pathInfo = req.getPathInfo();
         int taskId;
@@ -351,6 +353,8 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
         taskId = Integer.parseInt(pathInfo.substring(1));
         TaskModel task = objectMapper.readValue(req.getReader(), TaskModel.class);
 
+        
+
         String sql = "UPDATE task SET title = ?, category = ?, status = ? WHERE id = ?";
         try(PreparedStatement statement = connection.prepareStatement(sql)){
             statement.setString(1, task.getTitle());
@@ -364,7 +368,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
             if(rowsUpdated > 0){
             statement.setString(1, task.getTitle());
             responseMap.put("status", "true");
-            responseMap.put("message", "Successfully updated record : "+taskId);
+            responseMap.put("message", "data-updated");
             objectMapper.writeValue(res.getWriter(), responseMap);
 
             }else{
@@ -393,7 +397,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
 
         // Set CORS headers
         res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-        res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+        res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
         res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
         res.setHeader("Access-Control-Max-Age", "3600");
         res.setStatus(HttpServletResponse.SC_OK);

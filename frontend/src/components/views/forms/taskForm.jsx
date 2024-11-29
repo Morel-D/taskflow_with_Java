@@ -13,12 +13,12 @@ const TaskForm = ({closeModal, setLoadingType, category, setFetch, setAlert, id}
     }
     
 
-    const {createTask, fetchTaskById} = useTaskService();
+    const {createTask, fetchTaskById, updateTask} = useTaskService();
 
     const [error, setError] = useState(false);
     const [content, setContent] = useState();
     const [editLoading, setEditLoading] = useState(false);
-    const [singledata, setSingleData] = useState(null);
+    const [singledata, setSingleData] = useState({uid: "", title: "", category: ""});
 
     useEffect(() => {
         const getSingleTask = async () => {
@@ -30,7 +30,8 @@ const TaskForm = ({closeModal, setLoadingType, category, setFetch, setAlert, id}
                     const response = await fetchTaskById(id);
                     if(response.status == "true"){
                         console.log("The response is present : ", response);
-                        setContent(response.title);
+                        setSingleData({uid: response.uid, title: response.title, category: response.category});
+                        // console.log('DATA is : ', singledata);
                     }
                 }catch(error){
                     console.log('Something went wrong  : ', error);
@@ -42,7 +43,7 @@ const TaskForm = ({closeModal, setLoadingType, category, setFetch, setAlert, id}
         }
 
         getSingleTask();
-    }, [singledata])
+    }, [id])
 
 
     const handleSubmit = async (e) => {
@@ -83,9 +84,51 @@ const TaskForm = ({closeModal, setLoadingType, category, setFetch, setAlert, id}
         }
     }
 
+
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+        if(singledata.title == "" || singledata.title == undefined){
+            setError(true);
+            return;
+        }
+
+        const data = {
+            "title": singledata.title,
+            "category": singledata.category,
+            "status": "true"
+        };
+
+        try{
+            const response = await updateTask(id, data);
+            console.log('VIEW : ', response);
+            if(response.status == "true")
+            {
+                setFetch(true);
+                setAlert({showMessage: true, messageType: "success", message: "Data Updated"})
+                closeModal();
+            }else {
+                setAlert({showMessage: true, messageType: "fail", message: response.error});
+                closeModal();
+            }
+        }catch(error){
+            console.error('Something went wrong: ', error);
+        }
+
+
+    }
+
     const handleDefault = (e) => {
         setError(false);
         setContent(e.target.value);
+    }
+
+    const handleEdit = (e) => {
+        setError(false);
+        const newTtitle = e.target.value;
+        setSingleData((prevData) => ({
+            ...prevData,
+            title: newTtitle,
+        }))
     }
 
     return ( 
@@ -98,11 +141,11 @@ const TaskForm = ({closeModal, setLoadingType, category, setFetch, setAlert, id}
                     row={3} 
                     placeholder="Add a task description.." 
                     error={error} 
-                    onChange={handleDefault}  
-                    value={content}
+                    onChange={id ? handleEdit : handleDefault}  
+                    value={id ? singledata.title : content}
                     />
                     <div className="footer mt-4 text-end">
-                        <PrimaryButton children={!id ? "Save a task" : "Upadate Data"} onClick={handleSubmit} />
+                        <PrimaryButton children={!id ? "Save a task" : "Upadate Data"} onClick={id ? handleUpdate : handleSubmit} />
                     </div>
                 </>
             )}

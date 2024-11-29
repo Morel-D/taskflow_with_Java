@@ -68,7 +68,7 @@ const TaskContainer = ({color, child, id, setFetch, setAlert}) => {
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 style={{borderColor: color ?? colors.grey2Color, padding: "10px", position: "relative", borderRadius: "5px" }}>                
-                    <h6> {child}</h6>
+                    <div className="col-10"><h6> {child}</h6></div>
                     <p>Task 2</p>
                     {isHovered && (
                         <div
@@ -98,7 +98,7 @@ const TaskContainer = ({color, child, id, setFetch, setAlert}) => {
 
 
 
-        <Modal isOpen={editModal} onClose={closeEditModal} children={<TaskForm id={id} />} title="Quick Edit" col="col-4" />
+        <Modal isOpen={editModal} onClose={closeEditModal} children={<TaskForm id={id} closeModal={closeEditModal} setFetch={setFetch} setAlert={setAlert} />} title="Quick Edit" col="col-4" />
         
         </>
 

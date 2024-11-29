@@ -38,7 +38,7 @@ export const useApiServce = () => {
             setLoading(true);
             const response = await axiosInstance.get(endpoint);
             if(response){
-                console.log('GET ALL DATA : ', response);
+                // console.log('GET ALL DATA : ', response);
                 return response.data;
             }
         }catch(error){
@@ -68,7 +68,9 @@ export const useApiServce = () => {
 
     // UPDATE DATA BY ID**********************************
 
-    const upateData = async (endpoint, id, data) => {
+    const upateData = async (endpoint, data) => {
+        console.log('ENDPOINT : ', endpoint);
+        console.log('DATA : ', data);
         try {
             setLoading(true);
             const response = await axiosInstance.put(endpoint, data);
