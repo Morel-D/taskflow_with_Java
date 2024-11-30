@@ -23,6 +23,7 @@ export const useApiServce = () => {
                 // Request made but no response was received
                 return errorMessages.NETWORK_ERROR
             }else {
+                console.log('Hello world : ', error.code)
                 return errorMessages.UNKNOWN_ERROR
             }
         }finally{
@@ -42,7 +43,17 @@ export const useApiServce = () => {
                 return response.data;
             }
         }catch(error){
-            console.log('Err - GET ALL DATA : ', error);
+            // if backend retrun error 
+            if(error.response){
+                const status = error.response.message;
+                return errorMessages[status];
+            }else if (error.request){
+                console.log('Hello world : ', error.code)
+                // Request made but no response was received
+                return error.code
+            }else {
+                return errorMessages.UNKNOWN_ERROR
+            }
         }finally{
             setLoading(false);
         }

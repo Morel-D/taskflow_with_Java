@@ -1,13 +1,15 @@
 import Header from "./components/modules/header"
 import Navbar from "./components/modules/navbar"
 import Home from "./components/views/home"
+import Intro from "./components/views/intro"
 
 
 function App() {
 
   return (
-    <div className="app container-fluid py-4">
-      <div className="row">
+    <div className="app container-fluid">
+        <Intro />
+      {/* <div className="row py-4">
         <div className="col col-2">
           <Navbar />
         </div>
@@ -19,7 +21,7 @@ function App() {
                 <Home />
             </div>
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }

@@ -48,7 +48,6 @@ const TaskContainer = ({color, child, id, setFetch, setAlert}) => {
             if(response.status == "true")
             {
             console.log('Data deleted : ', response);
-            setIsFading(true);
             setAlert({showMessage: true, messageType: "success", message: "Task deleted"});
             setFetch(true);
             closeDeleteModal();
