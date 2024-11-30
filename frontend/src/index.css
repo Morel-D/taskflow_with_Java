@@ -136,6 +136,14 @@ li > a {text-decoration: none;}
 .dangerButton:hover { background-color: #ff74a3; color: white }
 
 
+.add-container {
+  border-style: dashed;
+  border-radius: 10px;
+  border-color: var(--grey2Color);
+  border-width: 2px;
+  padding: 4px;
+}
+
 
 /****************** widgets ****************/
 .custom-card{

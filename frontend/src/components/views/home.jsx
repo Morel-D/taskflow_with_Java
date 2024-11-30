@@ -9,9 +9,12 @@ import { ErrorMessage, SuccessMessage } from "../widgets/message";
 import { useApiServce } from "../service/apiService";
 import TaskForm from "./forms/taskForm";
 import { useTaskService } from "../service/taskService";
+import AddTaskContainer from "../widgets/addTaskConatiner";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { StrictModeDroppable } from "../widgets/StrictModelDroppable";
 const Home = () => {
 
-    const  {loading, fetchHighTasks, fetchMeduimTasks, fetchLowTasks} = useTaskService();
+    const  {loading, fetchHighTasks, fetchMeduimTasks, fetchLowTasks, updateTask} = useTaskService();
 
     const [highModal, setHighModal] = useState(false);
     const [lowModal, setLowModal] = useState(false);
@@ -94,111 +97,182 @@ const Home = () => {
         setAlert({showMessage: false, messageType: "", message: ""});
     }
 
+    const handleDragEnd = async (result) => {
+        const { source, destination, draggableId } = result;
+
+
+        console.log("Draggable key (id):", draggableId);
+
+        // If the item was not dropped in a valid destination
+        if (!destination) {
+            console.log("Dropped outside of any droppable");
+            return;
+        }
+    
+        // Log the source and destination droppableIds
+        console.log("Dragged from droppableId:", source.droppableId);
+        console.log("Dropped into droppableId:", destination.droppableId);
+    
+        // Perform actions based on the droppableId
+        if (source.droppableId !== destination.droppableId) {
+            try{
+                const response = await updateTask(draggableId, {'category': destination.droppableId, 'status': 'true'});
+                console.log('response is : ', response);
+            }catch(error){
+                console.error('Something went wrong: ', error);
+            }
+        } else {
+            console.log(`Reordered within ${source.droppableId}`);
+            // Handle logic for reordering within the same container
+        }
+    }
+
+
     return ( 
-        <div className="home">
-            <div className="row">
-                <div className="col">
-                    <CustomContainer
-                    taskLength={dataHigh.length+" tickets,  No task"}
-                    loading={load && loading}
-                    isModal={highModal}
-                    title={load && loading ? <Skeleton height={25} /> : "High Priority"}
-                    color={load && loading ? colors.greyColor : colors.primaryColor}
-                    closeModal={closeHighModal}
-                    onClick={openHighModal}
-                    modalTitle="High Priority Task"
-                    modalChildren={<TaskForm closeModal={closeHighModal} setFetch={setFetch} setLoadingType={setLoadingType} category="high" setAlert={setAlert} />}
-                    children={
-                        <div>
+        <DragDropContext onDragEnd={handleDragEnd} >
+
+                <div className="row">
+                    <StrictModeDroppable droppableId="high">
+                        {(provided) => (
+                            <div
+                                {...provided.droppableProps}
+                                ref={provided.innerRef}
+                                className="col"
+                            >
+                                {/* <AddTaskContainer children={provided.placeholder} /> */}
+                                <CustomContainer
+                                taskLength={dataHigh.length+" tickets,  No task"}
+                                loading={load && loading}
+                                isModal={highModal}
+                                title={load && loading ? <Skeleton height={25} /> : "High Priority"}
+                                color={load && loading ? colors.greyColor : colors.primaryColor}
+                                closeModal={closeHighModal}
+                                onClick={openHighModal}
+                                modalTitle="High Priority Task"
+                                modalChildren={<TaskForm closeModal={closeHighModal} setFetch={setFetch} setLoadingType={setLoadingType} category="high" setAlert={setAlert} />}
+                                children={
+                                    <div>
+                                        {load && loading ? <div>
+                                            <Skeleton height={70} /><br />
+                                            <Skeleton height={70} /><br />
+                                            <Skeleton height={70} />
+                                        </div> : 
+                                        
+                                        <>
+                                        {loadingType && loadingType.type == "high" ? <div><Skeleton height={70} /><br /></div> : null}
+                                        {dataHigh && dataHigh.map((data, index) => (
+                                            <Draggable key={data.id} draggableId={data.id.toString()} index={index} >
+                                                {(provided, snapshot) => (
+                                                    <div 
+                                                    style={{
+                                                        ...provided.draggableProps.style,
+                                                        opacity: snapshot.isDragging ? 0.8 : 1,
+                                                    }}
+                                                    ref={provided.innerRef}
+                                                    {...provided.draggableProps}
+                                                    {...provided.dragHandleProps}
+                                                    className="mb-2">
+                                                        <TaskContainer child={data.title} color={colors.primaryColor} id={data.id} setFetch={setFetch} setAlert={setAlert} />
+                                                    </div>
+                                                )}
+
+                                            </Draggable>
+                                        ))}
+                                        </>  }
+                                        
+                                    </div>
+                                    } />
+                        </div>
+                        )}
+                    </StrictModeDroppable>
+
+                    <StrictModeDroppable droppableId="meduim" >
+                        {(provided) => (
+                            <div 
+                            {...provided.droppableProps}
+                            ref={provided.innerRef}
+                            className="col">
+                                {/* <AddTaskContainer children={provided.placeholder} /> */}
+
+                                <CustomContainer
+                                taskLength={dataMeduim.length+" tickets, No task"}
+                                loading={load && loading}
+                                isModal={meduimModal}
+                                title={load && loading ? <Skeleton height={25} /> : "Meduim"}
+                                color={load && loading ? colors.greyColor : colors.secondaryColor}
+                                closeModal={closeMeduimModal}
+                                onClick={openMeduimModal}
+                                modalTitle="Meduim task"
+                                modalChildren={<TaskForm closeModal={closeMeduimModal} setFetch={setFetch} category="meduim" setAlert={setAlert} />}
+                                children={
+                                    <div>
+                                        {load && loading ? <div>
+                                            <Skeleton height={70} /><br />
+                                            <Skeleton height={70} /><br />
+                                            <Skeleton height={70} />
+                                        </div> : 
+                                            <>
+                                            {loadingType && loadingType.type == "meduim" ? <div><Skeleton height={70} /><br /></div> : null}
+                                            {dataMeduim && dataMeduim.map((data, index) => (
+                                                <Draggable key={data.id} draggableId={data.id.toString()} index={index} >
+                                                    {(provided) => (
+                                                        <div 
+                                                        ref={provided.innerRef}
+                                                        {...provided.draggableProps}
+                                                        {...provided.dragHandleProps}                                                        
+                                                        className="mb-2">
+                                                            <TaskContainer child={data.title}  color={colors.secondaryColor} id={data.id} setFetch={setFetch} />
+                                                        </div>
+                                                    )}
+                                                </Draggable>
+                                            ))}
+                                            </>}
+                                    </div>
+                                    }
+                                
+                                />
+                            </div>
+                        )}
+                    </StrictModeDroppable>
+
+                    <div className="col">
+                        <CustomContainer 
+                        taskLength={dataLow.length+" tickets, No task"}
+                        loading={load && loading}
+                        isModal={lowModal}
+                        title={load && loading ? <Skeleton height={25} /> : "Low"}
+                        color={load && loading ? colors.greyColor : colors.grey2Color}
+                        closeModal={closeLowModal}
+                        onClick={openLowModal}
+                        modalTitle="Low task"
+                        modalChildren={<TaskForm closeModal={closeLowModal} setFetch={setFetch} setLoadingType={setLoadingType} category="low" setAlert={setAlert} />}
+                        children={
+                            <div>
                             {load && loading ? <div>
                                 <Skeleton height={70} /><br />
                                 <Skeleton height={70} /><br />
                                 <Skeleton height={70} />
                             </div> : 
-                            
                             <>
-                            {loadingType && loadingType.type == "high" ? <div><Skeleton height={70} /><br /></div> : null}
-                            {dataHigh && dataHigh.map((data) => (
+                            {loadingType && loadingType.type == "low" ? <div><Skeleton height={70} /><br /></div> : null}
+                            {dataLow && dataLow.map((data) => (
                                 <div className="mb-2">
-                                    <TaskContainer child={data.title} color={colors.primaryColor} id={data.id} setFetch={setFetch} setAlert={setAlert} />
+                                    <TaskContainer child={data.title} id={data.id} setFetch={setFetch} setAlert={setAlert} />
                                 </div>
                             ))}
-                            </>  }
+                            </>
                             
+                            }
                         </div>
-                        } />
-                </div>
-
-                <div className="col">
-                    <CustomContainer
-                    taskLength={dataMeduim.length+" tickets, No task"}
-                    loading={load && loading}
-                    isModal={meduimModal}
-                    title={load && loading ? <Skeleton height={25} /> : "Meduim"}
-                    color={load && loading ? colors.greyColor : colors.secondaryColor}
-                    closeModal={closeMeduimModal}
-                    onClick={openMeduimModal}
-                    modalTitle="Meduim task"
-                    modalChildren={<TaskForm closeModal={closeMeduimModal} setFetch={setFetch} category="meduim" setAlert={setAlert} />}
-                    children={
-                        <div>
-                            {load && loading ? <div>
-                                <Skeleton height={70} /><br />
-                                <Skeleton height={70} /><br />
-                                <Skeleton height={70} />
-                            </div> : 
-                                <>
-                                {loadingType && loadingType.type == "meduim" ? <div><Skeleton height={70} /><br /></div> : null}
-                                {dataMeduim && dataMeduim.map((data) => (
-                                    <div className="mb-2">
-                                        <TaskContainer child={data.title}  color={colors.secondaryColor} id={data.id} setFetch={setFetch} />
-                                    </div>
-                                ))}
-                                </>}
-                        </div>
+                            
                         }
-                    
-                    />
-                </div>
-
-                <div className="col">
-                    <CustomContainer 
-                    taskLength={dataLow.length+" tickets, No task"}
-                    loading={load && loading}
-                    isModal={lowModal}
-                    title={load && loading ? <Skeleton height={25} /> : "Low"}
-                    color={load && loading ? colors.greyColor : colors.grey2Color}
-                    closeModal={closeLowModal}
-                    onClick={openLowModal}
-                    modalTitle="Low task"
-                    modalChildren={<TaskForm closeModal={closeLowModal} setFetch={setFetch} setLoadingType={setLoadingType} category="low" setAlert={setAlert} />}
-                    children={
-                        <div>
-                        {load && loading ? <div>
-                            <Skeleton height={70} /><br />
-                            <Skeleton height={70} /><br />
-                            <Skeleton height={70} />
-                        </div> : 
-                        <>
-                        {loadingType && loadingType.type == "low" ? <div><Skeleton height={70} /><br /></div> : null}
-                        {dataLow && dataLow.map((data) => (
-                            <div className="mb-2">
-                                <TaskContainer child={data.title} id={data.id} setFetch={setFetch} setAlert={setAlert} />
-                            </div>
-                        ))}
-                        </>
-                        
-                        }
+                        />
                     </div>
-                        
-                    }
-                    />
                 </div>
-            </div>
-            {alert.showMessage &&  alert.messageType == "success" ? <SuccessMessage onClick={handleCloseMessage} message={alert.message} /> : null}
-            {alert.showMessage &&  alert.messageType == "fail" ? <ErrorMessage onClick={handleCloseMessage} message={alert.message} /> : null}
-            {/* <ErrorMessage /> */}
-        </div>
+                {alert.showMessage &&  alert.messageType == "success" ? <SuccessMessage onClick={handleCloseMessage} message={alert.message} /> : null}
+                {alert.showMessage &&  alert.messageType == "fail" ? <ErrorMessage onClick={handleCloseMessage} message={alert.message} /> : null}
+                {/* <ErrorMessage /> */}
+        </DragDropContext>
      );
 }
  
