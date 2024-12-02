@@ -38,6 +38,7 @@ public class App
 
         // Add the routes (servlets) to the handler
         handler.addServlet(new ServletHolder(new TaskContoller(connection)), "/task/*");
+        handler.addServlet(new ServletHolder(new AuthController(connection)), "/auth/*");
 
         // Set the handler to the server 
         server.setHandler(handler);
