@@ -1,4 +1,5 @@
 com\back\App.class
 com\back\AuthController.class
+com\back\AuthModel.class
 com\back\TaskContoller.class
 com\back\TaskModel.class
