@@ -1,5 +1,7 @@
 package com.back;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AuthModel {
     private String uid;
     private String username;

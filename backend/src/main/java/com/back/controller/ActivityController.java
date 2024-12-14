@@ -48,6 +48,8 @@ public class ActivityController extends HttpServlet {
             createActivity(req, res);
         }else if(pathInfo.equals("/user/add")){
             addUser(req, res);
+        }else if(pathInfo.equals("/user/invite")){
+            userAccess(req, res);
         }
     }
 
@@ -61,7 +63,7 @@ public class ActivityController extends HttpServlet {
             statement.setString(2, activity.getName());
             statement.setString(3, activity.getDescription());
             statement.setInt(4, activity.getAccessCode());
-            statement.setInt(5, activity.getCreatedBy());
+            statement.setString(5, activity.getCreatedBy());
             statement.setString(6, activity.getStatus());
             statement.executeUpdate();
 
@@ -83,16 +85,11 @@ public class ActivityController extends HttpServlet {
         }
     }
 
-
     private void addUser(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        System.out.println("Hello");
-
+        // Read the request body once and store it
         String requestBody = req.getReader().lines().reduce("", (accumulator, actual) -> accumulator + actual);
-
-
+        
         AuthModel auth = objectMapper.readValue(requestBody, AuthModel.class);
-        // UserActivityModel userActivity = objectMapper.readValue(requestBody, UserActivityModel.class);
-
 
         String sql = "SELECT * FROM user WHERE email = ?";
         try(PreparedStatement statement = connection.prepareStatement(sql)){
@@ -100,17 +97,39 @@ public class ActivityController extends HttpServlet {
 
             ResultSet rs = statement.executeQuery();
 
-            System.out.print("Hello res -> "+ rs);
-
             if(rs.next()){
-                Map<String, Object> responseMap = new HashMap<>();
+                
+                UserActivityModel userActivityModel = objectMapper.readValue(requestBody, UserActivityModel.class);
+                userActivityModel.setUserId(rs.getString("uid"));
 
-                responseMap.put("id", rs.getInt("id"));
-                responseMap.put("uid", rs.getString("uid"));
-                responseMap.put("username", rs.getString("username"));
-                responseMap.put("email", rs.getString("email"));
-                responseMap.put("status", rs.getString("status"));
-                objectMapper.writeValue(res.getWriter(), responseMap);
+                 String sql2 = "INSERT INTO useractivity (uid, userId, activityId, status) VALUES (?, ?, ?, ?)";
+
+                 try(PreparedStatement statement2 = connection.prepareStatement(sql2)){
+                    statement2.setString(1, userActivityModel.getUid());
+                    statement2.setString(2, userActivityModel.getUserId());
+                    statement2.setString(3, userActivityModel.getActivityId());
+                    statement2.setString(4, userActivityModel.getStatus());
+
+                    statement2.executeUpdate();
+
+
+                    Map<String, String> responseMap = new HashMap<>();
+                    responseMap.put("status", "true");
+                    responseMap.put("message", "user-invited-created");
+                    objectMapper.writeValue(res.getWriter(), responseMap);
+                    
+
+                 }catch(SQLException e){
+                    e.printStackTrace();
+                    res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    Map<String, Object> responseMap = new HashMap<>();
+        
+                    responseMap.put("status", "false");
+                    responseMap.put("message", "Failed to insert");
+                    responseMap.put("error", e.getMessage());
+                    objectMapper.writeValue(res.getWriter(), responseMap);
+                } 
+                
             }else{
                 Map<String, Object> responseMap = new HashMap<>();
 
@@ -125,6 +144,42 @@ public class ActivityController extends HttpServlet {
 
             responseMap.put("status", "false");
             responseMap.put("message", "Failed to insert");
+            responseMap.put("error", e.getMessage());
+            objectMapper.writeValue(res.getWriter(), responseMap);
+        }
+    }
+
+    private void userAccess(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        ActivityModel activity = objectMapper.readValue(req.getReader(), ActivityModel.class);
+
+        // String sql = "SELECT a.id AS activity_id, a.name AS activity_name, ua.uid AS user_uid, ua.status AS user_status, a.accesscode FROM activity a JOIN useractivity ua ON a.uid = ua.activityId WHERE a.accesscode = ? AND ua.uid = ?";
+        String sql = "SELECT * FROM activity WHERE accesscode = ? ";
+        try(PreparedStatement statement = connection.prepareStatement(sql)){
+            statement.setInt(1, activity.getAccessCode());
+            ResultSet rs = statement.executeQuery();
+
+            if(rs.next()){
+                Map<String, Object> responseMap = new HashMap<>();
+                responseMap.put("status", "true");
+                responseMap.put("activity", rs.getString("name"));
+                responseMap.put("message", "User-invited");
+                objectMapper.writeValue(res.getWriter(), responseMap);
+
+            }else {
+                Map<String, Object> responseMap = new HashMap<>();
+                responseMap.put("status", "false");
+                responseMap.put("message", "Invalide-user");
+                objectMapper.writeValue(res.getWriter(), responseMap);
+            }
+
+
+        }catch(SQLException e){
+            e.printStackTrace();
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            Map<String, Object> responseMap = new HashMap<>();
+
+            responseMap.put("status", "false");
+            responseMap.put("message", "Failed to invite");
             responseMap.put("error", e.getMessage());
             objectMapper.writeValue(res.getWriter(), responseMap);
         }

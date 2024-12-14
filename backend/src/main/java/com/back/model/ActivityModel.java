@@ -5,12 +5,12 @@ public class ActivityModel {
     private String name;
     private String description;
     private int accesscode;
-    private int created_by;
+    private String created_by;
     private String status;
 
     public ActivityModel(){}
 
-    public ActivityModel(String uid, String name, String description, int accesscode, int created_by, String status){
+    public ActivityModel(String uid, String name, String description, int accesscode, String created_by, String status){
         this.uid = uid;
         this.name = name;
         this.description = description;
@@ -59,12 +59,12 @@ public class ActivityModel {
    }
 
 
-   public int getCreatedBy(){
+   public String getCreatedBy(){
     return created_by;
    }
 
 
-   public void setCreatedBy(int created_by){
+   public void setCreatedBy(String created_by){
     this.created_by = created_by;
    }
 

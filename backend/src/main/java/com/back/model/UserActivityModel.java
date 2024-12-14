@@ -1,5 +1,8 @@
 package com.back;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserActivityModel {
     
     private String uid;
@@ -28,7 +31,7 @@ public class UserActivityModel {
         return userId;
     }
 
-    public void setUsuerId(String userId){
+    public void setUserId(String userId){
         this.userId = userId;
     }
 
