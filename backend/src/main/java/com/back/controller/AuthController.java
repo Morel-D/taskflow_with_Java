@@ -69,25 +69,69 @@ public class AuthController extends HttpServlet {
         }
     }
 
-
     private void signInAuth(HttpServletResponse res, AuthModel auth) throws IOException {
 
         String hasshedPassword = BCrypt.hashpw(auth.getPassword(), BCrypt.gensalt());
 
+        String checkEmail = "SELECT COUNT(*) FROM user WHERE email = ?";
         String sql = "INSERT INTO user (uid, username, email, password, status) VALUES(?, ?, ?, ?, ?)";
-        try(PreparedStatement statement = connection.prepareStatement(sql)){
-            statement.setString(1, auth.getUid());
-            statement.setString(2, auth.getUsername());
-            statement.setString(3, auth.getEmail());
-            statement.setString(4, hasshedPassword);
-            statement.setString(5, auth.getStatus());
-            statement.executeUpdate();
+        try{
 
-            Map<String, Object> responseMap = new HashMap<>();
-            responseMap.put("status", "true");
-            responseMap.put("message", "user-inserted");
+            try(PreparedStatement statementCheck = connection.prepareStatement(checkEmail)){
+                statementCheck.setString(1, auth.getEmail());
+                ResultSet rs = statementCheck.executeQuery();
 
-            objectMapper.writeValue(res.getWriter(), responseMap);
+                if(rs.next() && rs.getInt(1) > 0){
+                    Map<String, Object> checkMap = new HashMap<>();
+                    checkMap.put("status", "false");
+                    checkMap.put("message", "email-already-registered");
+                    objectMapper.writeValue(res.getWriter(), checkMap);
+                    return;
+                }
+            }
+
+            // check some concditions
+
+            if(auth.getEmail() == null || auth.getEmail().isEmpty()){
+                Map<String, Object> checkMap = new HashMap<>();
+                checkMap.put("status", "false");
+                checkMap.put("message", "empty-email");
+                objectMapper.writeValue(res.getWriter(), checkMap);
+                return;
+            }
+
+            if(auth.getUsername() == null || auth.getUsername().isEmpty()){
+                Map<String, Object> checkMap = new HashMap<>();
+                checkMap.put("status", "false");
+                checkMap.put("message", "empty-username");
+                objectMapper.writeValue(res.getWriter(), checkMap);
+                return;
+            }
+
+            if(auth.getPassword() == null || auth.getPassword().isEmpty()){
+                Map<String, Object> checkMap = new HashMap<>();
+                checkMap.put("status", "false");
+                checkMap.put("message", "empty-password");
+                objectMapper.writeValue(res.getWriter(), checkMap);
+                return;
+            }
+
+            try(PreparedStatement statement = connection.prepareStatement(sql)){
+    
+                statement.setString(1, auth.getUid());
+                statement.setString(2, auth.getUsername());
+                statement.setString(3, auth.getEmail());
+                statement.setString(4, hasshedPassword);
+                statement.setString(5, auth.getStatus());
+                statement.executeUpdate();
+    
+                Map<String, Object> responseMap = new HashMap<>();
+                responseMap.put("status", "true");
+                responseMap.put("message", "user-inserted");
+    
+                objectMapper.writeValue(res.getWriter(), responseMap);
+            }
+
         }catch(SQLException e){
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
@@ -104,6 +148,15 @@ public class AuthController extends HttpServlet {
     private void loginAuth(HttpServletResponse res, AuthModel auth) throws IOException {
         String sql = "SELECT * FROM user WHERE email = ?";
         try(PreparedStatement statement = connection.prepareStatement(sql)){
+
+            if(auth.getEmail() == null || auth.getEmail().isEmpty()){
+                Map<String, Object> checkEmailMap = new HashMap<>();
+                checkEmailMap.put("status", "false");
+                checkEmailMap.put("message", "empty-email");
+                objectMapper.writeValue(res.getWriter(), checkEmailMap);
+                return;
+            }
+
             statement.setString(1, auth.getEmail());
 
             ResultSet rs = statement.executeQuery();

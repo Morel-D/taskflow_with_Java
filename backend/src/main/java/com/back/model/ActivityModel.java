@@ -1,5 +1,8 @@
 package com.back;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ActivityModel {
     private String uid;
     private String name;
