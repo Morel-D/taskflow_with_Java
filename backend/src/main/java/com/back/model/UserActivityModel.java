@@ -8,14 +8,16 @@ public class UserActivityModel {
     private String uid;
     private String userId;
     private String activityId;
+    private String role;
     private String status;
 
     public UserActivityModel(){}
 
-    public UserActivityModel(String uid, String userId, String activityId, String status){
+    public UserActivityModel(String uid, String userId, String activityId, String role, String status){
         this.uid = uid;
         this.userId = userId;
         this.activityId = activityId;
+        this.role = role;
         this.status = status;
     }
 
@@ -42,6 +44,15 @@ public class UserActivityModel {
 
     public void setActivityId(String activityId){
         this.activityId = activityId;
+    }
+
+
+    public String getRole(){
+        return role;
+    }
+
+    public void setRole(String role){
+        this.role = role;
     }
 
 

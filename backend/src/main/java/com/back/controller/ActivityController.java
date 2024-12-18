@@ -212,51 +212,96 @@ public class ActivityController extends HttpServlet {
         AuthModel auth = objectMapper.readValue(requestBody, AuthModel.class);
 
         String sql = "SELECT * FROM user WHERE email = ?";
-        try(PreparedStatement statement = connection.prepareStatement(sql)){
-            statement.setString(1, auth.getEmail());
+        try{
 
-            ResultSet rs = statement.executeQuery();
-
-            if(rs.next()){
-                
-                UserActivityModel userActivityModel = objectMapper.readValue(requestBody, UserActivityModel.class);
-                userActivityModel.setUserId(rs.getString("uid"));
-
-                 String sql2 = "INSERT INTO useractivity (uid, userId, activityId, status) VALUES (?, ?, ?, ?)";
-
-                 try(PreparedStatement statement2 = connection.prepareStatement(sql2)){
-                    statement2.setString(1, userActivityModel.getUid());
-                    statement2.setString(2, userActivityModel.getUserId());
-                    statement2.setString(3, userActivityModel.getActivityId());
-                    statement2.setString(4, userActivityModel.getStatus());
-
-                    statement2.executeUpdate();
-
-
-                    Map<String, String> responseMap = new HashMap<>();
-                    responseMap.put("status", "true");
-                    responseMap.put("message", "user-invited-created");
-                    objectMapper.writeValue(res.getWriter(), responseMap);
-                    
-
-                 }catch(SQLException e){
-                    e.printStackTrace();
-                    res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    Map<String, Object> responseMap = new HashMap<>();
-        
-                    responseMap.put("status", "false");
-                    responseMap.put("message", "Failed to insert");
-                    responseMap.put("error", e.getMessage());
-                    objectMapper.writeValue(res.getWriter(), responseMap);
-                } 
-                
-            }else{
-                Map<String, Object> responseMap = new HashMap<>();
-
-                responseMap.put("status", "false");
-                responseMap.put("message", "no-user");
-                objectMapper.writeValue(res.getWriter(), responseMap);
+            if(auth.getEmail() == null || auth.getEmail().equals("")){
+                Map<String, Object> checkMap = new HashMap<>();
+                checkMap.put("status", "false");
+                checkMap.put("message", "empty-email");
+                objectMapper.writeValue(res.getWriter(), checkMap);
+                return;
             }
+
+            try(PreparedStatement statement = connection.prepareStatement(sql)){
+                statement.setString(1, auth.getEmail());
+    
+                ResultSet rs = statement.executeQuery();
+    
+                if(rs.next()){
+                    
+                    UserActivityModel userActivityModel = objectMapper.readValue(requestBody, UserActivityModel.class);
+                    userActivityModel.setUserId(rs.getString("uid"));
+    
+                     String sql2 = "INSERT INTO useractivity (uid, userId, activityId, role, status) VALUES (?, ?, ?, ?, ?)";
+                     String chechUserPending = "SELECT COUNT(*) FROM useractivity WHERE userId = ? AND status = 'pending'";
+                     String chechUser = "SELECT COUNT(*) FROM useractivity WHERE userId = ?";
+
+                     try(PreparedStatement statementCheck = connection.prepareStatement(chechUserPending)){
+                        statementCheck.setString(1, userActivityModel.getUserId());
+
+                        ResultSet rsCheck = statementCheck.executeQuery();
+
+                        if(rsCheck.next() && rsCheck.getInt(1) > 0){
+                            Map<String, Object> checkMap = new HashMap<>();
+                            checkMap.put("status", "false");
+                            checkMap.put("message", "User-pending");
+                            objectMapper.writeValue(res.getWriter(), checkMap);
+                            return;                            
+                        }
+                     }
+
+
+                     try(PreparedStatement statementCheckUser = connection.prepareStatement(chechUser)){
+                        statementCheckUser.setString(1, userActivityModel.getUserId());
+
+                        ResultSet rsCheck2 = statementCheckUser.executeQuery();
+
+                        if(rsCheck2.next() && rsCheck2.getInt(1) > 0){
+                            Map<String, Object> checkMap = new HashMap<>();
+                            checkMap.put("status", "false");
+                            checkMap.put("message", "User-exist");
+                            objectMapper.writeValue(res.getWriter(), checkMap);
+                            return;                            
+                        }
+                     }
+
+    
+                     try(PreparedStatement statement2 = connection.prepareStatement(sql2)){
+                        statement2.setString(1, userActivityModel.getUid());
+                        statement2.setString(2, userActivityModel.getUserId());
+                        statement2.setString(3, userActivityModel.getActivityId());
+                        statement2.setString(4, userActivityModel.getRole());
+                        statement2.setString(5, userActivityModel.getStatus());
+    
+                        statement2.executeUpdate();
+    
+    
+                        Map<String, String> responseMap = new HashMap<>();
+                        responseMap.put("status", "true");
+                        responseMap.put("message", "user-invited-created");
+                        objectMapper.writeValue(res.getWriter(), responseMap);
+                        
+    
+                     }catch(SQLException e){
+                        e.printStackTrace();
+                        res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                        Map<String, Object> responseMap = new HashMap<>();
+            
+                        responseMap.put("status", "false");
+                        responseMap.put("message", "Failed to insert");
+                        responseMap.put("error", e.getMessage());
+                        objectMapper.writeValue(res.getWriter(), responseMap);
+                    } 
+                    
+                }else{
+                    Map<String, Object> responseMap = new HashMap<>();
+    
+                    responseMap.put("status", "false");
+                    responseMap.put("message", "no-user");
+                    objectMapper.writeValue(res.getWriter(), responseMap);
+                }
+            }
+
         }catch(SQLException e){
             e.printStackTrace();
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -277,37 +322,50 @@ public class ActivityController extends HttpServlet {
 
         // String sql = "SELECT a.id AS activity_id, a.name AS activity_name, ua.uid AS user_uid, ua.status AS user_status, a.accesscode FROM activity a JOIN useractivity ua ON a.uid = ua.activityId WHERE a.accesscode = ? AND ua.uid = ?";
         String sql = "SELECT * FROM activity WHERE accesscode = ? ";
-        try(PreparedStatement statement = connection.prepareStatement(sql)){
-            statement.setInt(1, activity.getAccessCode());
-            ResultSet rs = statement.executeQuery();
+        try{
 
-            if(rs.next()){
-                UserActivityModel userActivityModel = objectMapper.readValue(requestBody, UserActivityModel.class);
-                String sql2 = "SELECT * FROM useractivity WHERE userId = ? AND status = 'pending'";
-                try(PreparedStatement statement2 = connection.prepareStatement(sql2)){
-                    statement2.setString(1, userActivityModel.getUserId());
-                    ResultSet rs2 = statement2.executeQuery();
-
-                    if(rs2.next()){
-                        Map<String, Object> responseMap = new HashMap<>();
-                        responseMap.put("status", "true");
-                        responseMap.put("activity", rs.getString("name"));
-                        responseMap.put("description", rs.getString("description"));
-                        responseMap.put("user_id", rs2.getString("userId"));
-                        objectMapper.writeValue(res.getWriter(), responseMap);
-
-                    }
-
-                }
-
-            }else {
-                Map<String, Object> responseMap = new HashMap<>();
-                responseMap.put("status", "false");
-                responseMap.put("message", "Invalide-user");
-                objectMapper.writeValue(res.getWriter(), responseMap);
+            if(activity.getAccessCode() == 0){
+                if(activity.getAccessCode() == 0){
+                    Map<String, String> checkMap = new HashMap<>();
+                    checkMap.put("status", "false");
+                    checkMap.put("message", "empty-access-code");
+                    objectMapper.writeValue(res.getWriter(), checkMap);
+                    return;
+            }
             }
 
-
+            try(PreparedStatement statement = connection.prepareStatement(sql)){
+                statement.setInt(1, activity.getAccessCode());
+                ResultSet rs = statement.executeQuery();
+    
+                if(rs.next()){
+                    UserActivityModel userActivityModel = objectMapper.readValue(requestBody, UserActivityModel.class);
+                    String sql2 = "SELECT * FROM useractivity WHERE userId = ? AND status = 'pending'";
+                    try(PreparedStatement statement2 = connection.prepareStatement(sql2)){
+                        statement2.setString(1, userActivityModel.getUserId());
+                        ResultSet rs2 = statement2.executeQuery();
+    
+                        if(rs2.next()){
+                            Map<String, Object> responseMap = new HashMap<>();
+                            responseMap.put("status", "true");
+                            responseMap.put("activity", rs.getString("name"));
+                            responseMap.put("description", rs.getString("description"));
+                            responseMap.put("user_id", rs2.getString("userId"));
+                            objectMapper.writeValue(res.getWriter(), responseMap);
+    
+                        }
+    
+                    }
+    
+                }else {
+                    Map<String, Object> responseMap = new HashMap<>();
+                    responseMap.put("status", "false");
+                    responseMap.put("message", "Invalide-user");
+                    objectMapper.writeValue(res.getWriter(), responseMap);
+                }
+    
+    
+            }
         }catch(SQLException e){
             e.printStackTrace();
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

@@ -3,6 +3,7 @@ package com.back;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlet.FilterHolder;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -36,10 +37,15 @@ public class App
         ServletContextHandler handler = new ServletContextHandler();
         handler.setContextPath("/");
 
+        FilterHolder jwtFilterHolder = new FilterHolder(new JwtFilter());
+        handler.addFilter(jwtFilterHolder, "/protected/*", null);
+
+
         // Add the routes (servlets) to the handler
-        handler.addServlet(new ServletHolder(new TaskContoller(connection)), "/task/*");
+        handler.addServlet(new ServletHolder(new TaskContoller(connection)), "/protected/task/*");
         handler.addServlet(new ServletHolder(new AuthController(connection)), "/auth/*");
-        handler.addServlet(new ServletHolder(new ActivityController(connection)), "/activity/*");
+        handler.addServlet(new ServletHolder(new ActivityController(connection)), "/protected/activity/*");
+
 
         // Set the handler to the server 
         server.setHandler(handler);

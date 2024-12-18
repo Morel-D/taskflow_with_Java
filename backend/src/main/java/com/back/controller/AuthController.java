@@ -14,6 +14,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;
 
+import java.util.Base64;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import jakarta.servlet.http.HttpServlet;
@@ -23,7 +24,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class AuthController extends HttpServlet {
     public final ObjectMapper objectMapper = new ObjectMapper();
-    private static final String SECRET_KEY = "your-scret-key";
+    private static final String SECRET_KEY = Base64.getEncoder().encodeToString("taskFlow-private-grouptask-secret-key-256bits".getBytes());
     private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24;
 
     private final Connection connection;
@@ -173,7 +174,7 @@ public class AuthController extends HttpServlet {
                                                  .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                                                  .claim("username", rs.getString("username"))
                                                  .claim("email", rs.getString("email"))
-                                                //  .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                                                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                                                  .compact();
 
                     Map<String, Object> responseMap = new HashMap<>();
