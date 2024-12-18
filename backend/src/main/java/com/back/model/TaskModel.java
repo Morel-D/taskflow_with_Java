@@ -3,14 +3,16 @@ package com.back;
 public class TaskModel {
     // private String id;
     private String uid;
+    private String userActivityId;
     private String title;
     private String category;
     private String status;
 
     public TaskModel(){} // Default constructor for JSON decentralization
 
-    public TaskModel(String uid, String title, String category, String status){
+    public TaskModel(String uid, String userActivityId, String title, String category, String status){
         this.uid = uid;
+        this.userActivityId = userActivityId;
         this.title = title;
         this.category = category;
         this.status = status;
@@ -24,6 +26,14 @@ public class TaskModel {
         this.uid = uid;
     }
 
+
+    public String getUserActivityId(){
+        return userActivityId;
+    }
+
+    public void setUserActivityId(String userActivityId){
+        this.userActivityId = userActivityId;
+    }
 
 
     public String getTitle(){

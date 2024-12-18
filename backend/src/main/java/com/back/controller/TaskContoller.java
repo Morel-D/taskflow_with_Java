@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.back.model.TaskModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -68,6 +69,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
                     Map<String, Object> task = new HashMap<>();
                     task.put("id", rs.getInt("id"));
                     task.put("uid", rs.getString("uid"));
+                    task.put("userActivityId", rs.getString("userActivityId"));
                     task.put("title", rs.getString("title"));
                     task.put("category", rs.getString("category"));
                     task.put("status", rs.getString("status"));
@@ -155,6 +157,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
                 Map<String, Object> task = new HashMap<>();
                 task.put("id", rs.getInt("id"));
                 task.put("uid", rs.getString("uid"));
+                task.put("userActivityId", rs.getString("userActivityId"));
                 task.put("title", rs.getString("title"));
                 task.put("category", rs.getString("category"));
                 task.put("status", rs.getString("status"));
@@ -197,6 +200,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
                 Map<String, Object> task = new HashMap<>();
                 task.put("id", rs.getInt("id"));
                 task.put("uid", rs.getString("uid"));
+                task.put("userActivityId", rs.getString("userActivityId"));
                 task.put("title", rs.getString("title"));
                 task.put("category", rs.getString("category"));
                 task.put("status", rs.getString("status"));
@@ -239,6 +243,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
                 Map<String, Object> task = new HashMap<>();
                 task.put("id", rs.getInt("id"));
                 task.put("uid", rs.getString("uid"));
+                task.put("userActivityId", rs.getString("userActivityId"));
                 task.put("title", rs.getString("title"));
                 task.put("category", rs.getString("category"));
                 task.put("status", rs.getString("status"));
@@ -292,9 +297,10 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
         String sql = "INSERT INTO task (uid, title, category, status) VALUES (?, ?, ?, ?)";
         try(PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, task.getUid());
-            statement.setString(2, task.getTitle());
-            statement.setString(3, task.getCategory());
-            statement.setString(4, task.getStatus());
+            statement.setString(2, task.getUserActivityId());
+            statement.setString(3, task.getTitle());
+            statement.setString(4, task.getCategory());
+            statement.setString(5, task.getStatus());
             statement.executeUpdate();
 
             
