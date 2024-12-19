@@ -30,7 +30,25 @@ body {
   min-height: 100vh;
 }
 
+.auth-box{
+  background-color: var(--primaryColor);
+  border-radius: 10px;
+  height: 97vh;
+}
 
+.container-btn{
+  background-color: #32c9d1;
+  padding: 8px 0px 2px 18px;
+  border-radius: 10px;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.container-btn:hover{
+  cursor: pointer;
+  background-color: #2ed6df;
+  padding: 8px 0px 2px 18px;
+  border-radius: 10px;
+}
 
 /* taskconatiner setting */
 .task-container {
