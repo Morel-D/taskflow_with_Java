@@ -30,6 +30,10 @@ body {
   min-height: 100vh;
 }
 
+.text-green {
+  color: var(--primaryColor);
+}
+
 .auth-box{
   background-color: var(--primaryColor);
   border-radius: 10px;
@@ -81,9 +85,55 @@ body {
   font-size: 18px; /* Optional: adjust font size */
 }
 
+.btn-container {
+  cursor: pointer;
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-container:hover {
+  cursor: pointer;
+  background-color: #f8f9fa; /* Light background for visibility */
+  border-radius: 10px; /* Optional: Rounded corners */
+  padding: 20px; /* Optional: Padding for spacing */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Shadow effect */
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
 
 
-/***/
+/* Autrh page**/
+/* Transition Styles */
+.form-container,
+.box-container {
+  transition: all 0.5s ease; /* Smooth transition */
+}
+
+.box-container {
+
+  background-color: var(--greyColor); /* Add a background for distinction */
+}
+
+/* Form Container Initial Style */
+.form-container {
+  z-index: 1; 
+  left: 0; /* Start on the left */
+  background-color: var(--greyColor); /* Add a background for distinction */
+}
+
+/* When switched */
+.form-right {
+  transform: translateX(200%); /* Move to the right */
+}
+
+.box-left {
+  z-index: 0;
+  transform: translateX(-50%); /* Move to the left */
+}
+
+
+/* AuthAnimation.css */
+
+
 
 
 /* Dropdown */
@@ -158,6 +208,10 @@ li > a {text-decoration: none;}
 
 .primaryButton { text-decoration: none;  background-color: var(--primaryColor); color: var(--whiteColor); border-style: none; font-size: 18px; border-radius: 8px; padding: 10px 22px 10px 22px; cursor: pointer; transition: background-color 0.8s ease-out, padding 0.3s ease-out;  }
 .primaryButton:hover { background-color: #19abb3; color: white }
+
+
+.secondaryButton { text-decoration: none;  background-color: var(--secondaryColor); color: var(--whiteColor); border-style: none; font-size: 18px; border-radius: 8px; padding: 10px 22px 10px 22px; cursor: pointer; transition: background-color 0.8s ease-out, padding 0.3s ease-out;  }
+.secondaryButton:hover { background-color: #626a74; color: white }
 
 .dangerButton { text-decoration: none;  background-color: var(--dangerColor); color: var(--whiteColor); border-style: none; font-size: 18px; border-radius: 8px; padding: 10px 22px 10px 22px; cursor: pointer; transition: background-color 0.8s ease-out, padding 0.3s ease-out;  }
 .dangerButton:hover { background-color: #ff74a3; color: white }

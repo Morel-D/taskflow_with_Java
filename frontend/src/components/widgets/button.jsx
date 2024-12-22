@@ -7,6 +7,15 @@ const PrimaryButton = ({children, href, onClick}) =>
        )
     }
 
+
+    const SecondaryButton = ({children, href, onClick}) =>
+        {
+           return( 
+            <a className="secondaryButton" id='prIdMdl'  href={href} onClick={onClick} style={{ '--primaryColor': colors.primaryColor, '--whiteColor': colors.whiteColor }}>{children}</a>
+           )
+        }
+    
+
 const DangerButton = ({children, href, onClick}) =>
     {
         return( 
@@ -14,4 +23,4 @@ const DangerButton = ({children, href, onClick}) =>
         )
     }
 
-export {PrimaryButton, DangerButton}
+export {PrimaryButton, SecondaryButton, DangerButton}
