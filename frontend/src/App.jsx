@@ -1,3 +1,4 @@
+import { useContext } from "react"
 import Header from "./components/modules/header"
 import Navbar from "./components/modules/navbar"
 import Auth from "./components/views/auth"
@@ -6,29 +7,25 @@ import Home from "./components/views/home"
 import Intro from "./components/views/intro"
 import Invitation from "./components/views/invitation"
 import Option from "./components/views/option"
+import { AuthContext } from "./components/context/authContext"
+import { BrowserRouter, Route, Routes } from "react-router-dom"
+import AuthenticatedRedirect from "./components/routes/authenticatedRedirect"
+import RequireAuth from "./components/routes/requireAuth"
+import MainRoutes from "./components/routes/mainRoutes"
 
 
 function App() {
 
+  const {user} = useContext(AuthContext);
+
   return (
     <div className="app container-fluid">
-        {/* <Intro /> */}
-        {/* <Option /> */}
-        {/* <AuthActivity /> */}
-        <Invitation/>
-      {/* <div className="row py-4">
-        <div className="col col-2">
-          <Navbar />
-        </div>
-        <div className="col container-fluid">
-            <div className="header">
-                <Header />
-            </div>
-            <div className="content">
-                <Home />
-            </div>
-        </div>
-      </div> */}
+      <BrowserRouter>
+        <Routes>
+            <Route path="/login" element={<AuthenticatedRedirect><Auth /></AuthenticatedRedirect>} />
+            <Route path="/*" element={<RequireAuth><MainRoutes /></RequireAuth>} />
+        </Routes>
+    </BrowserRouter>
     </div>
   )
 }
