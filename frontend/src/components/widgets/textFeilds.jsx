@@ -1,15 +1,15 @@
-const TextFeild = ({label, type, placeholder, onChange, value, maxLength}) =>
+const TextFeild = ({label, type, placeholder, onChange, value, maxLength, error}) =>
     {
         return (
             <div>
                 <p className="text-dark">{label}</p>
-                <input type={type} className="form-control input-text" maxLength={maxLength} placeholder={placeholder} value={value} onChange={onChange} />
+                <input type={type} className={error == true ? "form-control input-danger-text" : "form-control input-text"} maxLength={maxLength} placeholder={placeholder} value={value} onChange={onChange} />
             </div>
         )
     }
 
 
-    const TextIconFeild = ({type, placeholder, onchange, icon, value, label, maxLength}) =>
+    const TextIconFeild = ({type, placeholder, onchange, icon, value, label, error, maxLength}) =>
         {
             return (
                 <div className="form-group has-search">
