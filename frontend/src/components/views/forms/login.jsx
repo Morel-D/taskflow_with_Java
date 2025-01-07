@@ -3,10 +3,12 @@ import { colors } from "../../tools/color";
 import { PrimaryButton } from "../../widgets/button";
 import { TextFeild } from "../../widgets/textFeilds";
 import { generateUniqueId, validateEmail } from "../../utils/helper";
+import { authApiService } from "../../service/authService";
 
 const Login = ({handleSwitch}) => {
 
     const newUid = generateUniqueId();
+    const {login} = authApiService();
 
     const [email, setEmail] = useState();
     const [password, setPasword] = useState();
@@ -17,7 +19,7 @@ const Login = ({handleSwitch}) => {
     // Check for valide email......
 
 
-    const handleLogin = (e) => 
+    const handleLogin = async (e) => 
     {
         e.preventDefault();
         if(email == undefined || email == ""){
@@ -41,10 +43,14 @@ const Login = ({handleSwitch}) => {
 
         const data = 
         {
-            // "uid": newUid,
+            "uid": newUid,
             "email": email,
             "password": password
         }
+
+        const response = await login("auth/login", data);
+
+        console.log("UI Login -> ", response);
     }
 
     return ( 

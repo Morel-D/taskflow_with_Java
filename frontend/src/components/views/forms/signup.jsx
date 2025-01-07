@@ -2,9 +2,13 @@ import { useState } from "react";
 import { colors } from "../../tools/color";
 import { PrimaryButton } from "../../widgets/button";
 import { TextFeild } from "../../widgets/textFeilds";
-import { validateEmail } from "../../utils/helper";
+import { generateUniqueId, validateEmail } from "../../utils/helper";
+import { authApiService } from "../../service/authService";
 
 const SignUp = ({handleSwitch}) => {
+
+
+    const {signUp} = authApiService();
 
     const [userName, setUserName] = useState();
     const [email, setEmail] = useState();
@@ -18,7 +22,7 @@ const SignUp = ({handleSwitch}) => {
     const [passordError, setPasswordError] = useState(false);
     const [confirmPassordError, setConfirmPasswordError] = useState(false);
 
-    const handleSigIn = (e) => {
+    const handleSigIn = async (e) => {
         e.preventDefault();
 
         if(userName == undefined || userName == ""){
@@ -47,13 +51,29 @@ const SignUp = ({handleSwitch}) => {
             return;
         }
 
-        if(password === confirmPassword){
-            setConfirmPasswordError(true);
-            return;
-        }
+        // if(password === confirmPassword){
+        //     setConfirmPasswordError(true);
+        //     return;
+        // }
          if(!validateEmail(email)){
             setEmailError(true);
          }
+
+         const uid = generateUniqueId();
+
+         const data = 
+         {
+            "uid": uid,
+            "username": userName,
+            "email": email,
+            "password": password,
+            "status": "true"
+         }
+
+         const response = await signUp('auth/signup', data);
+
+         console.log("UI SignUp -> ", response);
+
     }
 
 

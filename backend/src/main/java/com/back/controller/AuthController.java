@@ -35,6 +35,15 @@ public class AuthController extends HttpServlet {
 
 
     @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+        res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        res.setHeader("Access-Control-Max-Age", "3600");
+        res.setStatus(HttpServletResponse.SC_OK);
+    }
+
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
 
         // Set response type
@@ -49,7 +58,12 @@ public class AuthController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        
+        res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+        res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        res.setHeader("Access-Control-Max-Age", "3600");
+        res.setStatus(HttpServletResponse.SC_OK);
+
         // Set response type
         res.setContentType("application/json");
 
