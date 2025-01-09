@@ -74,7 +74,7 @@ public class AuthController extends HttpServlet {
 
             Map<String, Object> responseMap = new HashMap<>();
             responseMap.put("status", "false");
-            responseMap.put("error", "path-incomplete");
+            responseMap.put("message", "path-incomplete");
 
             objectMapper.writeValue(res.getWriter(), responseMap);
         }else if(pathInfo.equals("/signup")){
@@ -201,17 +201,16 @@ public class AuthController extends HttpServlet {
                     responseMap.put("token", token);
                     objectMapper.writeValue(res.getWriter(), responseMap);
                 }else{
-                    res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized
                     Map<String, Object> responseMap = new HashMap<>();
                     responseMap.put("status", "false");
-                    responseMap.put("message", "Invalid credentials");
+                    responseMap.put("message", "invalid-credentials");
                     objectMapper.writeValue(res.getWriter(), responseMap);
                 }
             }else{
-                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 Map<String, Object> responseMap = new HashMap<>();
                 responseMap.put("status", "false");
-                responseMap.put("message", "No-user");
+                responseMap.put("message", "invalid-credentials");
                 objectMapper.writeValue(res.getWriter(), responseMap);
             }
         }catch(SQLException e){
@@ -220,7 +219,7 @@ public class AuthController extends HttpServlet {
             Map<String, Object> responseMap = new HashMap<>();
 
             responseMap.put("status", "false");
-            responseMap.put("message", "Failed to get");
+            responseMap.put("message", "failed-to-get");
             responseMap.put("error", e.getMessage());
             objectMapper.writeValue(res.getWriter(), responseMap);
         }

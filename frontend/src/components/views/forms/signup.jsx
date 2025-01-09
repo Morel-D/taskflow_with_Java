@@ -4,11 +4,12 @@ import { PrimaryButton } from "../../widgets/button";
 import { TextFeild } from "../../widgets/textFeilds";
 import { generateUniqueId, validateEmail } from "../../utils/helper";
 import { authApiService } from "../../service/authService";
+import { ButtonLoading } from "../../widgets/loading";
 
 const SignUp = ({handleSwitch}) => {
 
 
-    const {signUp} = authApiService();
+    const {signUp, loading} = authApiService();
 
     const [userName, setUserName] = useState();
     const [email, setEmail] = useState();
@@ -99,12 +100,12 @@ const SignUp = ({handleSwitch}) => {
             </div>
 
             <div className="mt-5">
-                <PrimaryButton children="Sign up" onClick={handleSigIn} />
+                {loading ? <ButtonLoading /> :<PrimaryButton children="Sign up" onClick={handleSigIn} />}
             </div>
 
             <div className="mt-4">
                 Already have an account?{" "}
-                <a className="text-green" href="#" onClick={handleSwitch}>
+                <a className="text-green" href="#" onClick={loading ? '' : handleSwitch}>
                 Login
                 </a>
             </div>
