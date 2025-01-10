@@ -13,7 +13,7 @@ export const errorMessages = {
     /// Server Error -------------------------
 
     "path-incomplete": "Invalid request path.",
-    "email-already-registered": "Email is already registered.",
+    "email-already-registered": "Email is already exist.",
     "empty-email": "Email cannot be empty.",
     "empty-username": "Username cannot be empty.",
     "empty-password": "Password cannot be empty.",

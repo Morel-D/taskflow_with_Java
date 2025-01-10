@@ -97,6 +97,7 @@ public class AuthController extends HttpServlet {
                 ResultSet rs = statementCheck.executeQuery();
 
                 if(rs.next() && rs.getInt(1) > 0){
+                    res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     Map<String, Object> checkMap = new HashMap<>();
                     checkMap.put("status", "false");
                     checkMap.put("message", "email-already-registered");
@@ -108,6 +109,7 @@ public class AuthController extends HttpServlet {
             // check some concditions
 
             if(auth.getEmail() == null || auth.getEmail().isEmpty()){
+                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 Map<String, Object> checkMap = new HashMap<>();
                 checkMap.put("status", "false");
                 checkMap.put("message", "empty-email");
@@ -116,6 +118,7 @@ public class AuthController extends HttpServlet {
             }
 
             if(auth.getUsername() == null || auth.getUsername().isEmpty()){
+                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 Map<String, Object> checkMap = new HashMap<>();
                 checkMap.put("status", "false");
                 checkMap.put("message", "empty-username");
@@ -124,6 +127,7 @@ public class AuthController extends HttpServlet {
             }
 
             if(auth.getPassword() == null || auth.getPassword().isEmpty()){
+                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 Map<String, Object> checkMap = new HashMap<>();
                 checkMap.put("status", "false");
                 checkMap.put("message", "empty-password");
@@ -149,7 +153,6 @@ public class AuthController extends HttpServlet {
 
         }catch(SQLException e){
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
             Map<String, String> responseMap = new HashMap<>();
             responseMap.put("status", "false");
             responseMap.put("message", "user-not-created");
@@ -165,6 +168,7 @@ public class AuthController extends HttpServlet {
         try(PreparedStatement statement = connection.prepareStatement(sql)){
 
             if(auth.getEmail() == null || auth.getEmail().isEmpty()){
+                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 Map<String, Object> checkEmailMap = new HashMap<>();
                 checkEmailMap.put("status", "false");
                 checkEmailMap.put("message", "empty-email");
@@ -201,6 +205,7 @@ public class AuthController extends HttpServlet {
                     responseMap.put("token", token);
                     objectMapper.writeValue(res.getWriter(), responseMap);
                 }else{
+                    res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     Map<String, Object> responseMap = new HashMap<>();
                     responseMap.put("status", "false");
                     responseMap.put("message", "invalid-credentials");

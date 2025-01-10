@@ -15,7 +15,7 @@ export const authApiService = () => {
             return response;
         }catch(error){
             if(error.response){
-                const status = error.response.message;
+                const status = error.response.data.message;
                 return {"status": false, "error": errorMessages[status]};
             }else if(error.request){
                 return {"status": false, "error": errorMessages.NETWORK_ERROR};

@@ -26,6 +26,8 @@ const Login = ({handleSwitch}) => {
     const handleLogin = async (e) => 
     {
         e.preventDefault();
+        setAlert({showMessage: false, message: ""});
+        
         if(email == undefined || email == ""){
             setEmailError(true);
             return;
@@ -62,6 +64,11 @@ const Login = ({handleSwitch}) => {
         }
     }
 
+
+    const handleClose = () => {
+        setAlert({showMessage: false, message: ""})
+    }
+
     return ( 
         <>
             <div className="form col-9" style={{ paddingTop: "8rem", paddingLeft: "14rem" }}>
@@ -87,7 +94,7 @@ const Login = ({handleSwitch}) => {
                     </a>
                 </div>
             </div>
-            {alert.showMessage && <ErrorMessage message={alert.message} />}
+            {alert.showMessage && <ErrorMessage message={alert.message} onClick={handleClose} />}
         </>
      );
 }

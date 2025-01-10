@@ -5,6 +5,7 @@ import { TextFeild } from "../../widgets/textFeilds";
 import { generateUniqueId, validateEmail } from "../../utils/helper";
 import { authApiService } from "../../service/authService";
 import { ButtonLoading } from "../../widgets/loading";
+import { ErrorMessage } from "../../widgets/message";
 
 const SignUp = ({handleSwitch}) => {
 
@@ -23,8 +24,15 @@ const SignUp = ({handleSwitch}) => {
     const [passordError, setPasswordError] = useState(false);
     const [confirmPassordError, setConfirmPasswordError] = useState(false);
 
+    const [alert, setAlert] = useState({showMessage: false, message: ""});
+
+    const handleClose = () => {
+        setAlert({showMessage: false, message: ""})
+    }
+
     const handleSigIn = async (e) => {
         e.preventDefault();
+        setAlert({showMessage: false, message: ""});
 
         if(userName == undefined || userName == ""){
             setUserNameError(true);
@@ -52,10 +60,12 @@ const SignUp = ({handleSwitch}) => {
             return;
         }
 
-        // if(password === confirmPassword){
-        //     setConfirmPasswordError(true);
-        //     return;
-        // }
+        if(password != confirmPassword){
+            setConfirmPasswordError(true);
+            setAlert({showMessage: true, message: "Confirmation password incorrect"});
+            setConfirmPassword("");
+            return;
+        }
          if(!validateEmail(email)){
             setEmailError(true);
          }
@@ -75,41 +85,47 @@ const SignUp = ({handleSwitch}) => {
 
          console.log("UI SignUp -> ", response);
 
+         if(response.status == false){
+            setAlert({showMessage: true, message: response.error})
+        }
     }
 
 
     return ( 
-        <div className="form col-9" style={{ paddingTop: "8rem", paddingLeft: "14rem" }}>
-            <h2 style={{ color: colors.primaryColor }}>Welcome to TaskFlow</h2>
-            <p>Take control of your tasks, projects, and productivity today.</p>
+        <>
+            <div className="form col-9" style={{ paddingTop: "8rem", paddingLeft: "14rem" }}>
+                <h2 style={{ color: colors.primaryColor }}>Welcome to TaskFlow</h2>
+                <p>Take control of your tasks, projects, and productivity today.</p>
 
-            <div className="mt-4">
-                <TextFeild placeholder="Enter your username" value={userName} onChange={(e) => {setUserNameError(false); setUserName(e.target.value)}} error={userNameError} />
-            </div>
+                <div className="mt-4">
+                    <TextFeild placeholder="Enter your username" value={userName} onChange={(e) => {setUserNameError(false); setUserName(e.target.value)}} error={userNameError} />
+                </div>
 
-            <div className="mt-3">
-                <TextFeild placeholder="Enter your email" value={email} onChange={(e) => {setEmailError(false); setEmail(e.target.value)}} error={emailError} />
-            </div>
+                <div className="mt-3">
+                    <TextFeild placeholder="Enter your email" value={email} onChange={(e) => {setEmailError(false); setEmail(e.target.value)}} error={emailError} />
+                </div>
 
-            <div className="mt-3">
-                <TextFeild placeholder="Enter your password" value={password} onChange={(e) => {setPasswordError(false); setPassword(e.target.value)}} error={passordError} />
-            </div>
+                <div className="mt-3">
+                    <TextFeild placeholder="Enter your password" value={password} onChange={(e) => {setPasswordError(false); setPassword(e.target.value)}} error={passordError} />
+                </div>
 
-            <div className="mt-3">
-                <TextFeild placeholder="Confirm password" value={confirmPassword} onChange={(e) => {setConfirmPasswordError(false); setConfirmPassword(e.target.value)}} error={confirmPassordError} />
-            </div>
+                <div className="mt-3">
+                    <TextFeild placeholder="Confirm password" value={confirmPassword} onChange={(e) => {setConfirmPasswordError(false); setConfirmPassword(e.target.value)}} error={confirmPassordError} />
+                </div>
 
-            <div className="mt-5">
-                {loading ? <ButtonLoading /> :<PrimaryButton children="Sign up" onClick={handleSigIn} />}
-            </div>
+                <div className="mt-5">
+                    {loading ? <ButtonLoading /> :<PrimaryButton children="Sign up" onClick={handleSigIn} />}
+                </div>
 
-            <div className="mt-4">
-                Already have an account?{" "}
-                <a className="text-green" href="#" onClick={loading ? '' : handleSwitch}>
-                Login
-                </a>
+                <div className="mt-4">
+                    Already have an account?{" "}
+                    <a className="text-green" href="#" onClick={loading ? '' : handleSwitch}>
+                    Login
+                    </a>
+                </div>
             </div>
-        </div>
+        {alert.showMessage && <ErrorMessage message={alert.message} onClick={handleClose} />}
+        </>
      );
 }
  
