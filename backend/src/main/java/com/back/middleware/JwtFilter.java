@@ -43,8 +43,9 @@ public class JwtFilter implements Filter {
         if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer")){
             httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             Map<String, Object> tokenReponse = new HashMap<>();
-            tokenReponse.put("status", "Unauthorized");
-            tokenReponse.put("message", "Missing or invalide token");
+            tokenReponse.put("status", "false");
+            tokenReponse.put("error", "Unauthorized");
+            tokenReponse.put("message", "invalide-token");
             objectMapper.writeValue(res.getWriter(), tokenReponse);
             return;
         }
@@ -72,14 +73,16 @@ public class JwtFilter implements Filter {
         }catch(SignatureException e){
             httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             Map<String, Object> tokenReponse = new HashMap<>();
-            tokenReponse.put("status", "Unauthorized");
+            tokenReponse.put("status", "false");
+            tokenReponse.put("error", "Unauthorized");
             tokenReponse.put("message", "Invalid token signature");
             objectMapper.writeValue(res.getWriter(), tokenReponse);
             // httpResponse.getWriter().write("Unauthorized: Invalid token signature");
         }catch(Exception e){
             httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             Map<String, Object> tokenReponse = new HashMap<>();
-            tokenReponse.put("status", "Unauthorized");
+            tokenReponse.put("status", "false");
+            tokenReponse.put("error", "Unauthorized");
             tokenReponse.put("message", "Token validation failed");
             objectMapper.writeValue(res.getWriter(), tokenReponse);
             // httpResponse.getWriter().write("Unauthorized: Token validation failed");          

@@ -68,7 +68,7 @@ const TaskContainer = ({color, child, id, setFetch, setAlert}) => {
                 onMouseLeave={() => setIsHovered(false)}
                 style={{borderColor: color ?? colors.grey2Color, padding: "10px", position: "relative", borderRadius: "5px" }}>                
                     <div className="col-10"><h6> {child}</h6></div>
-                    <p>Task 2</p>
+                    <p>No action</p>
                     {isHovered && (
                         <div
                         style={{

@@ -293,7 +293,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
         TaskModel task = objectMapper.readValue(req.getReader(), TaskModel.class);
 
         // Insert task into the database 
-        String sql = "INSERT INTO task (uid, title, category, status) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO task (uid, userActivityId, title, category, status) VALUES (?, ?, ?, ?, ?)";
         try(PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, task.getUid());
             statement.setString(2, task.getUserActivityId());

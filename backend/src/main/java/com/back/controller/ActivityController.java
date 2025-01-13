@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -185,10 +187,23 @@ public class ActivityController extends HttpServlet {
                 statement.setString(5, activity.getCreatedBy());
                 statement.setString(6, activity.getStatus());
                 statement.executeUpdate();
-    
+
+                Map<String, String> userUid = new HashMap<>();
+                userUid.put("userUid", activity.getUserUid()); // Add userUid to the map
+
+                Map<String, Object> userData = new HashMap<>();
+                userData.put("userName", activity.getUserName());
+                userData.put("email", activity.getEmail());
+
+
+                System.out.println("The data here is --> " + objectMapper.writeValueAsString(userData));
+
+                String token = jwtUtil.generateToken(objectMapper.writeValueAsString(userUid), userData); 
+
                 Map<String, Object> responseMap = new HashMap<>();
                 responseMap.put("status", "true");
-                responseMap.put("status", "actibity-inserted");
+                responseMap.put("status", "activity-inserted");
+                responseMap.put("token", token);
     
                 objectMapper.writeValue(res.getWriter(), responseMap);
             }

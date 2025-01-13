@@ -3,7 +3,7 @@ const TextFeild = ({label, type, placeholder, onChange, value, maxLength, error}
         return (
             <div>
                 <p className="text-dark">{label}</p>
-                <input type={type} className={error == true ? "form-control input-danger-text" : "form-control input-text"} maxLength={maxLength} placeholder={placeholder} value={value} onChange={onChange} />
+                <input type={type} className={error == true ? "form-control input-danger-text" : "form-control input-text"} maxLength={maxLength ?? 50} placeholder={placeholder} value={value} onChange={onChange} />
             </div>
         )
     }
@@ -15,7 +15,7 @@ const TextFeild = ({label, type, placeholder, onChange, value, maxLength, error}
                 <div className="form-group has-search">
                     <span className="fa fa-search form-control-feedback"><img src={icon} className="img-fluid" style={{paddingTop: "5px"}}/></span>
                     {/* <p className="text-dark">{label}</p> */}
-                    <input type={type} className="form-control input-secondary-text" onChange={onchange} maxLength={maxLength} value={value} placeholder={placeholder} />
+                    <input type={type} className="form-control input-secondary-text" onChange={onchange} maxLength={maxLength ?? 30} value={value} placeholder={placeholder} />
                 </div>
                 )
         }
@@ -25,7 +25,7 @@ const TextFeild = ({label, type, placeholder, onChange, value, maxLength, error}
                 return(
                     <div>
                         <p className="text-dark">{label}</p>
-                        <textarea className={error == true ? "form-control input-danger-text" : "form-control input-text"} value={value} maxLength={maxLength} placeholder={placeholder} rows={row} onChange={onChange}></textarea>
+                        <textarea className={error == true ? "form-control input-danger-text" : "form-control input-text"} value={value} maxLength={maxLength ?? 100} placeholder={placeholder} rows={row} onChange={onChange}></textarea>
                     </div>
                 )
             }

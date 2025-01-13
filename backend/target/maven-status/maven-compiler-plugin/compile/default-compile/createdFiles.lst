@@ -1,7 +1,9 @@
 com\back\ActivityController.class
+com\back\UserIdFilter.class
 com\back\App.class
 com\back\AuthModel.class
 com\back\TaskContoller.class
+com\back\jwtUtil.class
 com\back\ActivityModel.class
 com\back\AuthController.class
 com\back\JwtFilter.class

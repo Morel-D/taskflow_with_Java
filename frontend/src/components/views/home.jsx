@@ -229,7 +229,7 @@ const Home = () => {
                         >
                             {/* <AddTaskContainer children={provided.placeholder} /> */}
                             <CustomContainer
-                            taskLength={dataHigh.length+" tickets,  No task"}
+                            taskLength={dataHigh.length > 1 ? dataHigh.length+" tasks": dataHigh.length+" task"}
                             loading={load && loading}
                             isModal={highModal}
                             title={load && loading ? <Skeleton height={25} /> : "High Priority"}
@@ -283,7 +283,7 @@ const Home = () => {
                             {/* <AddTaskContainer children={provided.placeholder} /> */}
 
                             <CustomContainer
-                            taskLength={dataMeduim.length+" tickets, No task"}
+                            taskLength={dataMeduim.length > 1 ? dataMeduim.length+" tasks" :dataMeduim.length+" task" }
                             loading={load && loading}
                             isModal={meduimModal}
                             title={load && loading ? <Skeleton height={25} /> : "Meduim"}
@@ -330,7 +330,7 @@ const Home = () => {
                         ref={provided.innerRef}
                         className="col">
                             <CustomContainer 
-                            taskLength={dataLow.length+" tickets, No task"}
+                            taskLength={dataLow.length > 1 ? dataLow.length+" tasks" : dataLow.length+" task"}
                             loading={load && loading}
                             isModal={lowModal}
                             title={load && loading ? <Skeleton height={25} /> : "Low"}

@@ -10,7 +10,7 @@ const Header = () => {
             <div className="row">
                 <div className="col">
                     <h2>All Tasks</h2>
-                    This is the header all man
+                    {/* This is the header all man */}
                 </div>
                 <div className="col mt-2">
                     <div className="row">
@@ -20,7 +20,7 @@ const Header = () => {
                         <div className="col text-end mt-1">
                             <label htmlFor="">
                                 {/* <img src={dropup} className="col-1" /> */}
-                                <img src={user} className="col-6" />
+                                <img src={user} className="col-7" />
                             </label>
                         </div>
                     </div>

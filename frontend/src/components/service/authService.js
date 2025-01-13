@@ -1,9 +1,11 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import axiosInstance from "../utils/axiosInstance";
 import { errorMessages } from "../utils/errorMessage";
+import { AuthContext } from "../context/authContext";
 
 export const authApiService = () => {
     const [loading, setLoading] = useState(false);
+    const { setUser } = useContext(AuthContext);
 
 
     const signUp = async (endpoint, data) => {
@@ -12,6 +14,7 @@ export const authApiService = () => {
             setLoading(true);
             const response = await axiosInstance.post(endpoint, data);
             console.log("POST DATA : ", response);
+            setUser(response.data);
             return response;
         }catch(error){
             if(error.response){
@@ -33,6 +36,8 @@ export const authApiService = () => {
         setLoading(true);
         const response = await axiosInstance.post(endpoint, data);
         console.log("POST DATA : ", response);
+        localStorage.setItem("user", JSON.stringify(response.data)); // Store user
+        setUser(response.data);
         return response;
         }catch(error){
             console.log("ERROR -> ", error);

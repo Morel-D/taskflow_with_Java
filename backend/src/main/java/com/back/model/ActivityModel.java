@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ActivityModel {
+    private String userUid;
+    private String userName;
+    private String email;
     private String uid;
     private String name;
     private String description;
@@ -13,7 +16,10 @@ public class ActivityModel {
 
     public ActivityModel(){}
 
-    public ActivityModel(String uid, String name, String description, int accesscode, String created_by, String status){
+    public ActivityModel(String userUid, String userName, String email, String uid, String name, String description, int accesscode, String created_by, String status){
+        this.userUid = userUid;
+        this.userName = userName;
+        this.email = email;
         this.uid = uid;
         this.name = name;
         this.description = description;
@@ -22,7 +28,30 @@ public class ActivityModel {
         this.status = status;
    }
    
-   
+   public String getUserUid(){
+    return userUid;
+   }
+
+   public void setUserUid(String userUid){
+    this.userUid = userUid;
+   }
+
+   public String getEmail(){
+    return email;
+   }
+
+   public void setEmail(String email){
+    this.email = email;
+   }
+
+   public String getUserName(){
+    return userName;
+   }
+
+   public void setUserName(String userName){
+    this.userName = userName;
+   }
+
    public String getUid(){
     return uid;
    }

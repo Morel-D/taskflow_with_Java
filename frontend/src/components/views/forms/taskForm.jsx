@@ -56,6 +56,7 @@ const TaskForm = ({closeModal, setLoadingType, category, setFetch, setAlert, id}
         const uniqueId = generateUniqueId();
 
         const data = {
+            "userActivityId": 1234,
             "uid": uniqueId,
             "title": content,
             "category": category,
