@@ -5,6 +5,9 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 import AuthenticatedRedirect from "./components/routes/authenticatedRedirect"
 import RequireAuth from "./components/routes/requireAuth"
 import MainRoutes from "./components/routes/mainRoutes"
+import RequireToken from "./components/routes/requireToken"
+import SettingRoutes from "./components/routes/settingRoute"
+import Options from "./components/views/options"
 
 
 function App() {
@@ -16,7 +19,9 @@ function App() {
       <BrowserRouter>
         <Routes>
             <Route path="/login" element={<AuthenticatedRedirect><Auth /></AuthenticatedRedirect>} />
-            <Route path="/*" element={<RequireAuth><MainRoutes /></RequireAuth>} />
+            <Route path="/option" element={<RequireAuth><Options /> </RequireAuth>} />
+            <Route path="/*" element={<RequireToken><MainRoutes /></RequireToken>} />
+            
         </Routes>
     </BrowserRouter>
     </div>

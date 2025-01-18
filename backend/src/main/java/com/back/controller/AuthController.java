@@ -143,10 +143,17 @@ public class AuthController extends HttpServlet {
                 statement.setString(4, hasshedPassword);
                 statement.setString(5, auth.getStatus());
                 statement.executeUpdate();
+
+                Map<String, Object> userData = new HashMap<>();
+                userData.put("uid", auth.getUid());
+                userData.put("username", auth.getUsername());
+                userData.put("email", auth.getEmail());
+                userData.put("status", auth.getStatus());
     
                 Map<String, Object> responseMap = new HashMap<>();
                 responseMap.put("status", "true");
                 responseMap.put("message", "user-inserted");
+                responseMap.put("data", userData);
     
                 objectMapper.writeValue(res.getWriter(), responseMap);
             }

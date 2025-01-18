@@ -4,13 +4,17 @@ import { useNavigate } from "react-router-dom";
 
 const AuthenticatedRedirect = ({children}) => {
     
+    const {token} = useContext(AuthContext);
     const {user} = useContext(AuthContext);
     const navigate = useNavigate();
 
     useEffect(() => {
-        if(user){
-            console.log("USER PRESENT --> ");
+        if(token){
+            console.log("TOKEN PRESENT --> ");
             navigate('/');
+        }else if(user){
+            console.log("USER PRESENT --> ");
+            navigate('/option');
         }
     }, [navigate])
     

@@ -6,11 +6,17 @@ export const AuthProvider = ({children}) =>
 {
     // HANDLE USER STORAGE..........................
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
+    const [token, setUserToken] = useState(JSON.parse(localStorage.getItem('token')) || null);
 
     useEffect(() => {
         const storedUser = JSON.parse(localStorage.getItem('user'));
+        const storedToken = JSON.parse(localStorage.getItem('token'));
         if(storedUser){
             setUser(storedUser);
+        }
+
+        if(storedToken){
+            setUserToken(storedToken)
         }
     }, []);
 
@@ -22,7 +28,7 @@ export const AuthProvider = ({children}) =>
     }
 
     return (
-        <AuthContext.Provider value={{user, setUser, logout}}>
+        <AuthContext.Provider value={{user, setUser, logout, token}}>
             {children}
         </AuthContext.Provider>
     )

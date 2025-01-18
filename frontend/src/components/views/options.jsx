@@ -1,7 +1,7 @@
 import { colors } from "../tools/color";
 import option from "../../assets/icons/option.svg";
 
-const Option = () => {
+const Options = () => {
     return ( 
         <>
         <div className="d-flex justify-content-center align-items-center vh-100">
@@ -40,4 +40,4 @@ const Option = () => {
      );
 }
  
-export default Option;
+export default Options;

@@ -6,11 +6,13 @@ import { generateUniqueId, validateEmail } from "../../utils/helper";
 import { authApiService } from "../../service/authService";
 import { ButtonLoading } from "../../widgets/loading";
 import { ErrorMessage } from "../../widgets/message";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = ({handleSwitch}) => {
 
 
     const {signUp, loading} = authApiService();
+    const navigate = useNavigate();
 
     const [userName, setUserName] = useState();
     const [email, setEmail] = useState();
@@ -83,10 +85,13 @@ const SignUp = ({handleSwitch}) => {
 
          const response = await signUp('auth/signup', data);
 
-         console.log("UI SignUp -> ", response);
+         console.log("UI SignUp -> ", response.data);
 
-         if(response.status == false){
+         if(response.data.status == 'false'){
             setAlert({showMessage: true, message: response.error})
+        }else if(response.data.status == 'true'){
+            console.log('The status is true');
+            navigate('/option');
         }
     }
 
