@@ -14,19 +14,25 @@ const Options = () => {
                     <h2 style={{paddingLeft: "20px"}}>How would you like to participate ?</h2>
                     <div className="options-container mt-3">
                         <div className="btn-container">
-                            <label className="title fw-bold fs-5" style={{color: colors.secondaryColor}}>Create an Activity</label>
-                            <label className="text-secondary">Take the lead by creating an activity where you can invite collaborators 
-                                and manage tasks as the organizer.</label>
+                            <a href="/option/activity" style={{textDecoration: "none"}}>
+                            <span className="title fw-bold fs-5" style={{color: colors.secondaryColor}}>Create an Activity</span><br />
+                            <span className="text-secondary">Take the lead by creating an activity where you can invite collaborators 
+                                and manage tasks as the organizer.</span>
+                            </a>
                         </div>
                         <div className="btn-container">
-                            <label className="title fw-bold fs-5" style={{color: colors.secondaryColor}}>Solo Operation</label>
-                            <label className="text-secondary">manage the activity entirely on your own. This is ideal for personal tasks 
-                                where no collaboration is needed.</label>
+                            <a href="#" style={{textDecoration: "none"}}>
+                            <span className="title fw-bold fs-5" style={{color: colors.secondaryColor}}>Solo Operation</span><br />
+                            <span className="text-secondary">manage the activity entirely on your own. This is ideal for personal tasks 
+                                where no collaboration is needed.</span>
+                            </a>
                         </div>
                         <div className="btn-container">
-                            <label className="title fw-bold fs-5" style={{color: colors.secondaryColor}}>Join an Existing Activity</label>
-                            <label className="text-secondary">Access an activity created by someone else and take part as a collaborator. 
-                            </label>
+                            <a href="/option/invite" style={{textDecoration: "none"}}>
+                            <span className="title fw-bold fs-5" style={{color: colors.secondaryColor}}>Join an Existing Activity</span><br />
+                            <span className="text-secondary">Access an activity created by someone else and take part as a collaborator. 
+                            </span>
+                            </a>
                         </div>
                     </div>
                 </div>

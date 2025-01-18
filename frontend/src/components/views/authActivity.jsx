@@ -1,8 +1,26 @@
 import { PrimaryButton } from "../widgets/button";
 import { TextAreaFeild, TextFeild } from "../widgets/textFeilds";
 import activity from "../../assets/icons/activity.svg"
+import { useState } from "react";
 
 const AuthActivity = () => {
+
+    // Input Information.....................................................
+    const [name, setName] = useState();
+    const [description, setDescription] = useState();
+    const [code, setCode] = useState();
+
+    // Feild Errors.........................................................
+    const[errorName, setErrorName] = useState(false);
+    const[errorDescription, setErrorDescription] = useState(false);
+    const[errorCode, setErrorCode] = useState(false);
+
+    const handleCreation = async (e) => {
+        e.preventDefault();
+        
+    }
+
+
     return ( 
         <div className="d-flex justify-content-center align-items-center vh-100">
             <div className="row" style={{width: "1000px"}}>

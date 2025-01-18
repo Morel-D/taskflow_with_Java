@@ -19,7 +19,7 @@ function App() {
       <BrowserRouter>
         <Routes>
             <Route path="/login" element={<AuthenticatedRedirect><Auth /></AuthenticatedRedirect>} />
-            <Route path="/option" element={<RequireAuth><Options /> </RequireAuth>} />
+            <Route path="/option/*" element={<RequireAuth><SettingRoutes /></RequireAuth>} />
             <Route path="/*" element={<RequireToken><MainRoutes /></RequireToken>} />
             
         </Routes>

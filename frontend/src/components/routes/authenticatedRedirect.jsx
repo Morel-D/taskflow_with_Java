@@ -14,7 +14,7 @@ const AuthenticatedRedirect = ({children}) => {
             navigate('/');
         }else if(user){
             console.log("USER PRESENT --> ");
-            navigate('/option');
+            navigate('/option/setting');
         }
     }, [navigate])
     

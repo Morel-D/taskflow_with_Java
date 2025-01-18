@@ -86,13 +86,13 @@ body {
 }
 
 .btn-container {
-  cursor: pointer;
   padding: 20px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .btn-container:hover {
   cursor: pointer;
+
   background-color: #f8f9fa; /* Light background for visibility */
   border-radius: 10px; /* Optional: Rounded corners */
   padding: 20px; /* Optional: Padding for spacing */
