@@ -1,7 +1,7 @@
 function generateUniqueId() {
-    const now = Date.now(); // Current time in milliseconds
-    const random = Math.floor(Math.random() * 1000); // Random number between 0 and 999
-    return `${now}${random}`; // Combine milliseconds and random for uniqueness
+    const now = Date.now();
+    const random = Math.floor(Math.random() * 1000);
+    return `${now}${random}`;
 }
 
 const validateEmail = (email) => {

@@ -10,7 +10,7 @@ export const authApiService = () => {
 
     const signUp = async (endpoint, data) => {
         try{
-            console.log("AUTH SIGNUP endpoint : ", endpoint);
+            // console.log("AUTH SIGNUP endpoint : ", endpoint);
             setLoading(true);
             const response = await axiosInstance.post(endpoint, data);
             console.log("POST DATA : ", response);
@@ -33,7 +33,7 @@ export const authApiService = () => {
 
     const login = async (endpoint, data) => {
         try{
-            console.log("AUTH LOGIN endpoint : ", endpoint);
+            // console.log("AUTH LOGIN endpoint : ", endpoint);
         setLoading(true);
         const response = await axiosInstance.post(endpoint, data);
         console.log("POST DATA : ", response);

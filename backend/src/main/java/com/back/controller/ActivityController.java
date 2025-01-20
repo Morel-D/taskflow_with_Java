@@ -33,6 +33,15 @@ public class ActivityController extends HttpServlet {
     }
 
     @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+        res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        res.setHeader("Access-Control-Max-Age", "3600");
+        res.setStatus(HttpServletResponse.SC_OK);
+    }
+
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException{
         res.setContentType("application/json");
 
@@ -119,6 +128,15 @@ public class ActivityController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException{
+
+        // Set CORS headers
+        res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+        res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        res.setHeader("Access-Control-Max-Age", "3600");
+        res.setStatus(HttpServletResponse.SC_OK);
+        
+
         res.setContentType("application/json");
 
         String pathInfo = req.getPathInfo();
@@ -147,6 +165,7 @@ public class ActivityController extends HttpServlet {
                 ResultSet rs = statementCheck.executeQuery();
 
                 if(rs.next() && rs.getInt(1) > 0){
+                    res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     Map<String, Object> checkMap = new HashMap<>();
                     checkMap.put("status", "false");
                     checkMap.put("message", "activity-already-exist");
@@ -156,6 +175,7 @@ public class ActivityController extends HttpServlet {
             }
 
             if(activity.getName() == null || activity.getName().isEmpty()){
+                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 Map<String, String> checkMap = new HashMap<>();
                 checkMap.put("status", "false");
                 checkMap.put("message", "empty-activity-name");
@@ -164,6 +184,7 @@ public class ActivityController extends HttpServlet {
             }
 
             if(activity.getDescription() == null || activity.getDescription().isEmpty()){
+                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 Map<String, String> checkMap = new HashMap<>();
                 checkMap.put("status", "false");
                 checkMap.put("message", "empty-description");
@@ -172,6 +193,7 @@ public class ActivityController extends HttpServlet {
             }
 
             if(activity.getAccessCode() == 0){
+                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 Map<String, String> checkMap = new HashMap<>();
                 checkMap.put("status", "false");
                 checkMap.put("message", "empty-access-code");
@@ -196,13 +218,20 @@ public class ActivityController extends HttpServlet {
                 userData.put("email", activity.getEmail());
 
 
+                Map<String, Object> companyData = new HashMap<>();
+                companyData.put("uid", activity.getUid());
+                companyData.put("name", activity.getName());
+                companyData.put("description", activity.getDescription());
+                companyData.put("created_by", activity.getCreatedBy());
+                companyData.put("status", activity.getStatus());
+
                 System.out.println("The data here is --> " + objectMapper.writeValueAsString(userData));
 
                 String token = jwtUtil.generateToken(objectMapper.writeValueAsString(userUid), userData); 
 
                 Map<String, Object> responseMap = new HashMap<>();
                 responseMap.put("status", "true");
-                responseMap.put("status", "activity-inserted");
+                responseMap.put("data", companyData);
                 responseMap.put("token", token);
     
                 objectMapper.writeValue(res.getWriter(), responseMap);

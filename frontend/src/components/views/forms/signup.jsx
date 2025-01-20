@@ -91,7 +91,7 @@ const SignUp = ({handleSwitch}) => {
             setAlert({showMessage: true, message: response.error})
         }else if(response.data.status == 'true'){
             console.log('The status is true');
-            navigate('/option');
+            navigate('/setting/option');
         }
     }
 

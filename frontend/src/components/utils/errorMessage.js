@@ -19,6 +19,12 @@ export const errorMessages = {
     "empty-password": "Password cannot be empty.",
     "user-not-created": "Failed to create user.",
     "invalid-credentials": "Incorrect email or password.",
-    "failed-to-get": "Unable to retrieve data."
+    "failed-to-get": "Unable to retrieve data.",
+
+    "activity-already-exist": "Activity already exists.",
+    "empty-activity-name": "Activity name is required.",
+    "empty-description": "Description is required.",
+    "empty-access-code": "Access code is required.",
+    "activity-not-created": "Failed to create activity. Please check your internet connection."
 
 }
