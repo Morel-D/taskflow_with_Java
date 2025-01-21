@@ -22,7 +22,7 @@ export const AuthProvider = ({children}) =>
         }
 
         if(storedActivity){
-            setUserToken(storedToken)
+            setActivity(storedActivity)
         }
     }, []);
 
@@ -35,7 +35,7 @@ export const AuthProvider = ({children}) =>
     }
 
     return (
-        <AuthContext.Provider value={{user, setUser, logout, token}}>
+        <AuthContext.Provider value={{user, setUser, logout, token, activity}}>
             {children}
         </AuthContext.Provider>
     )

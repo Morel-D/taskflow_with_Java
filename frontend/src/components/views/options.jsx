@@ -28,7 +28,7 @@ const Options = () => {
                             </a>
                         </div>
                         <div className="btn-container">
-                            <a href="/option/invite" style={{textDecoration: "none"}}>
+                            <a href="/option/collaborate" style={{textDecoration: "none"}}>
                             <span className="title fw-bold fs-5" style={{color: colors.secondaryColor}}>Join an Existing Activity</span><br />
                             <span className="text-secondary">Access an activity created by someone else and take part as a collaborator. 
                             </span>

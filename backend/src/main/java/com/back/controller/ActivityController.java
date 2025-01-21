@@ -141,7 +141,7 @@ public class ActivityController extends HttpServlet {
 
         String pathInfo = req.getPathInfo();
 
-        System.out.println("Hello -> "+ pathInfo);
+        System.out.println("USER ACTIVITY PATH -> "+ pathInfo);
 
 
         if(pathInfo == null || pathInfo.equals("/")){
@@ -259,6 +259,7 @@ public class ActivityController extends HttpServlet {
         try{
 
             if(auth.getEmail() == null || auth.getEmail().equals("")){
+                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 Map<String, Object> checkMap = new HashMap<>();
                 checkMap.put("status", "false");
                 checkMap.put("message", "empty-email");
@@ -286,13 +287,20 @@ public class ActivityController extends HttpServlet {
                         ResultSet rsCheck = statementCheck.executeQuery();
 
                         if(rsCheck.next() && rsCheck.getInt(1) > 0){
+                            res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                             Map<String, Object> checkMap = new HashMap<>();
                             checkMap.put("status", "false");
                             checkMap.put("message", "User-pending");
                             objectMapper.writeValue(res.getWriter(), checkMap);
                             return;                            
                         }
-                     }
+                     }catch(SQLException e){
+                        res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        Map<String, Object> checkMap = new HashMap<>();
+                        checkMap.put("status", "false");
+                        checkMap.put("message", "Invalide-user");
+                        objectMapper.writeValue(res.getWriter(), checkMap);
+                    } 
 
 
                      try(PreparedStatement statementCheckUser = connection.prepareStatement(chechUser)){
@@ -301,6 +309,7 @@ public class ActivityController extends HttpServlet {
                         ResultSet rsCheck2 = statementCheckUser.executeQuery();
 
                         if(rsCheck2.next() && rsCheck2.getInt(1) > 0){
+                            res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                             Map<String, Object> checkMap = new HashMap<>();
                             checkMap.put("status", "false");
                             checkMap.put("message", "User-exist");
@@ -330,7 +339,6 @@ public class ActivityController extends HttpServlet {
                         e.printStackTrace();
                         res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                         Map<String, Object> responseMap = new HashMap<>();
-            
                         responseMap.put("status", "false");
                         responseMap.put("message", "Failed to insert");
                         responseMap.put("error", e.getMessage());
@@ -339,7 +347,7 @@ public class ActivityController extends HttpServlet {
                     
                 }else{
                     Map<String, Object> responseMap = new HashMap<>();
-    
+                    res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     responseMap.put("status", "false");
                     responseMap.put("message", "no-user");
                     objectMapper.writeValue(res.getWriter(), responseMap);
@@ -370,6 +378,7 @@ public class ActivityController extends HttpServlet {
 
             if(activity.getAccessCode() == 0){
                 if(activity.getAccessCode() == 0){
+                    res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     Map<String, String> checkMap = new HashMap<>();
                     checkMap.put("status", "false");
                     checkMap.put("message", "empty-access-code");
@@ -397,11 +406,28 @@ public class ActivityController extends HttpServlet {
                             responseMap.put("user_id", rs2.getString("userId"));
                             objectMapper.writeValue(res.getWriter(), responseMap);
     
+                        }else{
+                            res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                            Map<String, Object> responseMap = new HashMap<>();
+                
+                            responseMap.put("status", "false");
+                            responseMap.put("message", "Invalide-user");
+                            objectMapper.writeValue(res.getWriter(), responseMap);
                         }
     
+                    }catch(SQLException e){
+                        e.printStackTrace();
+                        res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        Map<String, Object> responseMap = new HashMap<>();
+            
+                        responseMap.put("status", "false");
+                        responseMap.put("message", "no-useractivity");
+                        responseMap.put("error", e.getMessage());
+                        objectMapper.writeValue(res.getWriter(), responseMap);
                     }
     
                 }else {
+                    res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     Map<String, Object> responseMap = new HashMap<>();
                     responseMap.put("status", "false");
                     responseMap.put("message", "Invalide-user");
