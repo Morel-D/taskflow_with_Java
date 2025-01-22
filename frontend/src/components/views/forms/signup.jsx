@@ -70,6 +70,7 @@ const SignUp = ({handleSwitch}) => {
         }
          if(!validateEmail(email)){
             setEmailError(true);
+            return;
          }
 
          const uid = generateUniqueId();

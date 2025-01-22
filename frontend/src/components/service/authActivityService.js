@@ -1,10 +1,14 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import axiosInstance from "../utils/axiosInstance";
 import { errorMessages } from "../utils/errorMessage";
 import { catchApiErrors } from "../utils/catchApiError";
+import { AuthContext } from "../context/authContext";
 
 export const authActivityService = () => {
     const [loading, setLoading] = useState(false);
+    const {setActivity} = useContext(AuthContext);
+    const {setUserToken} = useContext(AuthContext);
+
 
     // POST REQUEST **********************************************************
 
@@ -13,10 +17,13 @@ export const authActivityService = () => {
             setLoading(true);
             const response = await axiosInstance.post(endpoint, data);
             localStorage.setItem("activity", JSON.stringify(response.data.data));
+            setActivity(response.data.data);
             localStorage.setItem("token", JSON.stringify(response.data.token));
+            setUserToken(response.data.token);
+            console.log("Activity --> ", response.data);
             return response.data;
         }catch(error){
-            catchApiErrors(error);
+            return catchApiErrors(error);
         }finally{
             setLoading(false)
         }
@@ -27,6 +34,7 @@ export const authActivityService = () => {
             setLoading(true);
             const response = await axiosInstance.post(endpoint, data);
             console.log("INVITE ACTIVITY --> ", response);
+            return response.data;
         }catch(error){
             return catchApiErrors(error);
         }finally{
@@ -39,6 +47,7 @@ export const authActivityService = () => {
             setLoading(true);
             const response = await axiosInstance.post(endpoint, data);
             console.log("ACESS ACTIVITY --> ", response);
+            return response.data;
         }catch(error){
             return catchApiErrors(error);
         }finally {

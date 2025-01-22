@@ -7,16 +7,29 @@ import { colors } from "../tools/color";
 import { authActivityService } from "../service/authActivityService";
 import { generateUniqueId, validateEmail } from "../utils/helper";
 import { ErrorMessage } from "../widgets/message";
+import Modal from "../widgets/modal";
+import InvitationSend from "./content/invitationSend";
+import { ButtonLoading } from "../widgets/loading";
 
 const Invitation = () => {
 
-    const {addUsers} = authActivityService();
-    const   {activity} = useContext(AuthContext);
+    const {addUsers, loading} = authActivityService();
+    const {activity} = useContext(AuthContext);
 
     const [alert, setAlert] = useState({showMessage: false, message: ""});
 
     const [email, setEmail] = useState();
     const [emailError, setEmailError] = useState(false);
+
+    const [isOpen, setIsOpen] = useState(false);
+    // const openModel = () => setIsOpen(true)
+    const closeModal = () => {
+        setEmail("");
+        setIsOpen(false);
+    }
+
+
+
 
 
     const handleClose = () => {
@@ -42,7 +55,7 @@ const Invitation = () => {
             "email": email,
             "uid": uid,
             "activityId": activity.uid,
-            "role": "user",
+            "role": "collaborator",
             "status": "pending"
         }
 
@@ -51,6 +64,9 @@ const Invitation = () => {
 
         if(response.status == false){
             setAlert({showMessage: true, message: response.error})
+        }else if(response.status == "true"){
+            console.log("Response data --> ", data);
+            setIsOpen(true);
         }
     }
 
@@ -73,7 +89,7 @@ const Invitation = () => {
                         <div className="mt-4">
                             <div className="row">
                                 <div className="col">
-                                    <PrimaryButton children="Search"  onClick={handleInvitation}/>
+                                    {loading ? <ButtonLoading /> : <PrimaryButton children="Search"  onClick={handleInvitation}/>}
                                 </div>
                                 
                                     <div className="col text-end">
@@ -85,7 +101,8 @@ const Invitation = () => {
                     </div>
                 </div>
             </div>
-            {alert.showMessage && <ErrorMessage message={alert.message} onClick={handleClose} />}            
+            {alert.showMessage && <ErrorMessage message={alert.message} onClick={handleClose} />}  
+            <Modal isOpen={isOpen} onClose={closeModal} children={<InvitationSend email={email} onClose={closeModal} />} title="" />          
         </>
      );
 }

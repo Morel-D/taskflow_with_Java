@@ -371,9 +371,10 @@ public class ActivityController extends HttpServlet {
         String requestBody = req.getReader().lines().reduce("", (accumulator, actual) -> accumulator + actual);
 
         ActivityModel activity = objectMapper.readValue(requestBody, ActivityModel.class);
+        UserActivityModel userActivity = objectMapper.readValue(requestBody, UserActivityModel.class);
 
         // String sql = "SELECT a.id AS activity_id, a.name AS activity_name, ua.uid AS user_uid, ua.status AS user_status, a.accesscode FROM activity a JOIN useractivity ua ON a.uid = ua.activityId WHERE a.accesscode = ? AND ua.uid = ?";
-        String sql = "SELECT * FROM activity WHERE accesscode = ? ";
+        String sql = "SELECT a.* FROM activity a JOIN useractivity ua ON a.uid = ua.activityId WHERE a.accesscode = ? AND ua.userId = ?";
         try{
 
             if(activity.getAccessCode() == 0){
@@ -389,6 +390,7 @@ public class ActivityController extends HttpServlet {
 
             try(PreparedStatement statement = connection.prepareStatement(sql)){
                 statement.setInt(1, activity.getAccessCode());
+                statement.setString(2, userActivity.getUserId());
                 ResultSet rs = statement.executeQuery();
     
                 if(rs.next()){
@@ -403,7 +405,8 @@ public class ActivityController extends HttpServlet {
                             responseMap.put("status", "true");
                             responseMap.put("activity", rs.getString("name"));
                             responseMap.put("description", rs.getString("description"));
-                            responseMap.put("user_id", rs2.getString("userId"));
+                            responseMap.put("createdBy", rs.getString("created_by"));
+                            responseMap.put("dateof", rs.getString("dateof"));
                             objectMapper.writeValue(res.getWriter(), responseMap);
     
                         }else{

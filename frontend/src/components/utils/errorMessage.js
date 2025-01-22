@@ -27,6 +27,7 @@ export const errorMessages = {
     "empty-access-code": "Access code is required.",
     "activity-not-created": "Failed to create activity. Please check your internet connection.",
     "Invalide-user": "Invalid Access Code. try again, or contact the activity manager for assistance.",
-    "no-user": "This user doesn't exist"
+    "no-user": "This user doesn't exist",
+    "activity-already-exist": "This activity already exsit"
 
 }

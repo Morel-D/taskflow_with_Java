@@ -4,6 +4,7 @@ import { TextFeild } from "../widgets/textFeilds";
 import { authActivityService } from "../service/authActivityService";
 import { AuthContext } from "../context/authContext";
 import { ErrorMessage } from "../widgets/message";
+import { useNavigate } from "react-router-dom";
 
 const Intro = () => {
 
@@ -14,6 +15,7 @@ const Intro = () => {
     const [codeError, setCodeError] = useState(false);
 
     const [alert, setAlert] = useState({showMessage: false, message: ""});
+    const navigate = useNavigate();
 
     const handleClose = () => {
         setAlert({showMessage: false, message: ""});
@@ -39,6 +41,8 @@ const Intro = () => {
 
         if(response.status == false){
             setAlert({showMessage: true, message: response.error})
+        }else if(response.status == "true"){
+            navigate('option/organisation');
         }
 
     }
