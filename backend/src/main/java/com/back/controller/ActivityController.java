@@ -15,21 +15,25 @@ import java.util.List;
 
 
 import java.util.Date;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 
 
 public class ActivityController extends HttpServlet {
     
-    public final ObjectMapper objectMapper = new ObjectMapper();
+    public final ObjectMapper objectMapper;
     private final Connection connection;
 
     public ActivityController(Connection connection){
         this.connection = connection;
+        this.objectMapper = new ObjectMapper();
+        this.objectMapper.registerModule(new JavaTimeModule());
+        this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     @Override
@@ -43,6 +47,13 @@ public class ActivityController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException{
+        // Set CORS headers
+        res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+        res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        res.setHeader("Access-Control-Max-Age", "3600");
+        res.setStatus(HttpServletResponse.SC_OK);
+
         res.setContentType("application/json");
 
         String pathInfo = req.getPathInfo();
@@ -150,6 +161,66 @@ public class ActivityController extends HttpServlet {
             addUser(req, res);
         }else if(pathInfo.equals("/user/invite")){
             userAccess(req, res);
+        }else if(pathInfo.equals("/get")){
+            getActivity(req, res);
+        }
+    }
+
+    private void getActivity(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        ActivityModel activity = objectMapper.readValue(req.getReader(), ActivityModel.class);
+
+        String getActivitySql = "SELECT * FROM activity WHERE uid = ?";
+        try(PreparedStatement statement = connection.prepareStatement(getActivitySql)){
+            statement.setString(1, activity.getUid());
+            ResultSet rs = statement.executeQuery();
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            List<Map<String, Object>> activities = new ArrayList<>();
+
+            if(rs.next()){
+
+                Map<String, Object> row = new HashMap<>();
+                for(int i = 1; i < columnCount; i++){
+                    String columnName = metaData.getColumnName(i);
+                    Object columnValue = rs.getObject(i);
+                    row.put(columnName, columnValue);
+                }
+                // Fetch collaborators from the useractivity table
+                String getCollaboratorsSql = "SELECT * FROM useractivity WHERE activityId = ? AND status = 'true'";
+                try(PreparedStatement collStatement = connection.prepareStatement(getCollaboratorsSql)){
+                    collStatement.setString(1, activity.getUid());
+                    ResultSet collaboratorRs = collStatement.executeQuery();
+                    ResultSetMetaData collaboratorMetaData = collaboratorRs.getMetaData();
+                    int collaboratorColumnCount = collaboratorMetaData.getColumnCount();
+
+                    List<Map<String, Object>> collaborators = new ArrayList<>();
+                    while (collaboratorRs.next()) {
+                        Map<String, Object> collaborator = new HashMap<>();
+                        for (int i = 1; i <= collaboratorColumnCount; i++) {
+                            String collaboratorColumnName = collaboratorMetaData.getColumnName(i);
+                            Object collaboratorColumnValue = collaboratorRs.getObject(i);
+                            collaborator.put(collaboratorColumnName, collaboratorColumnValue);
+                        }
+                        collaborators.add(collaborator);
+                    }
+
+                    row.put("collaborators", collaborators);
+                }
+
+                activities.add(row);
+
+            }
+
+            objectMapper.writeValue(res.getWriter(), activities);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            Map<String, Object> responseMap = new HashMap<>();
+            responseMap.put("status", "false");
+            responseMap.put("message", "Failed to fetch activities");
+            responseMap.put("error", e.getMessage());
+            objectMapper.writeValue(res.getWriter(), responseMap);
         }
     }
 
@@ -403,6 +474,7 @@ public class ActivityController extends HttpServlet {
                         if(rs2.next()){
                             Map<String, Object> responseMap = new HashMap<>();
                             responseMap.put("status", "true");
+                            responseMap.put("uid", rs.getString("uid"));
                             responseMap.put("activity", rs.getString("name"));
                             responseMap.put("description", rs.getString("description"));
                             responseMap.put("createdBy", rs.getString("created_by"));
@@ -486,6 +558,11 @@ public class ActivityController extends HttpServlet {
             responseMap.put("message", "user-access");
             objectMapper.writeValue(res.getWriter(), responseMap);
 
+            }else{
+                Map<String, String> responseMap = new HashMap<>();
+                responseMap.put("status", "false");
+                responseMap.put("message", "no-such-user");
+                objectMapper.writeValue(res.getWriter(), responseMap);
             }
         }catch(SQLException e){
             e.printStackTrace();
