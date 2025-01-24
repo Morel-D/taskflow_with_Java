@@ -188,36 +188,113 @@ public class AuthController extends HttpServlet {
             ResultSet rs = statement.executeQuery();
 
             if(rs.next()){
-
                 String hashedPassword = rs.getString("password");
                 boolean passwordMatch = BCrypt.checkpw(auth.getPassword(), hashedPassword);
 
-                if(passwordMatch){
-                    String token = Jwts.builder().setSubject(rs.getString("uid"))
-                                                 .setIssuer("taskflow")
-                                                 .setIssuedAt(new Date())
-                                                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                                                 .claim("username", rs.getString("username"))
-                                                 .claim("email", rs.getString("email"))
-                                                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
-                                                 .compact();
-
-                    Map<String, Object> responseMap = new HashMap<>();
-                    responseMap.put("id", rs.getInt("id"));
-                    responseMap.put("uid", rs.getString("uid"));
-                    responseMap.put("email", rs.getString("email"));
-                    responseMap.put("username", rs.getString("username"));
-                    responseMap.put("status", rs.getString("status"));
-                    responseMap.put("dateof", rs.getString("dateof"));
-                    responseMap.put("token", token);
-                    objectMapper.writeValue(res.getWriter(), responseMap);
-                }else{
+                if(!passwordMatch){
                     res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     Map<String, Object> responseMap = new HashMap<>();
                     responseMap.put("status", "false");
                     responseMap.put("message", "invalid-credentials");
                     objectMapper.writeValue(res.getWriter(), responseMap);
+                    return;
                 }
+
+                // Handle some checks.................................
+
+                // Check is the user activity exist 
+
+                String checkUserActiviy = "SELECT * FROM useractivity WHERE userId = ?";
+
+                try(PreparedStatement checkUserActivityStatement = connection.prepareStatement(checkUserActiviy)){
+                    checkUserActivityStatement.setString(1, rs.getString("uid"));
+                    ResultSet checkUserResultSet = checkUserActivityStatement.executeQuery();
+
+                    if(checkUserResultSet.next()){
+
+                        String status = checkUserResultSet.getString("status");
+
+                        // Print the status to the terminal for debugging
+                        System.out.println("Status retrieved from useractivity: " + status);
+
+                        // Check if the userActivity is active
+
+
+
+                            if(status.equals("true")){
+                                if(passwordMatch){
+                                    String token = Jwts.builder().setSubject(rs.getString("uid"))
+                                                                .setIssuer("taskflow")
+                                                                .setIssuedAt(new Date())
+                                                                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                                                                .claim("username", rs.getString("username"))
+                                                                .claim("email", rs.getString("email"))
+                                                                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                                                                .compact();
+                
+                                    Map<String, Object> responseMap = new HashMap<>();
+                                    responseMap.put("id", rs.getInt("id"));
+                                    responseMap.put("uid", rs.getString("uid"));
+                                    responseMap.put("email", rs.getString("email"));
+                                    responseMap.put("username", rs.getString("username"));
+                                    responseMap.put("status", rs.getString("status"));
+                                    responseMap.put("dateof", rs.getString("dateof"));
+                                    responseMap.put("token", token);
+                                    objectMapper.writeValue(res.getWriter(), responseMap);
+                                }
+                            }else {
+                                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                                Map<String, Object> responseMap = new HashMap<>();
+                                responseMap.put("status", "false");
+                                responseMap.put("message", "user-pending");
+                                objectMapper.writeValue(res.getWriter(), responseMap);
+                            }
+
+
+                    }else{
+
+                        String checkActivity = "SELECT * FROM activity WHERE created_by = ?";
+
+                        try(PreparedStatement activityStatement = connection.prepareStatement(checkActivity)){
+                            activityStatement.setString(1, rs.getString("uid"));
+                            ResultSet activityRs = activityStatement.executeQuery();
+
+                            if(activityRs.next()){
+                                Map<String, Object> responseMap = new HashMap<>();
+                                responseMap.put("status", "true");
+                                responseMap.put("message", "activity-present");
+                                objectMapper.writeValue(res.getWriter(), responseMap);
+
+                            }else{
+                                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                                Map<String, Object> responseMap = new HashMap<>();
+                                responseMap.put("status", "false");
+                                responseMap.put("message", "no-userActivity");
+                                objectMapper.writeValue(res.getWriter(), responseMap);
+                            }
+                        }catch(SQLException e){
+                            e.printStackTrace();
+                            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                            Map<String, Object> responseMap = new HashMap<>();
+                
+                            responseMap.put("status", "false");
+                            responseMap.put("message", "failed-to-get");
+                            responseMap.put("error", e.getMessage());
+                            objectMapper.writeValue(res.getWriter(), responseMap);
+                        }
+                    }
+
+                }catch(SQLException e){
+                    e.printStackTrace();
+                    res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    Map<String, Object> responseMap = new HashMap<>();
+        
+                    responseMap.put("status", "false");
+                    responseMap.put("message", "failed-to-get");
+                    responseMap.put("error", e.getMessage());
+                    objectMapper.writeValue(res.getWriter(), responseMap);
+                }
+
             }else{
                 res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 Map<String, Object> responseMap = new HashMap<>();
