@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.HashMap;
@@ -20,17 +21,23 @@ import java.io.IOException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 
 public class AuthController extends HttpServlet {
-    public final ObjectMapper objectMapper = new ObjectMapper();
     private static final String SECRET_KEY = Base64.getEncoder().encodeToString("taskFlow-private-grouptask-secret-key-256bits".getBytes());
     private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24;
 
     private final Connection connection;
+    public final ObjectMapper objectMapper;
+    
 
     public AuthController(Connection connection){
         this.connection = connection;
+        this.objectMapper =  new ObjectMapper();
+        this.objectMapper.registerModule(new JavaTimeModule());
+        this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
 
@@ -258,11 +265,25 @@ public class AuthController extends HttpServlet {
                         try(PreparedStatement activityStatement = connection.prepareStatement(checkActivity)){
                             activityStatement.setString(1, rs.getString("uid"));
                             ResultSet activityRs = activityStatement.executeQuery();
+                            ResultSetMetaData metaData = activityRs.getMetaData();
+                            int columnCount = metaData.getColumnCount();
 
                             if(activityRs.next()){
+
+                                Map<String, Object> data = new HashMap<>();
+                                data.put("id", activityRs.getString("id"));
+                                data.put("uid", activityRs.getString("uid"));
+                                data.put("accesscode", activityRs.getString("accesscode"));
+                                data.put("dateof", activityRs.getDate("dateof"));
+                                data.put("name", activityRs.getString("name"));
+                                data.put("created_by", activityRs.getString("created_by"));
+                                data.put("description", activityRs.getString("description"));
+                                data.put("status", activityRs.getString("status"));
+
                                 Map<String, Object> responseMap = new HashMap<>();
                                 responseMap.put("status", "true");
                                 responseMap.put("message", "activity-present");
+                                responseMap.put("activity", data);
                                 objectMapper.writeValue(res.getWriter(), responseMap);
 
                             }else{
