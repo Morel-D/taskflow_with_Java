@@ -39,7 +39,7 @@ export const authApiService = () => {
         console.log("POST DATA : ", response);
         localStorage.setItem("user", JSON.stringify(response.data)); // Store user
         setUser(response.data);
-        return response;
+        return response.data;
         }catch(error){
             console.log("ERROR -> ", error);
             if(error.response){

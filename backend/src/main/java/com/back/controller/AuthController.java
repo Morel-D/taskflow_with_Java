@@ -207,6 +207,17 @@ public class AuthController extends HttpServlet {
                     return;
                 }
 
+                Map<String, Object> userData = new HashMap<>();
+                userData.put("id", rs.getInt("id"));
+                userData.put("uid", rs.getString("uid"));
+                userData.put("email", rs.getString("email"));
+                userData.put("username", rs.getString("username"));
+                userData.put("status", rs.getString("status"));
+                userData.put("dateof", rs.getString("dateof"));
+
+
+
+
                 // Handle some checks.................................
 
                 // Check is the user activity exist 
@@ -226,6 +237,17 @@ public class AuthController extends HttpServlet {
 
                         // Check if the userActivity is active
 
+                        Map<String, Object> userActivityData = new HashMap<>();
+                        userActivityData.put("id", checkUserResultSet.getInt("id"));
+                        userActivityData.put("uid", checkUserResultSet.getString("uid"));
+                        userActivityData.put("userId", checkUserResultSet.getString("userId"));
+                        userActivityData.put("activityId", checkUserResultSet.getString("activityId"));
+                        userActivityData.put("joinedAt", checkUserResultSet.getString("joinedAt"));
+                        userActivityData.put("role", checkUserResultSet.getString("role"));
+                        userActivityData.put("status", checkUserResultSet.getString("status"));
+
+
+
 
 
                             if(status.equals("true")){
@@ -240,19 +262,15 @@ public class AuthController extends HttpServlet {
                                                                 .compact();
                 
                                     Map<String, Object> responseMap = new HashMap<>();
-                                    responseMap.put("id", rs.getInt("id"));
-                                    responseMap.put("uid", rs.getString("uid"));
-                                    responseMap.put("email", rs.getString("email"));
-                                    responseMap.put("username", rs.getString("username"));
-                                    responseMap.put("status", rs.getString("status"));
-                                    responseMap.put("dateof", rs.getString("dateof"));
+
+                                    responseMap.put("user", userData);
+                                    responseMap.put("userActivity", userActivityData);
                                     responseMap.put("token", token);
                                     objectMapper.writeValue(res.getWriter(), responseMap);
                                 }
                             }else {
-                                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                                 Map<String, Object> responseMap = new HashMap<>();
-                                responseMap.put("status", "false");
+                                responseMap.put("status", true);
                                 responseMap.put("message", "user-pending");
                                 objectMapper.writeValue(res.getWriter(), responseMap);
                             }
@@ -281,15 +299,14 @@ public class AuthController extends HttpServlet {
                                 data.put("status", activityRs.getString("status"));
 
                                 Map<String, Object> responseMap = new HashMap<>();
-                                responseMap.put("status", "true");
+                                responseMap.put("status", true);
                                 responseMap.put("message", "activity-present");
                                 responseMap.put("activity", data);
                                 objectMapper.writeValue(res.getWriter(), responseMap);
 
                             }else{
-                                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                                 Map<String, Object> responseMap = new HashMap<>();
-                                responseMap.put("status", "false");
+                                responseMap.put("status", true);
                                 responseMap.put("message", "no-userActivity");
                                 objectMapper.writeValue(res.getWriter(), responseMap);
                             }
