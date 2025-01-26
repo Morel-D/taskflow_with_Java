@@ -42,7 +42,9 @@ const Intro = () => {
         if(response.status == false){
             setAlert({showMessage: true, message: response.error})
         }else if(response.status == "true"){
-            navigate('option/organisation');
+            const currentPath = window.location.pathname;
+            const modifiedPath = currentPath.replace("/option/collaborate", "");
+            navigate(`${modifiedPath}/option/organisation`);
         }
 
     }

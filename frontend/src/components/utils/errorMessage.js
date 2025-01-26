@@ -28,6 +28,7 @@ export const errorMessages = {
     "activity-not-created": "Failed to create activity. Please check your internet connection.",
     "Invalide-user": "Invalid Access Code. try again, or contact the activity manager for assistance.",
     "no-user": "This user doesn't exist",
-    "activity-already-exist": "This activity already exsit"
+    "activity-already-exist": "This activity already exsit",
+    "User-pending": "User already in pending mode"
 
 }

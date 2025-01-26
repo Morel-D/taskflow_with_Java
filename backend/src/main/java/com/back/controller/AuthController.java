@@ -272,6 +272,7 @@ public class AuthController extends HttpServlet {
                                 Map<String, Object> responseMap = new HashMap<>();
                                 responseMap.put("status", true);
                                 responseMap.put("message", "user-pending");
+                                responseMap.put("user", userData);
                                 objectMapper.writeValue(res.getWriter(), responseMap);
                             }
 
@@ -302,12 +303,15 @@ public class AuthController extends HttpServlet {
                                 responseMap.put("status", true);
                                 responseMap.put("message", "activity-present");
                                 responseMap.put("activity", data);
+                                responseMap.put("user", userData);
                                 objectMapper.writeValue(res.getWriter(), responseMap);
 
                             }else{
+                                
                                 Map<String, Object> responseMap = new HashMap<>();
                                 responseMap.put("status", true);
                                 responseMap.put("message", "no-userActivity");
+                                responseMap.put("user", userData);
                                 objectMapper.writeValue(res.getWriter(), responseMap);
                             }
                         }catch(SQLException e){

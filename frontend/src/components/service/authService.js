@@ -37,8 +37,6 @@ export const authApiService = () => {
         setLoading(true);
         const response = await axiosInstance.post(endpoint, data);
         console.log("POST DATA : ", response);
-        localStorage.setItem("user", JSON.stringify(response.data)); // Store user
-        setUser(response.data);
         return response.data;
         }catch(error){
             console.log("ERROR -> ", error);

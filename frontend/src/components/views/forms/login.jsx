@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { colors } from "../../tools/color";
 import { PrimaryButton } from "../../widgets/button";
 import { TextFeild } from "../../widgets/textFeilds";
@@ -6,11 +6,17 @@ import { generateUniqueId, validateEmail } from "../../utils/helper";
 import { authApiService } from "../../service/authService";
 import { ButtonLoading } from "../../widgets/loading";
 import { ErrorMessage } from "../../widgets/message";
+import { AuthContext } from "../../context/authContext";
+import { useNavigate } from "react-router-dom";
 
 const Login = ({handleSwitch}) => {
 
+    const navigate = useNavigate();
+
     const newUid = generateUniqueId();
     const {login, loading} = authApiService();
+
+    const {setUser, setActivity} = useContext(AuthContext);
 
     const [email, setEmail] = useState();
     const [password, setPasword] = useState();
@@ -57,9 +63,23 @@ const Login = ({handleSwitch}) => {
 
         const response = await login("auth/login", data);
 
-        console.log("response -->", response)
+        console.log("response -->", response);
 
-        if(response.status == false){
+        if(response.status == true){
+            localStorage.setItem("user", JSON.stringify(response.user));
+            setUser(response.user);
+        if(response.message == "no-userActivity"){
+            // navigate("/option/setting", {replace: true});
+            navigate("/option/setting");
+        }else if(response.message == "activity-present"){
+            localStorage.setItem("activity", JSON.stringify(response.activity));
+            setActivity(response.activity);
+            navigate("/option/invite");
+        }else if(response.message == "user-pending"){
+            navigate("/option/collaborate");
+        }
+
+        }else if(response.status == false){
             setAlert({showMessage: true, message: response.error})
         }
     }
