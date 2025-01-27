@@ -5,10 +5,11 @@ import { authActivityService } from "../service/authActivityService";
 import { AuthContext } from "../context/authContext";
 import { ErrorMessage } from "../widgets/message";
 import { useNavigate } from "react-router-dom";
+import { ButtonLoading } from "../widgets/loading";
 
 const Intro = () => {
 
-    const {accessActivity} = authActivityService();
+    const {accessActivity, loading} = authActivityService();
     const {user} = useContext(AuthContext);
 
     const [code, setCode] = useState();
@@ -42,6 +43,8 @@ const Intro = () => {
         if(response.status == false){
             setAlert({showMessage: true, message: response.error})
         }else if(response.status == "true"){
+            localStorage.setItem("activityUid", response.uid);
+            localStorage.setItem("activityUid", response.uid);
             const currentPath = window.location.pathname;
             const modifiedPath = currentPath.replace("/option/collaborate", "");
             navigate(`${modifiedPath}/option/organisation`);
@@ -59,7 +62,7 @@ const Intro = () => {
                     <div className="form mt-4">
                         <TextFeild placeholder="Enter the access code" value={code} onChange={(e) => {setCodeError(false); setCode(e.target.value)}} error={codeError} />
                         <div className="mt-4">
-                        <PrimaryButton children="Verify" onClick={handleCodeVerification} />
+                        {loading ? <ButtonLoading /> : <PrimaryButton children="Verify" onClick={handleCodeVerification} />}
                         </div>
                         <div className="mt-3 text-start">
                             <p className="text-secondary">Don’t have an access code? Contact your admin.</p>
