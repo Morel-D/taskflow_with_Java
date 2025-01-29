@@ -20,7 +20,7 @@ export const authActivityService = () => {
             setActivity(response.data.data);
             localStorage.setItem("token", JSON.stringify(response.data.token));
             setUserToken(response.data.token);
-            console.log("Activity --> ", response.data);
+            // console.log("Activity --> ", response.data);
             return response.data;
         }catch(error){
             return catchApiErrors(error);
@@ -33,7 +33,7 @@ export const authActivityService = () => {
         try{
             setLoading(true);
             const response = await axiosInstance.post(endpoint, data);
-            console.log("INVITE ACTIVITY --> ", response);
+            // console.log("INVITE ACTIVITY --> ", response);
             return response.data;
         }catch(error){
             return catchApiErrors(error);
@@ -46,7 +46,7 @@ export const authActivityService = () => {
         try{
             setLoading(true);
             const response = await axiosInstance.post(endpoint, data);
-            console.log("ACESS ACTIVITY --> ", response);
+            // console.log("ACESS ACTIVITY --> ", response);
             return response.data;
         }catch(error){
             return catchApiErrors(error);
@@ -55,7 +55,21 @@ export const authActivityService = () => {
         }
     }
 
+    const collaboratorActivity = async (endpoint, data) => {
+        try{
+            setLoading(true);
+            const response = await axiosInstance.put(endpoint, data);
+            console.log("COLLABORATOR ACTIVITY --> ", response);
+            setUserToken(response.data.token);
+            return response.data;
+        }catch(error){
+            return catchApiErrors(error);
+        }finally{
+            setLoading(false);
+        }
+    }
 
-    return {loading, createActivity, accessActivity, addUsers}
+
+    return {loading, createActivity, accessActivity, addUsers, collaboratorActivity}
 
 }

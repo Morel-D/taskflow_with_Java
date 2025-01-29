@@ -65,7 +65,7 @@ const AuthActivity = () => {
 
         var data = {
             "userUid": user.uid,
-            "userName": user.name,
+            "userName": user.username,
             "email": user.email,
             "uid": uid,
             "name": name,

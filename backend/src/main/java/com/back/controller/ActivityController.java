@@ -11,10 +11,15 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 
 import java.util.Date;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +30,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 
 public class ActivityController extends HttpServlet {
+
+    private static final String SECRET_KEY = Base64.getEncoder().encodeToString("taskFlow-private-grouptask-secret-key-256bits".getBytes());
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24;
     
     public final ObjectMapper objectMapper;
     private final Connection connection;
@@ -163,6 +171,63 @@ public class ActivityController extends HttpServlet {
             userAccess(req, res);
         }else if(pathInfo.equals("/get")){
             getActivity(req, res);
+        }else if(pathInfo.equals("/create/managerActivity")){
+            managerUserActivity(req, res);
+        }
+    }
+
+    private void managerUserActivity(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        UserActivityModel userActivityModel = objectMapper.readValue(req.getReader(), UserActivityModel.class);
+
+        String sql = "INSERT INTO useractivity (uid, userId, activityId, role, status) VALUES (?, ?, ?, ?, ?)";
+        try(PreparedStatement statement = connection.prepareStatement(sql)){
+            statement.setString(1, userActivityModel.getUid());
+            statement.setString(2, userActivityModel.getUserId());
+            statement.setString(3, userActivityModel.getActivityId());
+            statement.setString(4, userActivityModel.getRole());
+            statement.setString(5, userActivityModel.getStatus());
+            statement.execute();
+
+            String sql2 = "SELECT * FROM user WHERE uid = ?";
+            try(PreparedStatement statement2 = connection.prepareStatement(sql2)){
+                statement2.setString(1, userActivityModel.getUserId());
+                ResultSet rs = statement2.executeQuery();
+
+                if(rs.next()){
+
+                    String token = Jwts.builder().setSubject(rs.getString("uid"))
+                    .setIssuer("taskflow")
+                    .setIssuedAt(new Date())
+                    .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                    .claim("username", rs.getString("username"))
+                    .claim("email", rs.getString("email"))
+                    .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                    .compact();
+
+
+                    Map responseMap = new HashMap<>();
+                    responseMap.put("status", "true");
+                    responseMap.put("token", token);
+                objectMapper.writeValue(res.getWriter(), responseMap);
+
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                Map<String, Object> responseMap = new HashMap<>();
+                responseMap.put("status", "false");
+                responseMap.put("message", "failed");
+                responseMap.put("error", e.getMessage());
+                objectMapper.writeValue(res.getWriter(), responseMap);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            Map<String, Object> responseMap = new HashMap<>();
+            responseMap.put("status", "false");
+            responseMap.put("message", "failed");
+            responseMap.put("error", e.getMessage());
+            objectMapper.writeValue(res.getWriter(), responseMap);
         }
     }
 
@@ -188,6 +253,7 @@ public class ActivityController extends HttpServlet {
                 }
                 // Fetch collaborators from the useractivity table
                 String getCollaboratorsSql = "SELECT * FROM useractivity WHERE activityId = ? AND status = 'true'";
+
                 try(PreparedStatement collStatement = connection.prepareStatement(getCollaboratorsSql)){
                     collStatement.setString(1, activity.getUid());
                     ResultSet collaboratorRs = collStatement.executeQuery();
@@ -207,6 +273,20 @@ public class ActivityController extends HttpServlet {
 
                     row.put("collaborators", collaborators);
                 }
+
+                // // Get the activity manager info
+
+                // String activityManager = "SELECT * FROM user WHERE uid = ?";
+                // try(PreparedStatement managerStatement = connection.prepareStatement(activityManager)){
+                //     managerStatement.setString(1, rs.getString("created_by"));
+                //     ResultSet managResultSet = managerStatement.executeQuery();
+
+                //     if(managResultSet.next()){
+                //         row.put("manager", managResultSet.getString("username"));
+                //         row.put("email", managResultSet.getString("email"));
+                //     }
+                // }
+
 
                 activities.add(row);
 
@@ -228,7 +308,7 @@ public class ActivityController extends HttpServlet {
     ActivityModel activity = objectMapper.readValue(req.getReader(), ActivityModel.class);
 
         String checkActivity = "SELECT COUNT(*) FROM activity WHERE name = ?";
-        String sql = "INSERT INTO activity (uid, name, description, accesscode, created_by, status) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO activity (uid, userUid, userName, email, name, description, accesscode, created_by, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try{
 
             try(PreparedStatement statementCheck = connection.prepareStatement(checkActivity)){
@@ -274,11 +354,14 @@ public class ActivityController extends HttpServlet {
 
             try(PreparedStatement statement = connection.prepareStatement(sql)){    
                 statement.setString(1, activity.getUid());
-                statement.setString(2, activity.getName());
-                statement.setString(3, activity.getDescription());
-                statement.setInt(4, activity.getAccessCode());
-                statement.setString(5, activity.getCreatedBy());
-                statement.setString(6, activity.getStatus());
+                statement.setString(2, activity.getUserUid());
+                statement.setString(3, activity.getUserName());
+                statement.setString(4, activity.getEmail());
+                statement.setString(5, activity.getName());
+                statement.setString(6, activity.getDescription());
+                statement.setInt(7, activity.getAccessCode());
+                statement.setString(8, activity.getCreatedBy());
+                statement.setString(9, activity.getStatus());
                 statement.executeUpdate();
 
                 Map<String, String> userUid = new HashMap<>();
@@ -528,6 +611,13 @@ public class ActivityController extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse res) throws IOException {
 
+        // Set CORS headers
+        res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+        res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, PATCH OPTIONS, DELETE");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        res.setHeader("Access-Control-Max-Age", "3600");
+        res.setStatus(HttpServletResponse.SC_OK);
+
         res.setContentType("application/json");
 
         String pathInfo = req.getPathInfo();
@@ -553,10 +643,32 @@ public class ActivityController extends HttpServlet {
             int rowUpdated = statement.executeUpdate();
 
             if(rowUpdated > 0){
-            Map<String, String> responseMap = new HashMap<>();
-            responseMap.put("status", "true");
-            responseMap.put("message", "user-access");
-            objectMapper.writeValue(res.getWriter(), responseMap);
+
+            String userSql = "SELECT * FROM user WHERE uid = ?";
+
+            try(PreparedStatement userStatement = connection.prepareStatement(userSql)){
+                userStatement.setString(1, userActivityModel.getUserId());
+                ResultSet userResultSet = userStatement.executeQuery();
+
+                if(userResultSet.next()){
+
+                    String token = Jwts.builder().setSubject(userResultSet.getString("uid"))
+                    .setIssuer("taskflow")
+                    .setIssuedAt(new Date())
+                    .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                    .claim("username", userResultSet.getString("username"))
+                    .claim("email", userResultSet.getString("email"))
+                    .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                    .compact();
+
+
+                    Map<String, String> responseMap = new HashMap<>();
+                    responseMap.put("status", "true");
+                    responseMap.put("message", "user-access");
+                    responseMap.put("token", token);
+                    objectMapper.writeValue(res.getWriter(), responseMap);
+                }
+            }
 
             }else{
                 Map<String, String> responseMap = new HashMap<>();
