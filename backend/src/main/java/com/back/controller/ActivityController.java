@@ -252,23 +252,31 @@ public class ActivityController extends HttpServlet {
                     row.put(columnName, columnValue);
                 }
                 // Fetch collaborators from the useractivity table
-                String getCollaboratorsSql = "SELECT * FROM useractivity WHERE activityId = ? AND status = 'true'";
+                String getCollaboratorsSql = "SELECT * FROM useractivity WHERE activityId = ? AND status = 'true' AND role = 'collaborator'";
 
                 try(PreparedStatement collStatement = connection.prepareStatement(getCollaboratorsSql)){
                     collStatement.setString(1, activity.getUid());
                     ResultSet collaboratorRs = collStatement.executeQuery();
-                    ResultSetMetaData collaboratorMetaData = collaboratorRs.getMetaData();
-                    int collaboratorColumnCount = collaboratorMetaData.getColumnCount();
 
                     List<Map<String, Object>> collaborators = new ArrayList<>();
-                    while (collaboratorRs.next()) {
-                        Map<String, Object> collaborator = new HashMap<>();
-                        for (int i = 1; i <= collaboratorColumnCount; i++) {
-                            String collaboratorColumnName = collaboratorMetaData.getColumnName(i);
-                            Object collaboratorColumnValue = collaboratorRs.getObject(i);
-                            collaborator.put(collaboratorColumnName, collaboratorColumnValue);
+                    while(collaboratorRs.next()) {
+
+                        String getUser = "SELECT * FROM user WHERE uid = ?";
+                        try(PreparedStatement userStatement = connection.prepareStatement(getUser)){
+                            userStatement.setString(1, collaboratorRs.getString("userId"));
+                            ResultSet userRs = userStatement.executeQuery();
+
+                            while(userRs.next()) {  // Iterate through all users
+                                Map<String, Object> collaborator = new HashMap<>();
+                                collaborator.put("uid", userRs.getString("uid"));
+                                collaborator.put("name", userRs.getString("username"));
+                                collaborator.put("email", userRs.getString("email"));
+                                // Add other fields as necessary
+                        
+                                collaborators.add(collaborator);
+                            }
+
                         }
-                        collaborators.add(collaborator);
                     }
 
                     row.put("collaborators", collaborators);
@@ -386,7 +394,6 @@ public class ActivityController extends HttpServlet {
                 Map<String, Object> responseMap = new HashMap<>();
                 responseMap.put("status", "true");
                 responseMap.put("data", companyData);
-                responseMap.put("token", token);
     
                 objectMapper.writeValue(res.getWriter(), responseMap);
             }
@@ -433,7 +440,9 @@ public class ActivityController extends HttpServlet {
     
                      String sql2 = "INSERT INTO useractivity (uid, userId, activityId, role, status) VALUES (?, ?, ?, ?, ?)";
                      String chechUserPending = "SELECT COUNT(*) FROM useractivity WHERE userId = ? AND status = 'pending'";
-                     String chechUser = "SELECT COUNT(*) FROM useractivity WHERE userId = ?";
+                     String chechUser = "SELECT COUNT(*) FROM useractivity WHERE userId = ? AND activityId = ?";
+                     String checkOutsideUser = "SELECT COUNT(*) FROM userActivity WHERE userId = ? AND activityId != ?";
+
 
                      try(PreparedStatement statementCheck = connection.prepareStatement(chechUserPending)){
                         statementCheck.setString(1, userActivityModel.getUserId());
@@ -459,6 +468,7 @@ public class ActivityController extends HttpServlet {
 
                      try(PreparedStatement statementCheckUser = connection.prepareStatement(chechUser)){
                         statementCheckUser.setString(1, userActivityModel.getUserId());
+                        statementCheckUser.setString(2, userActivityModel.getActivityId());
 
                         ResultSet rsCheck2 = statementCheckUser.executeQuery();
 
@@ -467,6 +477,22 @@ public class ActivityController extends HttpServlet {
                             Map<String, Object> checkMap = new HashMap<>();
                             checkMap.put("status", "false");
                             checkMap.put("message", "User-exist");
+                            objectMapper.writeValue(res.getWriter(), checkMap);
+                            return;                            
+                        }
+                     }
+
+                     try(PreparedStatement statementChecOutsidekUser = connection.prepareStatement(checkOutsideUser)){
+                        statementChecOutsidekUser.setString(1, userActivityModel.getUserId());
+                        statementChecOutsidekUser.setString(2, userActivityModel.getActivityId());
+
+                        ResultSet rsCheck3 = statementChecOutsidekUser.executeQuery();
+
+                        if(rsCheck3.next() && rsCheck3.getInt(1) > 0){
+                            res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                            Map<String, Object> checkMap = new HashMap<>();
+                            checkMap.put("status", "false");
+                            checkMap.put("message", "User-unavailable");
                             objectMapper.writeValue(res.getWriter(), checkMap);
                             return;                            
                         }

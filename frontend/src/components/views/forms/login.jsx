@@ -104,7 +104,7 @@ const Login = ({handleSwitch}) => {
                 </div>
 
                 <div className="mt-5">
-                <PrimaryButton children="Log In" onClick={handleLogin} />
+                {loading ? <ButtonLoading /> :<PrimaryButton children="Log In" onClick={handleLogin} />}
                 </div>
 
                 <div className="mt-4">

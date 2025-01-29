@@ -10,11 +10,13 @@ import { ErrorMessage } from "../widgets/message";
 import Modal from "../widgets/modal";
 import InvitationSend from "./content/invitationSend";
 import { ButtonLoading } from "../widgets/loading";
+import { useNavigate } from "react-router-dom";
 
 const Invitation = () => {
 
-    const {addUsers, loading} = authActivityService();
-    const {activity} = useContext(AuthContext);
+    const {addUsers, loading, managerUserActivity} = authActivityService();
+    const {activity, user} = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const [alert, setAlert] = useState({showMessage: false, message: ""});
 
@@ -70,6 +72,30 @@ const Invitation = () => {
         }
     }
 
+    const handleManagerUserActivity = async () => {
+        const uid = generateUniqueId();
+
+        const data = {
+            "uid": uid,
+            "userId": user.uid,
+            "activityId": activity.uid,
+            "role": "manager",
+            "status": "true"
+        }
+
+        const response = await managerUserActivity("activity/create/managerActivity", data);
+        console.log("FRONT-PATH --> ", response);
+
+        if(response.status == false){
+            setAlert({showMessage: true, message: response.error})
+        }else if(response.status == "true"){
+            console.log("Response data --> ", data);
+            const currentPath = window.location.pathname;
+            const modifiedPath = currentPath.replace("/option/invite", "/");
+            navigate(modifiedPath);
+        }
+    }
+
     
 
     return ( 
@@ -93,7 +119,7 @@ const Invitation = () => {
                                 </div>
                                 
                                     <div className="col text-end">
-                                        <SecondaryButton children="Do it later" />
+                                    {loading ? <ButtonLoading /> :  <SecondaryButton children="Do it later" onClick={handleManagerUserActivity} />}
                                     </div>
                                 
                             </div>
@@ -102,7 +128,7 @@ const Invitation = () => {
                 </div>
             </div>
             {alert.showMessage && <ErrorMessage message={alert.message} onClick={handleClose} />}  
-            <Modal isOpen={isOpen} onClose={closeModal} children={<InvitationSend email={email} onClose={closeModal} />} title="" />          
+            <Modal isOpen={isOpen} onClose={closeModal} children={<InvitationSend email={email} onClose={closeModal} onRoute={handleManagerUserActivity} />} title="" />          
         </>
      );
 }

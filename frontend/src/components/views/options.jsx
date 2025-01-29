@@ -1,9 +1,47 @@
 import { colors } from "../tools/color";
 import option from "../../assets/icons/option.svg";
+import { useContext } from "react";
+import { AuthContext } from "../context/authContext";
+import { generateUniqueId } from "../utils/helper";
+import { authActivityService } from "../service/authActivityService";
+import { Loading } from "../widgets/loading";
+import { useNavigate } from "react-router-dom";
 
 const Options = () => {
+
+    const navigate = useNavigate();
+
+    const {user} = useContext(AuthContext);
+    const {managerUserActivity, loading} = authActivityService();
+
+    const handleUserActivity = async () => {
+
+        const uid = generateUniqueId();
+
+        var data = {
+            "uid": uid,
+            "userId": user.uid,
+            "activityId": "null",
+            "role": "user",
+            "status": "true"
+        }
+
+        const response = await managerUserActivity("activity/create/managerActivity", data);
+        if(response.status == "true"){
+            const currentPath = window.location.pathname;
+            const modifiedPath = currentPath.replace("/option/setting", "/");
+            navigate(modifiedPath);
+        }
+
+        console.log("The data is --> ", data);
+    }
+
     return ( 
         <>
+        {loading ? 
+        (<div className="vh-100 d-flex justify-content-center align-items-center">
+            <Loading />
+        </div>) : 
         <div className="d-flex justify-content-center align-items-center vh-100">
             <div className="row" style={{width: "1000px"}}>
                 <div className="col">
@@ -21,7 +59,7 @@ const Options = () => {
                             </a>
                         </div>
                         <div className="btn-container">
-                            <a href="#" style={{textDecoration: "none"}}>
+                            <a style={{textDecoration: "none"}} onClick={handleUserActivity}>
                             <span className="title fw-bold fs-5" style={{color: colors.secondaryColor}}>Solo Operation</span><br />
                             <span className="text-secondary">manage the activity entirely on your own. This is ideal for personal tasks 
                                 where no collaboration is needed.</span>
@@ -41,6 +79,7 @@ const Options = () => {
                 </div>
             </div>
         </div>
+        }
         </>
 
      );

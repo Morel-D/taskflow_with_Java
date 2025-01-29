@@ -60,16 +60,36 @@ export const authActivityService = () => {
             setLoading(true);
             const response = await axiosInstance.put(endpoint, data);
             console.log("COLLABORATOR ACTIVITY --> ", response);
+            localStorage.setItem("token", JSON.stringify(response.data.token));
             setUserToken(response.data.token);
             return response.data;
         }catch(error){
             return catchApiErrors(error);
         }finally{
-            setLoading(false);
+            setTimeout(() => {
+                setLoading(false);
+            }, 2000)
+        }
+    }
+
+    const managerUserActivity =  async (endpoint, data) => {
+        try{
+            setLoading(true);
+            const response = await axiosInstance.post(endpoint, data);
+            console.log("MANAGER ACTIVITY --> ", response);
+            localStorage.setItem("token", JSON.stringify(response.data.token));
+            setUserToken(response.data.token);
+            return response.data;
+        }catch(error){
+            return catchApiErrors(error);
+        }finally{
+            setTimeout(() => {
+                setLoading(false);
+            }, 2000)
         }
     }
 
 
-    return {loading, createActivity, accessActivity, addUsers, collaboratorActivity}
+    return {loading, createActivity, accessActivity, addUsers, collaboratorActivity, managerUserActivity}
 
 }

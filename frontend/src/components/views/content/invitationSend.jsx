@@ -3,7 +3,7 @@ import plane from "../../../assets/icons/plane.png";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 
-const InvitationSend = ({email, onClose}) => {
+const InvitationSend = ({email, onClose, onRoute}) => {
 
     const {loading} = useContext(AuthContext);
 
@@ -21,7 +21,7 @@ const InvitationSend = ({email, onClose}) => {
                     <PrimaryButton children="New Invitation" onClick={onClose} />
                 </div>
                 <div className="col col-3">
-                    <SecondaryButton children="Do it later" />
+                    <SecondaryButton children="Do it later" onClick={onRoute} />
                 </div>
             </div>
         </div>
