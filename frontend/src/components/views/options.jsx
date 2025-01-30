@@ -6,6 +6,8 @@ import { generateUniqueId } from "../utils/helper";
 import { authActivityService } from "../service/authActivityService";
 import { Loading } from "../widgets/loading";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+
 
 const Options = () => {
 
@@ -37,7 +39,12 @@ const Options = () => {
     }
 
     return ( 
-        <>
+        <motion.div
+        initial={{ opacity: 0, y: -80 }}  // Start from below
+        animate={{ opacity: 1, y: 0 }}  // Move up into view
+        exit={{ opacity: 0, x: -100 }}   // Fade out upwards when leaving
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        >
         {loading ? 
         (<div className="vh-100 d-flex justify-content-center align-items-center">
             <Loading />
@@ -51,27 +58,36 @@ const Options = () => {
                 <div className="col col-7">
                     <h2 style={{paddingLeft: "20px"}}>How would you like to participate ?</h2>
                     <div className="options-container mt-3">
-                        <div className="btn-container">
+                        <motion.div
+                          whileHover={{ x: 30 }} // Moves 10px to the right on hover
+                          transition={{ type: "spring", stiffness: 300 }} // Smooth spring effect
+                        className="btn-container">
                             <a href="/option/activity" style={{textDecoration: "none"}}>
                             <span className="title fw-bold fs-5" style={{color: colors.secondaryColor}}>Create an Activity</span><br />
                             <span className="text-secondary">Take the lead by creating an activity where you can invite collaborators 
                                 and manage tasks as the organizer.</span>
                             </a>
-                        </div>
-                        <div className="btn-container">
+                        </motion.div>
+                        <motion.div
+                          whileHover={{ x: 30 }} // Moves 10px to the right on hover
+                          transition={{ type: "spring", stiffness: 300 }} // Smooth spring effect                        
+                         className="btn-container">
                             <a style={{textDecoration: "none"}} onClick={handleUserActivity}>
                             <span className="title fw-bold fs-5" style={{color: colors.secondaryColor}}>Solo Operation</span><br />
                             <span className="text-secondary">manage the activity entirely on your own. This is ideal for personal tasks 
                                 where no collaboration is needed.</span>
                             </a>
-                        </div>
-                        <div className="btn-container">
+                        </motion.div>
+                        <motion.div
+                          whileHover={{ x: 30 }} // Moves 10px to the right on hover
+                          transition={{ type: "spring", stiffness: 300 }} // Smooth spring effect                        
+                        className="btn-container">
                             <a href="/option/collaborate" style={{textDecoration: "none"}}>
                             <span className="title fw-bold fs-5" style={{color: colors.secondaryColor}}>Join an Existing Activity</span><br />
                             <span className="text-secondary">Access an activity created by someone else and take part as a collaborator. 
                             </span>
                             </a>
-                        </div>
+                        </motion.div>
                     </div>
                 </div>
                 <div className="text-center mt-5">
@@ -80,7 +96,7 @@ const Options = () => {
             </div>
         </div>
         }
-        </>
+        </motion.div>
 
      );
 }

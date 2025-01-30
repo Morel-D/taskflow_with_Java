@@ -105,29 +105,29 @@ body {
 /* Transition Styles */
 .form-container,
 .box-container {
-  transition: all 0.5s ease; /* Smooth transition */
+  transition: all 0.5s ease !important; /* Smooth transition */
 }
 
 .box-container {
 
-  background-color: var(--greyColor); /* Add a background for distinction */
+  background-color: var(--greyColor) !important; /* Add a background for distinction */
 }
 
 /* Form Container Initial Style */
 .form-container {
-  z-index: 1; 
-  left: 0; /* Start on the left */
-  background-color: var(--greyColor); /* Add a background for distinction */
+  z-index: 1 !important; 
+  left: 0 !important; /* Start on the left */
+  background-color: var(--greyColor) !important; /* Add a background for distinction */
 }
 
 /* When switched */
 .form-right {
-  transform: translateX(200%); /* Move to the right */
+  transform: translateX(200%) !important; /* Move to the right */
 }
 
 .box-left {
-  z-index: 0;
-  transform: translateX(-50%); /* Move to the left */
+  z-index: 0 !important;
+  transform: translateX(-50%) !important; /* Move to the left */
 }
 
 

@@ -8,6 +8,8 @@ import { authActivityService } from "../service/authActivityService";
 import { ButtonLoading } from "../widgets/loading";
 import { ErrorMessage } from "../widgets/message";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+
 
 const AuthActivity = () => {
 
@@ -89,7 +91,12 @@ const AuthActivity = () => {
 
 
     return ( 
-        <>
+        <motion.div
+        initial={{ opacity: 0, x: 100 }} // Next page starts from the right
+        animate={{ opacity: 1, x: 0 }} // Next page moves into view
+        exit={{ opacity: 0, x: -100 }} // Current page fades out to the left
+        transition={{ duration: 0.6, ease: "easeInOut" }} // Smooth transition        
+        >
             <div className="d-flex justify-content-center align-items-center vh-100">
                 <div className="row" style={{width: "1000px"}}>
                     <div className="col mt-5">
@@ -119,7 +126,7 @@ const AuthActivity = () => {
                 </div>
             </div>
             {alert.showMessage && <ErrorMessage message={alert.message} onClick={handleClose} />}
-        </>
+        </motion.div>
      );
 }
  
