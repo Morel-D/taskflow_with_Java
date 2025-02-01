@@ -55,7 +55,7 @@ const AuthActivity = () => {
             return;
         }
         if(codeConfimration == undefined || codeConfimration == ""){
-            setCodeConfimation(true);
+            setErrorCodeConfirm(true);
             return;
         }
         if(code != codeConfimration){
@@ -99,25 +99,46 @@ const AuthActivity = () => {
         >
             <div className="d-flex justify-content-center align-items-center vh-100">
                 <div className="row" style={{width: "1000px"}}>
-                    <div className="col mt-5">
+                    <div className="col responsive-option-img mt-5">
                         <img src={activity} alt="My Icon" width="350" height="350" />
+                    </div>
+                    <div className="col col-12 d-lg-none text-center">
+                        <img src={activity} alt="My Icon" width="250" height="250" />
                     </div>
                     <div className="col">
                         <h2>Create Your Activity</h2>
                         <p>Create an activity where you can set your goals, define tasks, and invite collaborators to join you. </p>
                         <div className="activity-form">
-                            <div className="mt-4">
+                            <motion.div
+                             animate={errorName ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }}
+                             transition={{ duration: 0.5 }}
+                             className="mt-4">
                             <TextFeild placeholder="Enter your activity name" value={name} onChange={(e) => {setErrorName(false); setName(e.target.value)}} error={errorName} />
-                            </div>
-                            <div className="mt-3">
+                            </motion.div>
+
+                            <motion.div
+                            animate={errorDescription ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }}
+                            transition={{ duration: 0.5 }}
+                             className="mt-3">
                                 <TextAreaFeild placeholder="Give a brief description of your activity" row={3} value={description} onChange={(e) => {setErrorDescription(false); setDescription(e.target.value)} } error={errorDescription} />
-                            </div>
-                            <div className="mt-3">
+                            </motion.div>
+
+                            <motion.div
+                             className="mt-3"
+                             animate={errorCode ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }}
+                             transition={{ duration: 0.5 }}                             
+                             >
                                 <TextFeild placeholder="Enter your access code (4 to 6 digits)" value={code} onChange={(e) => {setErrorCode(false); setCode(e.target.value)}} error={errorCode} />
-                            </div>
-                            <div className="mt-3">
+                            </motion.div>
+
+                            <motion.div
+                             className="mt-3"
+                             animate={errorCodeConfirmError ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }}
+                             transition={{ duration: 0.5 }}   
+                             >
                                 <TextFeild placeholder="Confirm your access code" value={codeConfimration} onChange={(e) => {setErrorCodeConfirm(false); setCodeConfimation(e.target.value)}} error={errorCodeConfirmError} />
-                            </div>
+                            </motion.div>
+
                             <div className="mt-5">
                                 {loading ? <ButtonLoading /> : <PrimaryButton children="Create activity" onClick={handleCreation} /> }
                             </div>

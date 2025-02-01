@@ -116,18 +116,18 @@ body {
 /* Form Container Initial Style */
 .form-container {
   z-index: 1 !important; 
-  left: 0 !important; /* Start on the left */
-  background-color: var(--greyColor) !important; /* Add a background for distinction */
+  left: 0 !important; 
+  background-color: var(--greyColor) !important; 
 }
 
-/* When switched */
+
 .form-right {
-  transform: translateX(200%) !important; /* Move to the right */
+  transform: translateX(200%) !important; 
 }
 
 .box-left {
   z-index: 0 !important;
-  transform: translateX(-50%) !important; /* Move to the left */
+  transform: translateX(-50%) !important; 
 }
 
 
@@ -366,6 +366,10 @@ li > a {text-decoration: none;}
   animation: rotation 1s linear infinite;
 }
 
+.mobile-auth-title{
+  display: none;
+}
+
 @keyframes rotation {
   0% {
     transform: rotate(0deg);
@@ -391,4 +395,44 @@ li > a {text-decoration: none;}
   --whiteColor: #FFFFFF;
     background-color: #ffffff;
   }
+}
+
+
+@media (max-width: 1024px) { /* Adjust breakpoint as needed */
+  .responsive-form {
+    padding-left: 0 !important;
+    padding-top: 0 !important;
+  }
+  .col-9 {
+    width: 100% !important; /* or remove the class dynamically */
+  }
+  .form-container{
+    display: none;
+  }
+  .box-left {
+    z-index: 0 !important;
+    transform: translateX(0%) !important; /* Move to the left */
+  }
+  .mobile-auth-title{
+    display: block;
+  }
+
+  .responsive-option-img{
+    display: none;
+  }
+
+  .notif
+{
+  border-style: solid;
+  border-width: 0px 0px 0px 4px;
+  padding: 20px;
+  background-color: white;
+  width: 350px;
+  border-radius: 2px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  bottom: 20px; 
+  right: 20px; 
+}
+
 }

@@ -99,7 +99,7 @@ const SignUp = ({handleSwitch}) => {
 
     return ( 
         <>
-            <div className="form col-9" style={{ paddingTop: "8rem", paddingLeft: "14rem" }}>
+            <div className="form col-9 responsive-form" style={{ paddingTop: "8rem", paddingLeft: "14rem" }}>
                 <h2 style={{ color: colors.primaryColor }}>Welcome to TaskFlow</h2>
                 <p>Take control of your tasks, projects, and productivity today.</p>
 

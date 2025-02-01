@@ -51,11 +51,14 @@ const Options = () => {
         </div>) : 
         <div className="d-flex justify-content-center align-items-center vh-100">
             <div className="row" style={{width: "1000px"}}>
-                <div className="col">
+                <div className="col responsive-option-img">
                     <div className="mt-5"></div>
                     <img src={option} alt="My Icon" width="350" height="350" />
                 </div>
-                <div className="col col-7">
+                <div className="mobile-auth-title mt-2 mb-5 text-center">
+                    <h2>TaskFlow</h2>
+                </div>
+                <div className="col col-lg-7">
                     <h2 style={{paddingLeft: "20px"}}>How would you like to participate ?</h2>
                     <div className="options-container mt-3">
                         <motion.div

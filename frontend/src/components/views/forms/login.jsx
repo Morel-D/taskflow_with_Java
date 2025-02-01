@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { colors } from "../../tools/color";
 import { PrimaryButton } from "../../widgets/button";
-import { TextFeild } from "../../widgets/textFeilds";
+import { TextFeild, TextPassWordField } from "../../widgets/textFeilds";
 import { generateUniqueId, validateEmail } from "../../utils/helper";
 import { authApiService } from "../../service/authService";
 import { ButtonLoading } from "../../widgets/loading";
@@ -99,7 +99,7 @@ const Login = ({handleSwitch, exit, setExit}) => {
 
     return ( 
         <>
-            <div className="form col-9" style={{ paddingTop: "8rem", paddingLeft: "14rem" }}>
+            <div className="form col-9 responsive-form" style={{ paddingTop: "8rem", paddingLeft: "14rem" }}>
                 <h2 style={{ color: colors.primaryColor }}>Welcome Back</h2>
                 <p>Take control of your tasks, projects, and productivity today.</p>
 
@@ -114,7 +114,7 @@ const Login = ({handleSwitch, exit, setExit}) => {
                     animate={passwordError ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }} // Shake effect
                     transition={{ duration: 0.5 }}
                 className="mt-3">
-                    <TextFeild placeholder="Enter your password" value={password} onChange={(e) => {setPasswordError(false); setPasword(e.target.value)}} maxLength={15} error={passwordError} />
+                    <TextPassWordField type="password" placeholder="Enter your password" value={password} onChange={(e) => {setPasswordError(false); setPasword(e.target.value)}} maxLength={15} error={passwordError} />
                 </motion.div>
 
                 <div className="mt-5">
