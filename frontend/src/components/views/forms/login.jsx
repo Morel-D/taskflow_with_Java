@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { colors } from "../../tools/color";
 import { PrimaryButton } from "../../widgets/button";
-import { TextFeild, TextPassWordField } from "../../widgets/textFeilds";
+import { TextFeild, TextIconFeild, TextPassWordField } from "../../widgets/textFeilds";
 import { generateUniqueId, validateEmail } from "../../utils/helper";
 import { authApiService } from "../../service/authService";
 import { ButtonLoading } from "../../widgets/loading";
@@ -103,19 +103,16 @@ const Login = ({handleSwitch, exit, setExit}) => {
                 <h2 style={{ color: colors.primaryColor }}>Welcome Back</h2>
                 <p>Take control of your tasks, projects, and productivity today.</p>
 
-                <motion.div
-                    animate={emailError ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }} // Shake effect
-                    transition={{ duration: 0.5 }} // Quick animation
-                className="mt-3">
+                <div className="mt-3">
                     <TextFeild placeholder="Enter your email" value={email} onChange={(e) => {setEmailError(false); setEmail(e.target.value)}} maxLength={30} error={emailError} />
-                </motion.div>
+                </div>
 
-                <motion.div
+                <div
                     animate={passwordError ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }} // Shake effect
                     transition={{ duration: 0.5 }}
                 className="mt-3">
                     <TextPassWordField type="password" placeholder="Enter your password" value={password} onChange={(e) => {setPasswordError(false); setPasword(e.target.value)}} maxLength={15} error={passwordError} />
-                </motion.div>
+                </div>
 
                 <div className="mt-5">
                 {success ? (
@@ -133,7 +130,7 @@ const Login = ({handleSwitch, exit, setExit}) => {
                 <div className="mt-4">
                     Don't have an account ?{" "}
                     <a className="text-green" href="#" onClick={loading ? '' : handleSwitch}>
-                    Sign In
+                    Sign Up
                     </a>
                 </div>
             </div>

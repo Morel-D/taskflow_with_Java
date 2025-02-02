@@ -394,6 +394,7 @@ public class ActivityController extends HttpServlet {
                 Map<String, Object> responseMap = new HashMap<>();
                 responseMap.put("status", "true");
                 responseMap.put("data", companyData);
+                responseMap.put("token", token);
     
                 objectMapper.writeValue(res.getWriter(), responseMap);
             }

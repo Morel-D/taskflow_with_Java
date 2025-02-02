@@ -11,6 +11,7 @@ import Modal from "../widgets/modal";
 import InvitationSend from "./content/invitationSend";
 import { ButtonLoading } from "../widgets/loading";
 import { useNavigate } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 
 const Invitation = () => {
 
@@ -99,13 +100,26 @@ const Invitation = () => {
     
 
     return ( 
-        <>
+        <AnimatePresence mode="wait">
             <div className="d-flex justify-content-center align-items-center vh-100">
                 <div className="row">
-                    <div className="col">
+                    <motion.div
+                        initial={{opacity: 0, x: 100}}
+                        animate={{opacity: 1, x: 0}}
+                        exit={{opacity: 0, x: 100}}
+                        transition={{duration: 0.8, ease: "easeOut"}}                    
+                    className="col d-none d-lg-block">
                         <img src={team} alt="My Icon" width="450" height="450" />
+                    </motion.div>
+                    <div className="mobile-auth-title mt-2 mb-5 text-center">
+                        <h2>TaskFlow</h2>
                     </div>
-                    <div className="col mt-5 py-5">
+                    <motion.div
+                        initial={{opacity: 0, x: 100}}
+                        animate={{opacity: 1, x: 0}}
+                        exit={{opacity: 0, x: 100}}
+                        transition={{duration: 0.8, ease: "easeOut", delay: 0.5}}                    
+                    className="col mt-5 py-5">
                         <h5 className="text" style={{color: colors.primaryColor}}>Wer're almost there !! 🎉</h5>
                         <h2>Invite a Collaborator</h2>
                         <p>Invite teammates, colleagues, or friends to join your activity and work together toward a shared goal. </p>
@@ -124,12 +138,12 @@ const Invitation = () => {
                                 
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
             {alert.showMessage && <ErrorMessage message={alert.message} onClick={handleClose} />}  
             <Modal isOpen={isOpen} onClose={closeModal} children={<InvitationSend email={email} onClose={closeModal} onRoute={handleManagerUserActivity} />} title="" />          
-        </>
+        </AnimatePresence>
      );
 }
  

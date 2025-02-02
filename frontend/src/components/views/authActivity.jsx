@@ -8,7 +8,7 @@ import { authActivityService } from "../service/authActivityService";
 import { ButtonLoading } from "../widgets/loading";
 import { ErrorMessage } from "../widgets/message";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 
 const AuthActivity = () => {
@@ -91,63 +91,56 @@ const AuthActivity = () => {
 
 
     return ( 
-        <motion.div
-        initial={{ opacity: 0, x: 100 }} // Next page starts from the right
-        animate={{ opacity: 1, x: 0 }} // Next page moves into view
-        exit={{ opacity: 0, x: -100 }} // Current page fades out to the left
-        transition={{ duration: 0.6, ease: "easeInOut" }} // Smooth transition        
-        >
-            <div className="d-flex justify-content-center align-items-center vh-100">
-                <div className="row" style={{width: "1000px"}}>
-                    <div className="col responsive-option-img mt-5">
-                        <img src={activity} alt="My Icon" width="350" height="350" />
-                    </div>
-                    <div className="col col-12 d-lg-none text-center">
-                        <img src={activity} alt="My Icon" width="250" height="250" />
-                    </div>
-                    <div className="col">
-                        <h2>Create Your Activity</h2>
-                        <p>Create an activity where you can set your goals, define tasks, and invite collaborators to join you. </p>
-                        <div className="activity-form">
-                            <motion.div
-                             animate={errorName ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }}
-                             transition={{ duration: 0.5 }}
-                             className="mt-4">
-                            <TextFeild placeholder="Enter your activity name" value={name} onChange={(e) => {setErrorName(false); setName(e.target.value)}} error={errorName} />
-                            </motion.div>
-
-                            <motion.div
-                            animate={errorDescription ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }}
-                            transition={{ duration: 0.5 }}
-                             className="mt-3">
-                                <TextAreaFeild placeholder="Give a brief description of your activity" row={3} value={description} onChange={(e) => {setErrorDescription(false); setDescription(e.target.value)} } error={errorDescription} />
-                            </motion.div>
-
-                            <motion.div
-                             className="mt-3"
-                             animate={errorCode ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }}
-                             transition={{ duration: 0.5 }}                             
-                             >
-                                <TextFeild placeholder="Enter your access code (4 to 6 digits)" value={code} onChange={(e) => {setErrorCode(false); setCode(e.target.value)}} error={errorCode} />
-                            </motion.div>
-
-                            <motion.div
-                             className="mt-3"
-                             animate={errorCodeConfirmError ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }}
-                             transition={{ duration: 0.5 }}   
-                             >
-                                <TextFeild placeholder="Confirm your access code" value={codeConfimration} onChange={(e) => {setErrorCodeConfirm(false); setCodeConfimation(e.target.value)}} error={errorCodeConfirmError} />
-                            </motion.div>
-
-                            <div className="mt-5">
-                                {loading ? <ButtonLoading /> : <PrimaryButton children="Create activity" onClick={handleCreation} /> }
-                            </div>
+       <AnimatePresence>
+            <div>
+                <div className="d-flex justify-content-center align-items-center vh-100">
+                    <div className="row" style={{width: "1000px"}}>
+                        <motion.div
+                        initial={{opacity: 0, x: 100}}
+                        animate={{opacity: 1, x: 0}}
+                        exit={{opacity: 0, x: 100}}
+                        transition={{duration: 0.8, ease: "easeOut"}}
+                        className="col responsive-option-img mt-5">
+                            <img src={activity} alt="My Icon" width="350" height="350" />
+                        </motion.div>
+                        <div className="col col-12 d-lg-none text-center">
+                            <img src={activity} alt="My Icon" width="250" height="250" />
                         </div>
+                        <motion.div
+                        initial={{opacity: 0, x: 100}}
+                        animate={{opacity: 1, x: 0}}
+                        exit={{opacity: 0, x: 100}}
+                        transition={{duration: 0.8, ease: "easeOut", delay: 0.5}}                        
+                        className="col">
+                            <h2>Create Your Activity</h2>
+                            <p>Create an activity where you can set your goals, define tasks, and invite collaborators to join you. </p>
+                            <div className="activity-form">
+                                <div>
+                                <TextFeild placeholder="Enter your activity name" value={name} onChange={(e) => {setErrorName(false); setName(e.target.value)}} error={errorName} />
+                                </div>
+
+                                <div>
+                                    <TextAreaFeild placeholder="Give a brief description of your activity" row={3} value={description} onChange={(e) => {setErrorDescription(false); setDescription(e.target.value)} } error={errorDescription} />
+                                </div>
+
+                                <div>
+                                    <TextFeild placeholder="Enter your access code (4 to 6 digits)" value={code} onChange={(e) => {setErrorCode(false); setCode(e.target.value)}} error={errorCode} />
+                                </div>
+
+                                <div>
+                                    <TextFeild placeholder="Confirm your access code" value={codeConfimration} onChange={(e) => {setErrorCodeConfirm(false); setCodeConfimation(e.target.value)}} error={errorCodeConfirmError} />
+                                </div>
+
+                                <div className="mt-5">
+                                    {loading ? <ButtonLoading /> : <PrimaryButton children="Create activity" onClick={handleCreation} /> }
+                                </div>
+                            </div>
+                        </motion.div>
                     </div>
                 </div>
+                {alert.showMessage && <ErrorMessage message={alert.message} onClick={handleClose} />}
             </div>
-            {alert.showMessage && <ErrorMessage message={alert.message} onClick={handleClose} />}
-        </motion.div>
+       </AnimatePresence>
      );
 }
  

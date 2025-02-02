@@ -6,6 +6,8 @@ import { AuthContext } from "../context/authContext";
 import { ErrorMessage } from "../widgets/message";
 import { useNavigate } from "react-router-dom";
 import { ButtonLoading } from "../widgets/loading";
+import { AnimatePresence, motion } from "framer-motion";
+import work from "../../assets/icons/work.svg";
 
 const Intro = () => {
 
@@ -53,10 +55,28 @@ const Intro = () => {
     }
 
     return ( 
-        <>
+        <AnimatePresence mode="wait">
             <div className="d-flex justify-content-center align-items-center vh-100">
-                <div className="" style={{width: "500px"}}>
-                    <h2>Access Your Activity Workspace</h2>
+                <div className="row" style={{display: "flex"}}>
+                    <motion.div
+                    initial={{opacity: 0, x: 100}}
+                    animate={{opacity: 1, x: 0}}
+                    exit={{opacity: 0, x: 100}}
+                    transition={{duration: 0.8, ease: "easeOut"}}
+                    className="col d-none d-lg-block text-center">
+                        <img src={work} alt="My Icon" width="450" height="450" />
+                    </motion.div>
+                    <div className="mobile-auth-title mt-2 mb-5 text-center">
+                        <h2>TaskFlow</h2>
+                    </div>
+                    <motion.div
+                    initial={{opacity: 0, x: 100}}
+                    animate={{opacity: 1, x: 0}}
+                    exit={{opacity: 0, x: 100}}
+                    transition={{duration: 0.8, ease: "easeOut", delay: 0.5}}
+                    className="col col mt-5 py-lg-5 mx-lg-0 mx-2">
+                    <div className="">
+                    <h2 className="text-lg-start text-center">Access Your Activity Workspace</h2>
                     <p className="mt-3"> Collaborate seamlessly with your team and stay aligned on your shared goals. Start making an impact today !</p> 
 
                     <div className="form mt-4">
@@ -69,9 +89,11 @@ const Intro = () => {
                         </div>
                     </div>               
                 </div>
+                    </motion.div>
+                </div>
             </div>
             {alert.showMessage && <ErrorMessage message={alert.message} onClick={handleClose} />}
-        </>
+        </AnimatePresence>
      );
 }
  

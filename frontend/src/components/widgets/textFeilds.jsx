@@ -1,15 +1,20 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { motion } from "framer-motion";
+
 
 
 
 const TextFeild = ({label, type, placeholder, onChange, value, maxLength, error}) =>
     {
         return (
-            <div>
+            <motion.div
+            animate={error ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }} // Shake effect
+            transition={{ duration: 0.5 }}
+            >
                 <p className="text-dark">{label}</p>
                 <input type={type} className={error == true ? "form-control input-danger-text" : "form-control input-text"} maxLength={maxLength ?? 50} placeholder={placeholder} value={value} onChange={onChange} />
-            </div>
+            </motion.div>
         )
     }
 
@@ -22,7 +27,14 @@ const TextFeild = ({label, type, placeholder, onChange, value, maxLength, error}
         };
     
         return (
-            <div className="relative">
+            <motion.div 
+            animate={error ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }} // Shake effect
+            transition={{ duration: 0.5 }}
+            className="form-group has-search-suffix">
+                    <span className="form-control-feedback-suffix" 
+                onClick={togglePasswordVisibility}>
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </span>
                 <input
                     type={showPassword ? "text" : "password"}
                     className={error == true ? "form-control input-danger-text" : "form-control input-text"}
@@ -31,16 +43,7 @@ const TextFeild = ({label, type, placeholder, onChange, value, maxLength, error}
                     onChange={onChange}
                     maxLength={maxLength ?? 50}
                 />
-                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500" 
-                style={{
-                    position: "relative",
-                    left: "470px",
-                    bottom: "37px"
-                }}
-                onClick={togglePasswordVisibility}>
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </span>
-            </div>
+            </motion.div>
         );
     };
 
@@ -59,10 +62,13 @@ const TextFeild = ({label, type, placeholder, onChange, value, maxLength, error}
         const TextAreaFeild = ({label, placeholder, onChange, value, maxLength, row, error}) =>
             {
                 return(
-                    <div>
+                    <motion.div
+                    animate={error ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }} // Shake effect
+                    transition={{ duration: 0.5 }}
+                    >
                         <p className="text-dark">{label}</p>
                         <textarea className={error == true ? "form-control input-danger-text" : "form-control input-text"} value={value} maxLength={maxLength ?? 100} placeholder={placeholder} rows={row} onChange={onChange}></textarea>
-                    </div>
+                    </motion.div>
                 )
             }
         

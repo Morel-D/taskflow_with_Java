@@ -58,14 +58,15 @@ const Organisation = () => {
                 {
                     loading ? <div className="d-flex align-items-center justify-content-center vh-100"><Loading /></div>
                     :
-                    <div className="py-5 text-center mt-5 mx-5">
-                    <h1>Do you want to collaborate ? </h1>
+                    <div className="py-5 text-center mt-5 mx-lg-5 mx-3">
+                    <h1 className="d-lg-block d-none">Do you want to collaborate ? </h1>
+                    <h5 className="d-block d-lg-none text-dark fw-bold">Do you want to <br /> collaborate ? </h5>
                     <br />
                     <div className="d-flex justify-content-center">
-                        <div className="card p-4 col-8">
+                        <div className="card p-4 col-lg-8">
                             {getdata.map((data) => (
                                 <div className="row" key={data.id}>
-                                <div className="col col-5">
+                                <div className="col col-5 d-none d-lg-block">
                                     <img src={create} alt="My Icon" width="300" height="300" />
                                 </div>
                                 <div className="col text-start">
@@ -107,7 +108,16 @@ const Organisation = () => {
                                     {data.collaborators.length == 0 ? <><br /><br /></> : (
                                         <>
                                         <label className="fw-1 mt-2">Collaborators -</label>
-                                            <div className="mt-2">
+
+                                        <div className="d-flex">
+                                            <div className="col col-1 d-lg-block d-none">
+                                                <img src={usersImg} alt="" style={{width: "33px"}} />
+                                            </div>
+                                            <div className="col mt-1"><p className="text-dark">{data.collaborators[0].name} {data.collaborators.length - 1 == 0 ? "" : `and ${data.collaborators.length - 1} other ${data.collaborators.length - 1 > 1 ? "collaborators" : "collaborator" }` }</p></div>
+                                        </div> 
+                                        <br />
+                                        <br />                                       
+                                            {/* <div className="mt-2">
                                             <FloatingCard triggerText={
                                                 <div className="d-flex">
                                                     <div className="col col-1">
@@ -151,14 +161,14 @@ const Organisation = () => {
                                                 <br />
                                                 <br />
 
-                                            </div>
+                                            </div> */}
                                         </>
                                     )}
                                     <div className="d-flex justify-content-end">
                                         <div className="">
                                                 <SecondaryButton children="Decline" />
                                             </div>
-                                            <div className="mx-4">
+                                            <div className="mx-lg-4 mx-2">
                                                 {loading ? <ButtonLoading /> :<PrimaryButton children="Join in" onClick={handleUserCollaborate}/>}
                                             </div>
                                     </div>

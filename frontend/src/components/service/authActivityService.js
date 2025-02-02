@@ -20,7 +20,7 @@ export const authActivityService = () => {
             setActivity(response.data.data);
             localStorage.setItem("token", JSON.stringify(response.data.token));
             setUserToken(response.data.token);
-            // console.log("Activity --> ", response.data);
+            console.log("Activity --> ", response.data);
             return response.data;
         }catch(error){
             return catchApiErrors(error);

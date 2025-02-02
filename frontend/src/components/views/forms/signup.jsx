@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { colors } from "../../tools/color";
 import { PrimaryButton } from "../../widgets/button";
-import { TextFeild } from "../../widgets/textFeilds";
+import { TextFeild, TextPassWordField } from "../../widgets/textFeilds";
 import { generateUniqueId, validateEmail } from "../../utils/helper";
 import { authApiService } from "../../service/authService";
 import { ButtonLoading } from "../../widgets/loading";
@@ -112,21 +112,21 @@ const SignUp = ({handleSwitch}) => {
                 </div>
 
                 <div className="mt-3">
-                    <TextFeild placeholder="Enter your password" value={password} onChange={(e) => {setPasswordError(false); setPassword(e.target.value)}} error={passordError} />
+                    <TextPassWordField placeholder="Enter your password" value={password} onChange={(e) => {setPasswordError(false); setPassword(e.target.value)}} error={passordError} />
                 </div>
 
                 <div className="mt-3">
-                    <TextFeild placeholder="Confirm password" value={confirmPassword} onChange={(e) => {setConfirmPasswordError(false); setConfirmPassword(e.target.value)}} error={confirmPassordError} />
+                    <TextPassWordField placeholder="Confirm password" value={confirmPassword} onChange={(e) => {setConfirmPasswordError(false); setConfirmPassword(e.target.value)}} error={confirmPassordError} />
                 </div>
 
                 <div className="mt-5">
-                    {loading ? <ButtonLoading /> :<PrimaryButton children="Sign up" onClick={handleSigIn} />}
+                    {loading ? <ButtonLoading /> :<PrimaryButton children="Sign Up" onClick={handleSigIn} />}
                 </div>
 
                 <div className="mt-4">
                     Already have an account?{" "}
                     <a className="text-green" href="#" onClick={loading ? '' : handleSwitch}>
-                    Login
+                    LogIn
                     </a>
                 </div>
             </div>

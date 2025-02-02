@@ -18,6 +18,7 @@ const FloatingCard = ({ triggerText, children, className }) => {
         {isOpen && (
           <div
             className={`absolute left-0 mt-2 p-4 w-56 bg-white shadow-lg border border-gray-300 rounded-lg transition-all duration-300 ease-in-out ${className}`}
+            style={{ zIndex: 1000 }}  
           >
             {children}
           </div>

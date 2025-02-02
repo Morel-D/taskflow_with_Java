@@ -6,7 +6,7 @@ import { generateUniqueId } from "../utils/helper";
 import { authActivityService } from "../service/authActivityService";
 import { Loading } from "../widgets/loading";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 
 const Options = () => {
@@ -39,10 +39,11 @@ const Options = () => {
     }
 
     return ( 
-        <motion.div
+      <AnimatePresence>
+          <motion.div
         initial={{ opacity: 0, y: -80 }}  // Start from below
         animate={{ opacity: 1, y: 0 }}  // Move up into view
-        exit={{ opacity: 0, x: -100 }}   // Fade out upwards when leaving
+        exit={{ x: -100, opacity: 0 }}  
         transition={{ duration: 0.6, ease: "easeOut" }}
         >
         {loading ? 
@@ -65,7 +66,11 @@ const Options = () => {
                           whileHover={{ x: 30 }} // Moves 10px to the right on hover
                           transition={{ type: "spring", stiffness: 300 }} // Smooth spring effect
                         className="btn-container">
-                            <a href="/option/activity" style={{textDecoration: "none"}}>
+                            <a style={{textDecoration: "none"}} onClick={() => {
+                                setTimeout(() => {
+                                    navigate("/option/activity")
+                                }, 100)
+                            }}>
                             <span className="title fw-bold fs-5" style={{color: colors.secondaryColor}}>Create an Activity</span><br />
                             <span className="text-secondary">Take the lead by creating an activity where you can invite collaborators 
                                 and manage tasks as the organizer.</span>
@@ -85,7 +90,13 @@ const Options = () => {
                           whileHover={{ x: 30 }} // Moves 10px to the right on hover
                           transition={{ type: "spring", stiffness: 300 }} // Smooth spring effect                        
                         className="btn-container">
-                            <a href="/option/collaborate" style={{textDecoration: "none"}}>
+                            <a style={{textDecoration: "none"}}
+                            onClick={() => {
+                                setTimeout(() => {
+                                    navigate("/option/collaborate")
+                                }, 100)
+                            }}
+                            >
                             <span className="title fw-bold fs-5" style={{color: colors.secondaryColor}}>Join an Existing Activity</span><br />
                             <span className="text-secondary">Access an activity created by someone else and take part as a collaborator. 
                             </span>
@@ -100,6 +111,7 @@ const Options = () => {
         </div>
         }
         </motion.div>
+      </AnimatePresence>
 
      );
 }

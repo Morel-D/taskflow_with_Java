@@ -88,7 +88,7 @@ const Auth = () => {
                                             />
                                             </div>
                                             <div className="auth-left-content" style={{ paddingTop: "0rem", paddingRight: "2rem" }}>
-                                            <h2 className="text-white text-bold">Sign up</h2>
+                                            <h2 className="text-white text-bold">Sign Up</h2>
                                             <p className="text-white mt-4 fs-5">
                                                 Creating an account is quick and easy. Join thousands of users already boosting their productivity.
                                             </p>

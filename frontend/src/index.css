@@ -273,12 +273,16 @@ li > a {text-decoration: none;}
 .input-text::placeholder {color: var(--grey2Color);}
 
 .has-search .form-control {padding-left: 3.375rem;}
+.has-search-suffix .form-control {padding-left: 3.375rem;}
+
 
 .input-secondary-text {  border-style: none;  border-radius: 70px;  padding: 14px 0px 18px 10px; background-color: #F0F1F5; }
 .input-secondary-text:focus {  outline: none;  box-shadow: 0 0 0 1px var(--darkColor); background-color: #F0F1F5;}
 .input-secondary-text::placeholder {color: var(--grey2Color);}
 
 .has-search .form-control-feedback { position: absolute; z-index: 3; display: block; width: 2.8rem; height: 2rem; line-height: 2.8rem; text-align: center; pointer-events: none; padding-left: 20px; color: #aaa;}
+.has-search-suffix .form-control-feedback-suffix { position: absolute; z-index: 3; display: block; width: 2rem; height: 2rem; line-height: 2.8rem; text-align: center;  padding-left: 20px; color: #aaa; cursor: pointer;}
+
 
 .notif
 {
