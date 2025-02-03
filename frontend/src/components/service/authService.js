@@ -5,7 +5,7 @@ import { AuthContext } from "../context/authContext";
 
 export const authApiService = () => {
     const [loading, setLoading] = useState(false);
-    const { setUser } = useContext(AuthContext);
+    const { setUser, setUserToken } = useContext(AuthContext);
 
 
     const signUp = async (endpoint, data) => {

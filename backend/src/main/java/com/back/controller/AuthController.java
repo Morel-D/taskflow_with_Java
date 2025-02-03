@@ -263,6 +263,7 @@ public class AuthController extends HttpServlet {
                 
                                     Map<String, Object> responseMap = new HashMap<>();
 
+                                    responseMap.put("status", true);
                                     responseMap.put("user", userData);
                                     responseMap.put("userActivity", userActivityData);
                                     responseMap.put("token", token);

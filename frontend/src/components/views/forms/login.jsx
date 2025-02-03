@@ -18,7 +18,7 @@ const Login = ({handleSwitch, exit, setExit}) => {
     const newUid = generateUniqueId();
     const {login, loading} = authApiService();
 
-    const {setUser, setActivity} = useContext(AuthContext);
+    const {setUser, setActivity, setUserToken} = useContext(AuthContext);
 
     const [email, setEmail] = useState();
     const [password, setPasword] = useState();
@@ -67,10 +67,16 @@ const Login = ({handleSwitch, exit, setExit}) => {
         const response = await login("auth/login", data);
 
         console.log("response -->", response);
+        console.log("response -->", response.user);
 
         if(response.status == true){
             localStorage.setItem("user", JSON.stringify(response.user));
+            localStorage.setItem("token", JSON.stringify(response.token));
             setUser(response.user);
+            setUserToken(response.token);
+            const currentPath = window.location.pathname;
+            const modifiedPath = currentPath.replace("/login", "/");
+            navigate(modifiedPath);
         if(response.message == "no-userActivity"){
             // navigate("/option/setting", {replace: true});
             // navigate("/option/setting");
