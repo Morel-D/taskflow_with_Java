@@ -198,8 +198,14 @@ h2 {
   line-height: 1.1;
 }
 
-.active-link { color: white; font-size: 18px; font-weight: 400;}
-.link { color: var(--secondDarkColor); font-size: 18px; font-weight: 400; }
+.active-link { color: var(--secondaryColor); font-size: 18px; font-weight: 400;}
+.link { font-size: 16px; font-weight: 400; text-decoration: none; }
+
+a, .link{
+  text-decoration: none;
+  color: var(--grey2Color);
+}
+
 .active-li { font-size: 18px; font-weight: 400; background-color: var(--whiteColor); padding: 12px 12px 12px 12px; border-radius: 4px 0px 0px 4px; a { color: var(--secondaryColor); font-weight: 500; }}
 li{ padding: 12px 12px 12px 0px; border-radius: 4px; transition: padding 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out; }
 li:hover{ background-color: var(--hoverColor); padding: 12px 12px 12px 12px; border-radius: 4px; a { color: rgb(167, 167, 167); }}
@@ -276,7 +282,7 @@ li > a {text-decoration: none;}
 .has-search-suffix .form-control {padding-left: 3.375rem;}
 
 
-.input-secondary-text {  border-style: none;  border-radius: 70px;  padding: 14px 0px 18px 10px; background-color: #F0F1F5; }
+.input-secondary-text {  border-style: none;  border-radius: 30px;  padding: 14px 0px 18px 10px; background-color: #F0F1F5; }
 .input-secondary-text:focus {  outline: none;  box-shadow: 0 0 0 1px var(--darkColor); background-color: #F0F1F5;}
 .input-secondary-text::placeholder {color: var(--grey2Color);}
 

@@ -1,5 +1,5 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
-import Home from "../views/home";
+import Home from "../views/modules/home";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../context/authContext";
 

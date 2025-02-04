@@ -15,7 +15,7 @@ function App() {
   const {user} = useContext(AuthContext);
 
   return (
-    <div className="app container-fluid">
+    <div className="app">
       <BrowserRouter>
         <Routes>
             <Route path="/login" element={<AuthenticatedRedirect><Auth /></AuthenticatedRedirect>} />

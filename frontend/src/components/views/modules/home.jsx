@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import { colors } from "../tools/color";
-import CustomContainer from "../widgets/customConatiner";
-import TaskContainer from "../widgets/taskConatiner";
-import HighFeild from "./forms/taskForm";
+import { colors } from "../../tools/color";
+import CustomContainer from "../../widgets/customConatiner";
+import TaskContainer from "../../widgets/taskConatiner";
+import HighFeild from "../forms/taskForm";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import { ErrorMessage, SuccessMessage } from "../widgets/message";
-import { useApiServce } from "../service/apiService";
-import TaskForm from "./forms/taskForm";
-import { useTaskService } from "../service/taskService";
-import AddTaskContainer from "../widgets/addTaskConatiner";
+import { ErrorMessage, SuccessMessage } from "../../widgets/message";
+import { useApiServce } from "../../service/apiService";
+import TaskForm from "../forms/taskForm";
+import { useTaskService } from "../../service/taskService";
+import AddTaskContainer from "../../widgets/addTaskConatiner";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { StrictModeDroppable } from "../widgets/StrictModelDroppable";
-import NoNetwork from "../widgets/noNetwork";
+import { StrictModeDroppable } from "../../widgets/StrictModelDroppable";
+import NoNetwork from "../../widgets/noNetwork";
 const Home = () => {
 
     const  {loading, fetchHighTasks, fetchMeduimTasks, fetchLowTasks, updateTask} = useTaskService();

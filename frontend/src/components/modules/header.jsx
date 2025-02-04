@@ -1,32 +1,51 @@
 import { TextIconFeild } from "../widgets/textFeilds";
-import search from "../../assets/icons/search.png";
 import user from "../../assets/icons/user.png";
 import dropdown from "../../assets/icons/expand_arrow.png"
 import dropup from  "../../assets/icons/collapse_arrow.png"
+import { PrimaryButton, SecondaryButton } from "../widgets/button";
 
 const Header = () => {
+
+    const headerStyle = {
+        display: "flex",
+        justifyContent: "end",
+        alignItems: "center",
+        padding: "20px 20px",
+        backgroundColor: "#f8f9fa",    // Light background
+      };
+
+      
+      const rightSectionStyle = {
+        display: "flex",
+        alignItems: "center",
+        gap: "15px" // Space between buttons and avatar
+      };
+      
+      const avatarStyle = {
+        width: "50px",
+        height: "50px",
+        backgroundColor: "white",
+        color: "black",
+        fontWeight: "bold",
+        fontSize: "20px",
+        border: "1px solid black",
+        borderRadius: "50%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        cursor: "pointer"
+      };
+      
     return ( 
-        <div className="mb-4">
-            <div className="row">
-                <div className="col">
-                    <h2>All Tasks</h2>
-                    {/* This is the header all man */}
-                </div>
-                <div className="col mt-2">
-                    <div className="row">
-                        <div className="col col-10">
-                            <TextIconFeild icon={search} placeholder="Search for something" />
-                        </div>
-                        <div className="col text-end mt-1">
-                            <label htmlFor="">
-                                {/* <img src={dropup} className="col-1" /> */}
-                                <img src={user} className="col-7" />
-                            </label>
-                        </div>
-                    </div>
+        <section className="">
+            <div className="header-container bg-white" style={headerStyle}>
+                <div style={rightSectionStyle}>
+                    <SecondaryButton>Team</SecondaryButton>
+                    <PrimaryButton>Project</PrimaryButton>
+                    <div style={avatarStyle}>A</div>
                 </div>
             </div>
-        </div>
+        </section>
      );
 }
  
