@@ -42,6 +42,7 @@ public class App
 
 
         // Add the routes (servlets) to the handler
+        handler.addServlet(new ServletHolder(new SessionController(connection)), "/protected/*");
         handler.addServlet(new ServletHolder(new TaskContoller(connection)), "/protected/task/*");
         handler.addServlet(new ServletHolder(new AuthController(connection)), "/auth/*");
         handler.addServlet(new ServletHolder(new ActivityController(connection)), "/activity/*");

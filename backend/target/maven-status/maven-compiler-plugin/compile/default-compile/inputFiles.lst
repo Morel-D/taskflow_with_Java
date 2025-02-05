@@ -1,6 +1,7 @@
 D:\Projects\Project - z\Ongoing\taskflow\backend\src\main\java\com\back\App.java
 D:\Projects\Project - z\Ongoing\taskflow\backend\src\main\java\com\back\controller\ActivityController.java
 D:\Projects\Project - z\Ongoing\taskflow\backend\src\main\java\com\back\controller\AuthController.java
+D:\Projects\Project - z\Ongoing\taskflow\backend\src\main\java\com\back\controller\SessionController.java
 D:\Projects\Project - z\Ongoing\taskflow\backend\src\main\java\com\back\controller\TaskContoller.java
 D:\Projects\Project - z\Ongoing\taskflow\backend\src\main\java\com\back\middleware\JwtFilter.java
 D:\Projects\Project - z\Ongoing\taskflow\backend\src\main\java\com\back\middleware\UserIdFilter.java

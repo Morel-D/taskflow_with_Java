@@ -53,6 +53,9 @@ public class ActivityController extends HttpServlet {
         res.setStatus(HttpServletResponse.SC_OK);
     }
 
+
+    // GET REQUEST****************************************************************************************************
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException{
         // Set CORS headers
@@ -72,6 +75,7 @@ public class ActivityController extends HttpServlet {
             getActivityUsers(req, res);
         }
     }
+
 
     private void getActivities(HttpServletRequest req, HttpServletResponse res) throws IOException {
 
@@ -144,6 +148,8 @@ public class ActivityController extends HttpServlet {
         }
     }
 
+
+    // POST REQUEST****************************************************************************************************
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException{
@@ -633,6 +639,8 @@ public class ActivityController extends HttpServlet {
         }
     }
 
+
+    // PUT REQUEST****************************************************************************************************
 
 
     @Override
