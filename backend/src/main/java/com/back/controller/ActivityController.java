@@ -671,9 +671,10 @@ public class ActivityController extends HttpServlet {
 
         UserActivityModel userActivityModel = objectMapper.readValue(req.getReader(), UserActivityModel.class);
 
-        String sql = "UPDATE useractivity SET status = 'true' WHERE userId = ? AND status = 'pending'";
+        String sql = "UPDATE useractivity SET status = ? WHERE userId = ? AND status = 'pending'";
         try(PreparedStatement statement = connection.prepareStatement(sql)){
-            statement.setString(1, userActivityModel.getUserId());
+            statement.setString(1, userActivityModel.getStatus());
+            statement.setString(2, userActivityModel.getUserId());
 
             int rowUpdated = statement.executeUpdate();
 

@@ -36,9 +36,10 @@ const Organisation = () => {
     }, []);
 
 
-    const handleUserCollaborate  = async () => {
+    const handleUserCollaborate  = async (action) => {
 
         var data = {
+            "status": action,
             "userId": user.uid
         }
 
@@ -50,6 +51,8 @@ const Organisation = () => {
             navigate(modifiedPath);
         }
     }
+
+
 
     return ( 
         <>
@@ -166,10 +169,10 @@ const Organisation = () => {
                                     )}
                                     <div className="d-flex justify-content-end">
                                         <div className="">
-                                                <SecondaryButton children="Decline" />
+                                                <SecondaryButton children="Decline" onClick={() => {handleUserCollaborate("decline")}} />
                                             </div>
                                             <div className="mx-lg-4 mx-2">
-                                                {loading ? <ButtonLoading /> :<PrimaryButton children="Join in" onClick={handleUserCollaborate}/>}
+                                                {loading ? <ButtonLoading /> :<PrimaryButton children="Join in" onClick={() => {handleUserCollaborate("true")}}/>}
                                             </div>
                                     </div>
                                 </div>

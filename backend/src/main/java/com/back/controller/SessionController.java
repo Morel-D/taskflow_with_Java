@@ -102,7 +102,7 @@ public class SessionController extends HttpServlet {
                     responseMap.put("action", "wipe");
                     objectMapper.writeValue(res.getWriter(), responseMap);
                 }else{
-                    if(rs.getString("role").equals("collaborator") || rs.getString("role").equals("manager")){
+                    if(rs.getString("role").equals("collaborator")){
                         String query2 = "SELECT * FROM activity WHERE uid = ?";
                         try(PreparedStatement statement2 = connection.prepareStatement(query2)){
                             statement2.setString(1, rs.getString("activityId"));
@@ -124,6 +124,58 @@ public class SessionController extends HttpServlet {
                                 info.put("user", userActivity);
                                 info.put("activity", activity);
                                 objectMapper.writeValue(res.getWriter(), info);
+                            }
+                        } 
+                    } else if( rs.getString("role").equals("manager")){
+                        String query3 = "SELECT * FROM activity WHERE uid = ?";
+                        try(PreparedStatement statement3 = connection.prepareStatement(query3)){
+                            statement3.setString(1, rs.getString("activityId"));
+                            ResultSet rs3 = statement3.executeQuery();
+                            if(rs3.next()){
+                                Map<String, Object> activity = new HashMap<>();
+                                activity.put("id", rs3.getString("id"));
+                                activity.put("uid", rs3.getString("uid"));
+                                activity.put("userId", rs3.getString("userUid"));
+                                activity.put("manager", rs3.getString("userName"));
+                                activity.put("email", rs3.getString("email"));
+                                activity.put("activity", rs3.getString("name"));
+                                activity.put("description", rs3.getString("description"));
+                                activity.put("status", rs3.getString("status"));
+
+                                String query4 = "SELECT u.*, ua.status AS userActivityStatus, u.status AS userStatus, ua.uid AS userActivityUid " +
+                                "FROM user u " +
+                                "JOIN useractivity ua ON u.uid = ua.userId " +
+                                "JOIN activity a ON a.uid = ua.activityId " +
+                                "WHERE a.uid = ? AND ua.role <> 'manager'";
+
+                                try(PreparedStatement statement4 = connection.prepareStatement(query4)){
+                                    statement4.setString(1, rs3.getString("uid"));
+                                    ResultSet rs4 = statement4.executeQuery();
+
+                                    List<Map<String, Object>> collaborators = new ArrayList<>();
+
+                                    while(rs4.next()){
+                                        Map<String, Object> collaborator = new HashMap<>();
+                                        collaborator.put("id", rs4.getString("id"));
+                                        collaborator.put("userActivityUid", rs4.getString("userActivityUid"));
+                                        collaborator.put("username", rs4.getString("username"));
+                                        collaborator.put("userStatus", rs4.getString("userStatus")); // Status from user table
+                                        collaborator.put("userActivityStatus", rs4.getString("userActivityStatus")); 
+                                        collaborators.add(collaborator);
+                                    }
+
+
+
+                                    Map<String, Object> info = new HashMap<>();
+                                    info.put("status", "true");
+                                    info.put("role", rs.getString("role"));
+                                    info.put("user", userActivity);
+                                    info.put("activity", activity);
+                                    info.put("collaborators", collaborators);
+                                    objectMapper.writeValue(res.getWriter(), info);
+                                }
+    
+
                             }
                         } 
                     }else{
