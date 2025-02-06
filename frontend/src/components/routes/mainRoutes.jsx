@@ -3,18 +3,21 @@ import Navbar from "../modules/navbar";
 import Header from "../modules/header";
 import Home from "../views/modules/home";
 import Admin from "../views/admin";
+import { SessionProvider } from "../context/sessionContext";
 
 const MainRoutes = () => {
     return ( 
-        <div>
-            <div className="">
-                <div className="content">
-                    <Routes>
-                        <Route path="/dashboard/*" element={<Admin />} />
-                    </Routes>
+        <SessionProvider>
+            <div>
+                <div className="">
+                    <div className="content">
+                        <Routes>
+                            <Route path="/dashboard/*" element={<Admin />} />
+                        </Routes>
+                    </div>
                 </div>
             </div>
-        </div>
+        </SessionProvider>
      );
 }
  

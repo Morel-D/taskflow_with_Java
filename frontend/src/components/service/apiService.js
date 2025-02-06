@@ -65,6 +65,7 @@ export const useApiServce = () => {
 
     const getDataByID = async(endpoint, id) => {
         try{
+            console.log("THE ENDPOINT --> ", endpoint)
             setLoading(true);
             const response = await axiosInstance.get(endpoint);
             if(response){

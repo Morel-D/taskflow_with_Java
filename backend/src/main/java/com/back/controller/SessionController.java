@@ -63,6 +63,8 @@ public class SessionController extends HttpServlet {
         
         String pathInfo = req.getPathInfo();
 
+        System.out.print("Path Info --> "+ pathInfo);
+
         if(pathInfo == null || pathInfo.length() > 1){
             String activityId = pathInfo.substring(1);
             getActivityById(activityId, res);

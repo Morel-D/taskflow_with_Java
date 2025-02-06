@@ -35,12 +35,29 @@ public class JwtFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+
+
         HttpServletRequest httpRequest = (HttpServletRequest) req;
         HttpServletResponse httpResponse = (HttpServletResponse) res;
+
+
+        // Set CORS headers
+        httpResponse.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+        httpResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
+        httpResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        httpResponse.setHeader("Access-Control-Max-Age", "3600");
+        if ("OPTIONS".equalsIgnoreCase(httpRequest.getMethod())) {
+            httpResponse.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
+
+        httpResponse.setContentType("application/json");
+
 
         String authorizationHeader = httpRequest.getHeader("Authorization");
 
         if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer")){
+
             httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             Map<String, Object> tokenReponse = new HashMap<>();
             tokenReponse.put("status", "false");
@@ -51,7 +68,6 @@ public class JwtFilter implements Filter {
         }
 
         String token = authorizationHeader.substring(7);
-        System.out.println("Token : "+ token);
         try{
 
             Claims claims = Jwts.parser()
@@ -83,7 +99,8 @@ public class JwtFilter implements Filter {
             Map<String, Object> tokenReponse = new HashMap<>();
             tokenReponse.put("status", "false");
             tokenReponse.put("error", "Unauthorized");
-            tokenReponse.put("message", "Token validation failed");
+            tokenReponse.put("message", "Token-expire");
+            tokenReponse.put("error", e.getMessage());
             objectMapper.writeValue(res.getWriter(), tokenReponse);
             // httpResponse.getWriter().write("Unauthorized: Token validation failed");          
         }
