@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { colors } from "../../tools/color";
 import CustomContainer from "../../widgets/customConatiner";
 import TaskContainer from "../../widgets/taskConatiner";
@@ -13,13 +13,14 @@ import AddTaskContainer from "../../widgets/addTaskConatiner";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { StrictModeDroppable } from "../../widgets/StrictModelDroppable";
 import NoNetwork from "../../widgets/noNetwork";
+import { SessionContext } from "../../context/sessionContext";
 const Home = () => {
 
-    const  {loading, fetchHighTasks, fetchMeduimTasks, fetchLowTasks, updateTask} = useTaskService();
+    const  {loading, fetchTodoTasks, fetchProgressTasks, fetchDoneTasks, updateTask} = useTaskService();
 
-    const [highModal, setHighModal] = useState(false);
-    const [lowModal, setLowModal] = useState(false);
-    const [meduimModal, setMeduimModal] = useState(false);
+    const [todoModal, setTodoModal] = useState(false);
+    const [doneModal, setDoneModal] = useState(false);
+    const [progressModal, setProgressModal] = useState(false);
     const [network, setNetwork] = useState(false);
 
     const [alert, setAlert] = useState({showMessage: false, messageType: "", message: ""});
@@ -27,30 +28,30 @@ const Home = () => {
     const [loadingType, setLoadingType] = useState({showLoading: false, type: ""});
     const [load, setLoad] = useState(true);
 
-    const [dataHigh, setDataHigh] = useState([]);
-    const [dataMeduim, setDataMeduim] = useState([]);
-    const [dataLow, setDataLow] = useState([]);
+    const [dataTodo, setDataTodo] = useState([]);
+    const [dataProgress, setDataProgress] = useState([]);
+    const [dataDone, setDataDone] = useState([]);
 
 
 
 
-    const openHighModal = () => setHighModal(true);
-    const closeHighModal = () => setHighModal(false);
+    const openTodoModal = () => setTodoModal(true);
+    const closeTodoModal = () => setTodoModal(false);
 
-    const openLowModal = () => setLowModal(true);
-    const closeLowModal = () => setLowModal(false);
+    const openDoneModal = () => setDoneModal(true);
+    const closeDoneModal = () => setDoneModal(false);
 
-    const openMeduimModal = () => setMeduimModal(true);
-    const closeMeduimModal = () => setMeduimModal(false);
+    const openProgressModal = () => setProgressModal(true);
+    const closeProgressModal = () => setProgressModal(false);
 
 
     const handleReload = async () => {
 
 
-        const getHighData = async () => {
+        const getTodoData = async () => {
             try{
-                const response = await fetchHighTasks();
-                setDataHigh(response.data);
+                const response = await fetchTodoTasks();
+                setDataTodo(response.data);
                 setFetch(false);
                 setLoad(false);
             }catch(error){
@@ -58,15 +59,15 @@ const Home = () => {
             }
         }
 
-        const getMeduimData = async () => {
+        const getProgressData = async () => {
             try{
-                const response = await fetchMeduimTasks();
+                const response = await fetchProgressTasks();
                 console.log('The meduim data is : ', response);
                 if(response == "ERR_NETWORK"){
                     setNetwork(true)
                 }else{
                     setNetwork(false);
-                    setDataMeduim(response.data);
+                    setDataProgress(response.data);
                     setFetch(false);
                 }
 
@@ -76,11 +77,11 @@ const Home = () => {
             }
         }
 
-        const getLowData = async () => {
+        const getDoneData = async () => {
             try{
-                const response = await fetchLowTasks();
+                const response = await fetchDoneTasks();
                 // console.log('The data is : ', response);
-                setDataLow(response.data);
+                setDataDone(response.data);
                 setFetch(false);
 
             }catch(error){
@@ -88,37 +89,35 @@ const Home = () => {
             }
         }
         
-        getHighData();
-        getMeduimData();
-        getLowData();
+        getTodoData();
+        getProgressData();
+        getDoneData();
 
     }
 
 
     useEffect(() => {
 
-
-
-        const getHighData = async () => {
+        const getTodoData = async () => {
             try{
-                const response = await fetchHighTasks();
-                setDataHigh(response.data);
+                const response = await fetchTodoTasks();
+                setDataTodo(response.data);
                 setFetch(false);
                 setLoad(false);
             }catch(error){
-                console.log('Smething went wrong : ', error.code);
+                console.log('Smething went wrong : ', error);
             }
         }
 
-        const getMeduimData = async () => {
+        const getProgressData = async () => {
             try{
-                const response = await fetchMeduimTasks();
+                const response = await fetchProgressTasks();
                 console.log('The meduim data is : ', response);
                 if(response == "ERR_NETWORK"){
                     setNetwork(true)
                 }else{
                     setNetwork(false);
-                    setDataMeduim(response.data);
+                    setDataProgress(response.data);
                     setFetch(false);
                 }
 
@@ -128,11 +127,11 @@ const Home = () => {
             }
         }
 
-        const getLowData = async () => {
+        const getDoneData = async () => {
             try{
-                const response = await fetchLowTasks();
+                const response = await fetchDoneTasks();
                 // console.log('The data is : ', response);
-                setDataLow(response.data);
+                setDataDone(response.data);
                 setFetch(false);
 
             }catch(error){
@@ -140,9 +139,9 @@ const Home = () => {
             }
         }
         
-        getHighData();
-        getMeduimData();
-        getLowData();
+        getTodoData();
+        getProgressData();
+        getDoneData();
 
     }, [fetch])
 
@@ -174,18 +173,18 @@ const Home = () => {
         console.log("Dropped into droppableId:", destination.droppableId);
 
 
-        if(source.droppableId == "high"){
-            const draggedTask = dataHigh.find((task) => task.id.toString() === draggableId);
-            tasktitle = draggedTask.title;
+        if(source.droppableId == "todo"){
+            const draggedTask = dataTodo.find((task) => task.id.toString() === draggableId);
+            // tasktitle = draggedTask.title;
         }
-        if(source.droppableId == "meduim"){
-            const draggedTask = dataMeduim.find((task) => task.id.toString() === draggableId);
-            tasktitle = draggedTask.title;
+        if(source.droppableId == "progress"){
+            const draggedTask = dataProgress.find((task) => task.id.toString() === draggableId);
+            // tasktitle = draggedTask.title;
 
         }
-        if(source.droppableId == "low"){
-            const draggedTask = dataLow.find((task) => task.id.toString() === draggableId);
-            tasktitle = draggedTask.title;
+        if(source.droppableId == "done"){
+            const draggedTask = dataDone.find((task) => task.id.toString() === draggableId);
+            // tasktitle = draggedTask.title;
 
         }
     
@@ -193,7 +192,7 @@ const Home = () => {
         if (source.droppableId != destination.droppableId) {
             try{
                 setLoadingType({showLoading: true, type: destination.droppableId});
-                const response = await updateTask(draggableId, {'title':  tasktitle,  'category': destination.droppableId, 'status': 'true'});
+                const response = await updateTask(draggableId, {'status': destination.droppableId});
                 console.log('response is : ', response);
                 if(response.status == "true")
                 {
@@ -220,7 +219,7 @@ const Home = () => {
             <DragDropContext onDragEnd={handleDragEnd} >
 
             <div className="row">
-                <StrictModeDroppable droppableId="high">
+                <StrictModeDroppable droppableId="todo">
                     {(provided) => (
                         <div
                             {...provided.droppableProps}
@@ -229,15 +228,15 @@ const Home = () => {
                         >
                             {/* <AddTaskContainer children={provided.placeholder} /> */}
                             <CustomContainer
-                            taskLength={dataHigh.length > 1 ? dataHigh.length+" tasks": dataHigh.length+" task"}
+                            taskLength={dataTodo.length > 1 ? dataTodo.length+" tasks": dataTodo.length+" task"}
                             loading={load && loading}
-                            isModal={highModal}
-                            title={load && loading ? <Skeleton height={25} /> : "High Priority"}
-                            color={load && loading ? colors.greyColor : colors.primaryColor}
-                            closeModal={closeHighModal}
-                            onClick={openHighModal}
-                            modalTitle="High Priority Task"
-                            modalChildren={<TaskForm closeModal={closeHighModal} setFetch={setFetch} setLoadingType={setLoadingType} category="high" setAlert={setAlert} />}
+                            isModal={todoModal}
+                            title={load && loading ? <Skeleton height={25} /> : "Todo"}
+                            color={load && loading ? colors.greyColor : colors.grey2Color}
+                            closeModal={closeTodoModal}
+                            onClick={openTodoModal}
+                            modalTitle="Todo Task"
+                            modalChildren={<TaskForm closeModal={closeTodoModal} setFetch={setFetch} setLoadingType={setLoadingType} category="high" status="todo" setAlert={setAlert} />}
                             children={
                                 <div>
                                     {load && loading ? <div>
@@ -247,9 +246,9 @@ const Home = () => {
                                     </div> : 
                                     
                                     <>
-                                    {loadingType && loadingType.type == "high" ? <div><Skeleton height={70} /><br /></div> : null}
-                                    {dataHigh && dataHigh.map((data, index) => (
-                                        <Draggable key={data.id} draggableId={data.id.toString()} index={index} >
+                                    {loadingType && loadingType.type == "todo" ? <div><Skeleton height={70} /><br /></div> : null}
+                                    {dataTodo && dataTodo.map((data, index) => (
+                                        <Draggable key={data.id} draggableId={data.uid.toString()} index={index} >
                                             {(provided, snapshot) => (
                                                 <div 
                                                 style={{
@@ -260,7 +259,7 @@ const Home = () => {
                                                 {...provided.draggableProps}
                                                 {...provided.dragHandleProps}
                                                 className="mb-2">
-                                                    <TaskContainer child={data.title} color={colors.primaryColor} id={data.id} setFetch={setFetch} setAlert={setAlert} />
+                                                    <TaskContainer child={data.title} id={data.id} setFetch={setFetch} setAlert={setAlert} />
                                                 </div>
                                             )}
 
@@ -274,24 +273,23 @@ const Home = () => {
                     )}
                 </StrictModeDroppable>
 
-                <StrictModeDroppable droppableId="meduim" >
+                <StrictModeDroppable droppableId="progress" >
                     {(provided) => (
                         <div 
                         {...provided.droppableProps}
                         ref={provided.innerRef}
                         className="col">
-                            {/* <AddTaskContainer children={provided.placeholder} /> */}
 
                             <CustomContainer
-                            taskLength={dataMeduim.length > 1 ? dataMeduim.length+" tasks" :dataMeduim.length+" task" }
+                            taskLength={dataProgress.length > 1 ? dataProgress.length+" tasks" :dataProgress.length+" task" }
                             loading={load && loading}
-                            isModal={meduimModal}
-                            title={load && loading ? <Skeleton height={25} /> : "Meduim"}
+                            isModal={progressModal}
+                            title={load && loading ? <Skeleton height={25} /> : "In-Progess"}
                             color={load && loading ? colors.greyColor : colors.secondaryColor}
-                            closeModal={closeMeduimModal}
-                            onClick={openMeduimModal}
-                            modalTitle="Meduim task"
-                            modalChildren={<TaskForm closeModal={closeMeduimModal} setFetch={setFetch} setLoadingType={setLoadingType} category="meduim" setAlert={setAlert} />}
+                            closeModal={closeProgressModal}
+                            onClick={openProgressModal}
+                            modalTitle="In-Progess task"
+                            modalChildren={<TaskForm closeModal={closeProgressModal} setFetch={setFetch} setLoadingType={setLoadingType} category="meduim" status="progress" setAlert={setAlert} />}
                             children={
                                 <div>
                                     {load && loading ? <div>
@@ -300,8 +298,8 @@ const Home = () => {
                                         <Skeleton height={70} />
                                     </div> : 
                                         <>
-                                        {loadingType && loadingType.type == "meduim" ? <div><Skeleton height={70} /><br /></div> : null}
-                                        {dataMeduim && dataMeduim.map((data, index) => (
+                                        {loadingType && loadingType.type == "progress" ? <div><Skeleton height={70} /><br /></div> : null}
+                                        {dataProgress && dataProgress.map((data, index) => (
                                             <Draggable key={data.id} draggableId={data.id.toString()} index={index} >
                                                 {(provided) => (
                                                     <div 
@@ -323,22 +321,22 @@ const Home = () => {
                     )}
                 </StrictModeDroppable>
 
-                <StrictModeDroppable droppableId="low">
+                <StrictModeDroppable droppableId="done">
                     {(provided) => (
                         <div 
                         {...provided.droppableProps}
                         ref={provided.innerRef}
                         className="col">
                             <CustomContainer 
-                            taskLength={dataLow.length > 1 ? dataLow.length+" tasks" : dataLow.length+" task"}
+                            taskLength={dataDone.length > 1 ? dataDone.length+" tasks" : dataDone.length+" task"}
                             loading={load && loading}
-                            isModal={lowModal}
-                            title={load && loading ? <Skeleton height={25} /> : "Low"}
-                            color={load && loading ? colors.greyColor : colors.grey2Color}
-                            closeModal={closeLowModal}
-                            onClick={openLowModal}
-                            modalTitle="Low task"
-                            modalChildren={<TaskForm closeModal={closeLowModal} setFetch={setFetch} setLoadingType={setLoadingType} category="low" setAlert={setAlert} />}
+                            isModal={doneModal}
+                            title={load && loading ? <Skeleton height={25} /> : "Done"}
+                            color={load && loading ? colors.greyColor : colors.primaryColor}
+                            closeModal={closeDoneModal}
+                            onClick={openDoneModal}
+                            modalTitle="Done task"
+                            modalChildren={<TaskForm closeModal={closeDoneModal} setFetch={setFetch} setLoadingType={setLoadingType} category="low" status="done" setAlert={setAlert} />}
                             children={
                                 <div>
                                 {load && loading ? <div>
@@ -347,8 +345,8 @@ const Home = () => {
                                     <Skeleton height={70} />
                                 </div> : 
                                 <>
-                                {loadingType && loadingType.type == "low" ? <div><Skeleton height={70} /><br /></div> : null}
-                                {dataLow && dataLow.map((data, index) => (
+                                {loadingType && loadingType.type == "done" ? <div><Skeleton height={70} /><br /></div> : null}
+                                {dataDone && dataDone.map((data, index) => (
                                     <Draggable key={data.id} draggableId={data.id.toString()} index={index} >
                                         {(provided) => (
                                             <div 
@@ -356,7 +354,7 @@ const Home = () => {
                                             {...provided.draggableProps}
                                             {...provided.dragHandleProps}  
                                             className="mb-2">
-                                                <TaskContainer child={data.title} id={data.id} setFetch={setFetch} setAlert={setAlert} />
+                                                <TaskContainer child={data.title} color={colors.primaryColor} id={data.id} setFetch={setFetch} setAlert={setAlert} />
                                             </div>
                                         )}
                                     </Draggable>

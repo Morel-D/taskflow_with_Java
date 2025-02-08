@@ -14,8 +14,6 @@ axiosInstance.interceptors.request.use(
             token = JSON.parse(localStorage.getItem('token'));
             config.headers['Authorization']  = `Bearer ${token}`;
         }
-        console.log('Request Headers:', config.headers);
-
         return config;
     },
     (error) => Promise.reject(error)

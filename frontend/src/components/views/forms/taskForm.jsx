@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { PrimaryButton } from "../../widgets/button";
 import { TextAreaFeild, TextFeild } from "../../widgets/textFeilds";
 import {  useTaskService } from "../../service/taskService";
 import { Loading } from "../../widgets/loading";
+import { SessionContext } from "../../context/sessionContext";
 
-const TaskForm = ({closeModal, setLoadingType, category, setFetch, setAlert, id}) => {
+const TaskForm = ({closeModal, setLoadingType, status, category, setFetch, setAlert, id}) => {
 
     function generateUniqueId() {
         const now = Date.now(); // Current time in milliseconds
@@ -14,6 +15,8 @@ const TaskForm = ({closeModal, setLoadingType, category, setFetch, setAlert, id}
     
 
     const {createTask, fetchTaskById, updateTask} = useTaskService();
+
+    const {session} = useContext(SessionContext);
 
     const [error, setError] = useState(false);
     const [content, setContent] = useState();
@@ -56,17 +59,21 @@ const TaskForm = ({closeModal, setLoadingType, category, setFetch, setAlert, id}
         const uniqueId = generateUniqueId();
 
         const data = {
-            "userActivityId": 1234,
             "uid": uniqueId,
+            "activityId": session.activity.uid,
+            "ownerId": session.activity.userId,
             "title": content,
+            "description": "Testing the app using Jekins",
             "category": category,
-            "status": "true"
+            "status": status,
+            "dueDate": "2025-02-10T14:30:00",
         };
+
 
         
         try{
             setAlert({showMessage: false, messageType: "", message: ""});
-            setLoadingType({showLoading: true, type: category});
+            setLoadingType({showLoading: true, type: status});
             const response = await createTask(data);
             console.log('VIEW : ', response);
             if(response.status == "true")

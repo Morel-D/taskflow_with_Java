@@ -15,15 +15,18 @@ export const SessionProvider = ({children}) =>
             try{
                 const response = await getActivityById(user.uid);
                 console.log("SESSION RESPONSE --> ", response);
+                setSession(response);
+                setSession(response);
+                console.log("THE SESSION RESPONSE --> ", session);
             }catch(error){
                 console.log("Something went wrong --> ", error);
             }
         }
         getActivityInfo();
-    }, [session]);
+    }, []);
 
     return (
-        <SessionContext.Provider value={session}>
+        <SessionContext.Provider value={{session}}>
             {children}
         </SessionContext.Provider>
     )

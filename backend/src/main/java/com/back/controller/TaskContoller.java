@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,10 +69,13 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
                     Map<String, Object> task = new HashMap<>();
                     task.put("id", rs.getInt("id"));
                     task.put("uid", rs.getString("uid"));
-                    task.put("userActivityId", rs.getString("userActivityId"));
+                    task.put("activityId", rs.getString("activityId"));
+                    task.put("ownerId", rs.getString("ownerId"));
                     task.put("title", rs.getString("title"));
+                    task.put("description", rs.getString("description"));
                     task.put("category", rs.getString("category"));
                     task.put("status", rs.getString("status"));
+                    task.put("dueDate", rs.getString("dueDate"));
                     task.put("dateof", rs.getString("dateof"));
 
                     tasks.add(task);
@@ -97,12 +101,15 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
 
                 objectMapper.writeValue(res.getWriter(), responseMap);
             }
-        }else if(pathInfo.equals("/high")){
-            fetchHighTask(res);
-        }else if(pathInfo.equals("/medium")){
-            fetchMedumTask(res);
-        }else if(pathInfo.equals("/low")){
-            fetchLowTask(res);
+        }else if(pathInfo.startsWith("/todo/")){
+            String id = pathInfo.substring(6);
+            fetchTodoTask(res, id);
+        }else if(pathInfo.startsWith("/progress/")){
+            String id = pathInfo.substring(10);
+            fetchProgressTask(res, id);
+        }else if(pathInfo.startsWith("/done/")){
+            String id = pathInfo.substring(6);
+            fetchDoneTask(res, id);
         }else {
             // Retrive single data by ID
             taskId = Integer.parseInt(pathInfo.substring(1).trim());
@@ -116,9 +123,13 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
                     Map<String, Object> responseMap = new HashMap<>();
                     responseMap.put("id", rs.getInt("id"));
                     responseMap.put("uid", rs.getString("uid"));
+                    responseMap.put("activityId", rs.getString("activityId"));
+                    responseMap.put("ownerId", rs.getString("ownerId"));
                     responseMap.put("title", rs.getString("title"));
+                    responseMap.put("description", rs.getString("description"));
                     responseMap.put("category", rs.getString("category"));
                     responseMap.put("status", rs.getString("status"));
+                    responseMap.put("dueDate", rs.getString("dueDate"));
                     responseMap.put("dateof", rs.getString("dateof"));
                     objectMapper.writeValue(res.getWriter(), responseMap);
                 }else{
@@ -144,11 +155,11 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
         }
     }
 
-
-    private void fetchHighTask (HttpServletResponse res) throws IOException {
-        String sql = "SELECT * FROM task WHERE category = 'high' ORDER BY dateof DESC";
-        try(PreparedStatement statement = connection.prepareStatement(sql);
-            ResultSet rs = statement.executeQuery()){
+    private void fetchTodoTask (HttpServletResponse res, String id) throws IOException {
+        String sql = "SELECT * FROM task WHERE status = 'todo' AND activityId = ? ORDER BY dateof DESC";
+        try(PreparedStatement statement = connection.prepareStatement(sql)){
+            statement.setString(1, id);
+            ResultSet rs = statement.executeQuery();
 
             List<Map<String, Object>> tasks = new ArrayList<>();
 
@@ -156,10 +167,13 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
                 Map<String, Object> task = new HashMap<>();
                 task.put("id", rs.getInt("id"));
                 task.put("uid", rs.getString("uid"));
-                task.put("userActivityId", rs.getString("userActivityId"));
+                task.put("activityId", rs.getString("activityId"));
+                task.put("ownerId", rs.getString("ownerId"));
                 task.put("title", rs.getString("title"));
+                task.put("description", rs.getString("description"));
                 task.put("category", rs.getString("category"));
                 task.put("status", rs.getString("status"));
+                task.put("dueDate", rs.getString("dueDate"));
                 task.put("dateof", rs.getString("dateof"));
 
                 tasks.add(task);
@@ -189,20 +203,24 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
         }
     }
 
-    private void fetchMedumTask (HttpServletResponse res) throws IOException {
-        String sql = "SELECT * FROM task WHERE category = 'meduim' ORDER BY dateof DESC";
-        try(PreparedStatement statement = connection.prepareStatement(sql);
-        ResultSet rs = statement.executeQuery()
-        ){
+    private void fetchProgressTask (HttpServletResponse res, String id) throws IOException {
+        String sql = "SELECT * FROM task WHERE status = 'progress' AND activityId = ? ORDER BY dateof DESC";
+        try(PreparedStatement statement = connection.prepareStatement(sql)){
+        statement.setString(1, id);   
+        ResultSet rs = statement.executeQuery();
+        
             List<Map<String, Object>> tasks = new ArrayList<>();
             while(rs.next()){
                 Map<String, Object> task = new HashMap<>();
                 task.put("id", rs.getInt("id"));
                 task.put("uid", rs.getString("uid"));
-                task.put("userActivityId", rs.getString("userActivityId"));
+                task.put("activityId", rs.getString("activityId"));
+                task.put("ownerId", rs.getString("ownerId"));
                 task.put("title", rs.getString("title"));
+                task.put("description", rs.getString("description"));
                 task.put("category", rs.getString("category"));
                 task.put("status", rs.getString("status"));
+                task.put("dueDate", rs.getString("dueDate"));
                 task.put("dateof", rs.getString("dateof"));
 
                 tasks.add(task);
@@ -232,20 +250,24 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
         }
     }
 
-    private void fetchLowTask (HttpServletResponse res) throws IOException {
-        String sql = "SELECT * FROM task WHERE category = 'low' ORDER BY dateof DESC";
-        try(PreparedStatement statement = connection.prepareStatement(sql);
-        ResultSet rs = statement.executeQuery()
-        ){
+    private void fetchDoneTask (HttpServletResponse res, String id) throws IOException {
+        String sql = "SELECT * FROM task WHERE status = 'done' AND activityId = ? ORDER BY dateof DESC";
+        try(PreparedStatement statement = connection.prepareStatement(sql)){
+            statement.setString(1, id);   
+            ResultSet rs = statement.executeQuery();
+        
             List<Map<String, Object>> tasks = new ArrayList<>();
             while(rs.next()){
                 Map<String, Object> task = new HashMap<>();
                 task.put("id", rs.getInt("id"));
                 task.put("uid", rs.getString("uid"));
-                task.put("userActivityId", rs.getString("userActivityId"));
+                task.put("activityId", rs.getString("activityId"));
+                task.put("ownerId", rs.getString("ownerId"));
                 task.put("title", rs.getString("title"));
+                task.put("description", rs.getString("description"));
                 task.put("category", rs.getString("category"));
                 task.put("status", rs.getString("status"));
+                task.put("dueDate", rs.getString("dueDate"));
                 task.put("dateof", rs.getString("dateof"));
 
                 tasks.add(task);
@@ -293,13 +315,16 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
         TaskModel task = objectMapper.readValue(req.getReader(), TaskModel.class);
 
         // Insert task into the database 
-        String sql = "INSERT INTO task (uid, userActivityId, title, category, status) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO task (uid, activityId, ownerId, title, description, category, status, dueDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try(PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, task.getUid());
-            statement.setString(2, task.getUserActivityId());
-            statement.setString(3, task.getTitle());
-            statement.setString(4, task.getCategory());
-            statement.setString(5, task.getStatus());
+            statement.setString(2, task.getActivityId());
+            statement.setString(3, task.getOwnerId());
+            statement.setString(4, task.getTitle());
+            statement.setString(5, task.getDescription());
+            statement.setString(6, task.getCategory());
+            statement.setString(7, task.getStatus());
+            statement.setTimestamp(8, task.getDueDate());
             statement.executeUpdate();
 
             
@@ -343,7 +368,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
         System.out.print("The data here is : "+ res);
 
         String pathInfo = req.getPathInfo();
-        int taskId;
+        // int taskId;
         
         if(pathInfo == null || pathInfo.equals("/")){
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -355,33 +380,69 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
             return;
         }
 
-        taskId = Integer.parseInt(pathInfo.substring(1));
+        String taskId = pathInfo.substring(1);
         TaskModel task = objectMapper.readValue(req.getReader(), TaskModel.class);
 
         
 
-        String sql = "UPDATE task SET title = ?, category = ?, status = ? WHERE id = ?";
-        try(PreparedStatement statement = connection.prepareStatement(sql)){
-            statement.setString(1, task.getTitle());
-            statement.setString(2, task.getCategory());
-            statement.setString(3, task.getStatus());
-            statement.setInt(4, taskId);
+        StringBuilder sql = new StringBuilder("UPDATE task SET ");
+        List<Object> parameters = new ArrayList<>();
+        if (task.getTitle() != null) {
+            sql.append("title = ?, ");
+            parameters.add(task.getTitle());
+        }
+        
+        if (task.getDescription() != null) {
+            sql.append("description = ?, ");
+            parameters.add(task.getDescription());
+        }
+        
+        if (task.getCategory() != null) {
+            sql.append("category = ?, ");
+            parameters.add(task.getCategory());
+        }
+        
+        if (task.getStatus() != null) {
+            sql.append("status = ?, ");
+            parameters.add(task.getStatus());
+        }
+        
+        if (task.getDueDate() != null) {
+            sql.append("dueDate = ?, ");
+            parameters.add(task.getDueDate());
+        }
+        
+        // Remove the last comma and space
+        if (parameters.isEmpty()) {
+            res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            Map<String, String> errorMap = new HashMap<>();
+            errorMap.put("status", "false");
+            errorMap.put("message", "no-update-data");
+            objectMapper.writeValue(res.getWriter(), errorMap);
+            return;
+        }
 
+        sql.setLength(sql.length() - 2); // Remove trailing comma
+        sql.append(" WHERE uid = ?");
+        parameters.add(taskId);
+
+        try(PreparedStatement statement = connection.prepareStatement(sql.toString())){
+            for (int i = 0; i < parameters.size(); i++) {
+                statement.setObject(i + 1, parameters.get(i));
+            }
+        
             int rowsUpdated = statement.executeUpdate();
             Map<String, String> responseMap = new HashMap<>();
-
-            if(rowsUpdated > 0){
-            statement.setString(1, task.getTitle());
-            responseMap.put("status", "true");
-            responseMap.put("message", "data-updated");
-            objectMapper.writeValue(res.getWriter(), responseMap);
-
-            }else{
+        
+            if (rowsUpdated > 0) {
+                responseMap.put("status", "true");
+                responseMap.put("message", "data-updated");
+            } else {
                 responseMap.put("status", "false");
                 responseMap.put("message", "This task doesn't exist");
-            objectMapper.writeValue(res.getWriter(), responseMap);
-
             }
+        
+            objectMapper.writeValue(res.getWriter(), responseMap);
         }catch(SQLException e){
             e.printStackTrace();
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
