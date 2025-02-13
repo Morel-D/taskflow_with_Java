@@ -75,7 +75,7 @@ const Login = ({handleSwitch, exit, setExit}) => {
             setUser(response.user);
             setUserToken(response.token);
             const currentPath = window.location.pathname;
-            const modifiedPath = currentPath.replace("/login", "/");
+            const modifiedPath = currentPath.replace("/login", "/dashboard");
             navigate(modifiedPath);
         if(response.message == "no-userActivity"){
             // navigate("/option/setting", {replace: true});

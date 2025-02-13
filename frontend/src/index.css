@@ -265,6 +265,16 @@ li > a {text-decoration: none;}
   font-size: 18px;
 }
 
+.custom-row-head th {
+  padding-bottom: 30px;
+}
+
+.custom-row th,
+.custom-row td {
+  padding: 30px 0;
+}
+
+
 .icon-btn{
   height: 60px;
   width: 60px;
@@ -277,6 +287,27 @@ li > a {text-decoration: none;}
 .input-text {  border-style: solid;  border-radius: 6px;  padding: 10px 0px 10px 10px; }
 .input-text:focus {  outline: none;  box-shadow: 0 0 0 1px var(--primaryColor);}
 .input-text::placeholder {color: var(--grey2Color);}
+
+
+.borderless-primary-input-text{
+  border-style: none;  border-radius: 0px;  padding: 10px 0px 10px 10px; font-size: 24px; font-weight: 600;
+}
+.borderless-primary-input-text::placeholder {color: var(--grey2Color);}
+.borderless-primary-input-text:focus {  outline: none;  box-shadow: 0 0 0 1px transparent;}
+.custom-checkbox {
+  outline: none;
+  box-shadow: 0 0 0 1px transparent !important;
+  accent-color: var(--primaryColor) !important;
+}
+.custom-checkbox:checked {
+  background-color: var(--primaryColor);
+  border-color: var(--primaryColor);
+}
+
+.borderless-input-text{  border-style: none;  border-radius: 0px;  padding: 10px 0px 10px 10px; }
+.borderless-input-text:focus {  outline: none;  box-shadow: 0 0 0 1px transparent;}
+.borderless-input-text::placeholder {color: var(--grey2Color);}
+
 
 .has-search .form-control {padding-left: 3.375rem;}
 .has-search-suffix .form-control {padding-left: 3.375rem;}
@@ -305,6 +336,73 @@ li > a {text-decoration: none;}
 }
 
 
+/************************** Badge ******************/
+
+.joined-badge
+{
+  background-color: var(--accentBlue);
+  padding: 8px;
+  border-style: solid;
+  border-color: var(--primaryColor);
+  border-width: 1px;
+  border-radius: 30px;
+  color: var(--primaryColor);
+  cursor: pointer;
+}
+
+.pending-badge
+{
+  background-color: var(--accentBlue);
+  padding: 8px;
+  border-style: solid;
+  border-color: var(--grey2Color);
+  border-width: 1px;
+  border-radius: 30px;
+  color: var(--grey2Color);
+  cursor: pointer;
+}
+
+.decline-badge
+{
+  background-color: var(--accentBlue);
+  padding: 8px;
+  border-style: solid;
+  border-color: var(--secondaryColor);
+  border-width: 1px;
+  border-radius: 30px;
+  color: var(--secondaryColor);
+  cursor: pointer;
+}
+
+
+
+.active-badge
+{
+  background-color: var(--primaryColor);
+  padding: 8px;
+  border-style: solid;
+  border-color: var(--primaryColor);
+  border-width: 1px;
+  border-radius: 30px;
+  color: var(--whiteColor);
+  cursor: pointer;
+}
+
+
+.non-active-badge
+{
+  background-color: var(--secondaryColor);
+  padding: 8px;
+  border-style: solid;
+  border-color: var(--secondaryColor);
+  border-width: 1px;
+  border-radius: 30px;
+  color: var(--whiteColor);
+  cursor: pointer;
+}
+
+
+/************************** Badge ******************/
 
 
 /* Modal.css */

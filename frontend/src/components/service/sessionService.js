@@ -6,6 +6,7 @@ export const useSessionService = () => {
     const endpoint = "protected";
 
     const getActivityById = (id) => getDataByID(`protected/${id}`);
+    const getCollaborators = (id) => getDataByID(`${endpoint}/collaborators/${id}`);
 
-    return {loading, getActivityById}
+    return {loading, getActivityById, getCollaborators}
 }

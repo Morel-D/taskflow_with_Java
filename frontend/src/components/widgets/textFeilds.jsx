@@ -1,9 +1,23 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
+import { colors } from "../tools/color";
 
 
 
+
+const BorderlessTextFeild = ({label, type, placeholder, onChange, value, maxLength, error}) =>
+    {
+        return (
+            <motion.div
+            animate={error ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }} // Shake effect
+            transition={{ duration: 0.5 }}
+            >
+                <p className="text-dark">{label}</p>
+                <input type={type} className={error == true ? "form-control input-danger-text" : "form-control borderless-primary-input-text"} maxLength={maxLength ?? 50} placeholder={placeholder} value={value} onChange={onChange} />
+            </motion.div>
+        )
+    }
 
 const TextFeild = ({label, type, placeholder, onChange, value, maxLength, error}) =>
     {
@@ -71,6 +85,71 @@ const TextFeild = ({label, type, placeholder, onChange, value, maxLength, error}
                     </motion.div>
                 )
             }
+
+            const BordelessTextAreaFeild = ({label, placeholder, onChange, value, maxLength, row, error}) =>
+                {
+                    return(
+                        <motion.div
+                        animate={error ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }} // Shake effect
+                        transition={{ duration: 0.5 }}
+                        >
+                            <p className="text-dark">{label}</p>
+                            <textarea className={error == true ? "form-control input-danger-text" : "form-control borderless-input-text"} value={value} maxLength={maxLength ?? 100} placeholder={placeholder} rows={row} onChange={onChange}></textarea>
+                        </motion.div>
+                    )
+                }
+
+
+                const SelectField = ({ label, options, onChange, value, error }) => {
+                    return (
+                        <motion.div
+                            animate={error ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }} // Shake effect
+                            transition={{ duration: 0.5 }}
+                        >
+                            {/* <p className="text-dark">{label}</p> */}
+                            <select 
+                                className={error ? "form-control input-danger-text" : "form-control input-text"} 
+                                value={value} 
+                                onChange={onChange}
+                            >
+                                <option value="" disabled>{label}</option>
+                                {options.map((option, index) => (
+                                    <option key={index} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </motion.div>
+                    );
+                };
+                
+                const CheckboxField = ({ label, checked, onChange, error }) => {
+                    return (
+                        <motion.div
+                            animate={error ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }} // Shake effect
+                            transition={{ duration: 0.5 }}
+                            className="d-flex align-items-center gap-2"
+                        >
+                            <input 
+                                type="checkbox" 
+                                checked={checked} 
+                                onChange={onChange} 
+                                className={error ? "form-check-input input-danger-text custom-checkbox" : "form-check-input custom-checkbox"}
+                                style={{paddingTop: "20px", paddingLeft: "20px"}} 
+                            />
+                            <label className="text-dark">{label}</label>
+                        </motion.div>
+                    );
+                };
         
 
-export {TextFeild, TextIconFeild, TextAreaFeild, TextPassWordField}
+export {
+    TextFeild, 
+    TextIconFeild, 
+    TextAreaFeild, 
+    SelectField, 
+    CheckboxField, 
+    TextPassWordField, 
+    BorderlessTextFeild, 
+    BordelessTextAreaFeild
+}

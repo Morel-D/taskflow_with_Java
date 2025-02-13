@@ -97,7 +97,7 @@ const TaskContainer = ({color, child, id, setFetch, setAlert}) => {
 
 
 
-        <Modal isOpen={editModal} onClose={closeEditModal} children={<TaskForm id={id} closeModal={closeEditModal} setFetch={setFetch} setAlert={setAlert} />} title="Quick Edit" col="col-4" />
+        <Modal isOpen={editModal} onClose={closeEditModal} children={<TaskForm id={id} closeModal={closeEditModal} setFetch={setFetch} setAlert={setAlert} />} title="Quick Edit" col="col-8" />
         
         </>
 

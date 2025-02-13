@@ -300,7 +300,7 @@ const Home = () => {
                                         <>
                                         {loadingType && loadingType.type == "progress" ? <div><Skeleton height={70} /><br /></div> : null}
                                         {dataProgress && dataProgress.map((data, index) => (
-                                            <Draggable key={data.id} draggableId={data.id.toString()} index={index} >
+                                            <Draggable key={data.id} draggableId={data.uid.toString()} index={index} >
                                                 {(provided) => (
                                                     <div 
                                                     ref={provided.innerRef}
@@ -347,7 +347,7 @@ const Home = () => {
                                 <>
                                 {loadingType && loadingType.type == "done" ? <div><Skeleton height={70} /><br /></div> : null}
                                 {dataDone && dataDone.map((data, index) => (
-                                    <Draggable key={data.id} draggableId={data.id.toString()} index={index} >
+                                    <Draggable key={data.id} draggableId={data.uid.toString()} index={index} >
                                         {(provided) => (
                                             <div 
                                             ref={provided.innerRef}

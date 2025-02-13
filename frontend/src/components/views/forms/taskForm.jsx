@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { PrimaryButton } from "../../widgets/button";
-import { TextAreaFeild, TextFeild } from "../../widgets/textFeilds";
+import { BordelessTextAreaFeild, BorderlessTextFeild, CheckboxField, SelectField, TextAreaFeild, TextFeild } from "../../widgets/textFeilds";
 import {  useTaskService } from "../../service/taskService";
 import { Loading } from "../../widgets/loading";
 import { SessionContext } from "../../context/sessionContext";
@@ -19,9 +19,12 @@ const TaskForm = ({closeModal, setLoadingType, status, category, setFetch, setAl
     const {session} = useContext(SessionContext);
 
     const [error, setError] = useState(false);
+    const [titleError, setTitleError] = useState(false);
+
     const [content, setContent] = useState();
+    const [title, setTitle] = useState();
     const [editLoading, setEditLoading] = useState(false);
-    const [singledata, setSingleData] = useState({uid: "", title: "", category: ""});
+    const [singledata, setSingleData] = useState({uid: "", title: "", content: "", category: ""});
 
     useEffect(() => {
         const getSingleTask = async () => {
@@ -31,13 +34,14 @@ const TaskForm = ({closeModal, setLoadingType, status, category, setFetch, setAl
                 try{
                     setEditLoading(true);
                     const response = await fetchTaskById(id);
-                    if(response.status == "true"){
+                    // if(response.status == "true"){
                         console.log("The response is present : ", response);
-                        setSingleData({uid: response.uid, title: response.title, category: response.category});
+                        setSingleData({uid: response.uid, title: response.title, content: response.description, category: response.category});
                         // console.log('DATA is : ', singledata);
-                    }
+                    // }
                 }catch(error){
                     console.log('Something went wrong  : ', error);
+                    closeModal();
                 }finally {
                     setEditLoading(false);
 
@@ -56,12 +60,17 @@ const TaskForm = ({closeModal, setLoadingType, status, category, setFetch, setAl
             return;
         }
 
+        if(title == "" || title == undefined){
+            setContent(true);
+            return;
+        }
+
         const uniqueId = generateUniqueId();
 
         const data = {
             "uid": uniqueId,
-            "activityId": session.activity.uid,
-            "ownerId": session.activity.userId,
+            "activityId": session.activity != null ? session.activity.uid : null,
+            "ownerId": session.activity != null ? session.activity.userId : session.user.userId,
             "title": content,
             "description": "Testing the app using Jekins",
             "category": category,
@@ -100,14 +109,19 @@ const TaskForm = ({closeModal, setLoadingType, status, category, setFetch, setAl
             return;
         }
 
+        if(singledata.content == "" || singledata.content == undefined){
+            setContent(true);
+            return;
+        }
+
         const data = {
             "title": singledata.title,
+            "description": singledata.content,
             "category": singledata.category,
-            "status": "true"
         };
 
         try{
-            const response = await updateTask(id, data);
+            const response = await updateTask(singledata.uid, data);
             console.log('VIEW : ', response);
             if(response.status == "true")
             {
@@ -135,6 +149,21 @@ const TaskForm = ({closeModal, setLoadingType, status, category, setFetch, setAl
         const newTtitle = e.target.value;
         setSingleData((prevData) => ({
             ...prevData,
+            content: newTtitle,
+        }))
+    }
+
+
+    const handleTitleDefault = (e) => {
+        setError(false);
+        setTitle(e.target.value);
+    }
+
+    const handleTitleEdit = (e) => {
+        setError(false);
+        const newTtitle = e.target.value;
+        setSingleData((prevData) => ({
+            ...prevData,
             title: newTtitle,
         }))
     }
@@ -145,16 +174,49 @@ const TaskForm = ({closeModal, setLoadingType, status, category, setFetch, setAl
                 <Loading />
             ): (
                 <>
-                <TextAreaFeild 
-                    row={3} 
-                    placeholder="Add a task description.." 
-                    error={error} 
-                    onChange={id ? handleEdit : handleDefault}  
-                    value={id ? singledata.title : content}
-                    />
-                    <div className="footer mt-4 text-end">
-                        <PrimaryButton children={!id ? "Save a task" : "Upadate Data"} onClick={id ? handleUpdate : handleSubmit} />
+                <div className="d-flex">
+                    <div className="col">
+                        <BorderlessTextFeild 
+                        placeholder="Add a title"
+                        error={titleError} 
+                        onChange={id ? handleTitleEdit : handleTitleDefault}  
+                        value={id ? singledata.title : title}
+                        />
+                        <BordelessTextAreaFeild 
+                            row={6} 
+                            placeholder="Add a task description.." 
+                            error={error} 
+                            onChange={id ? handleEdit : handleDefault}  
+                            value={id ? singledata.content: content}
+                            />
+
                     </div>
+                    <div className="col col-5" style={{borderStyle: "solid", borderWidth: "0px 0px 0px 1px"}}>
+                        <div className="px-2">
+                            <SelectField label="Select a category"   options={[
+                                    { label: "low", value: "Low" },
+                                    { label: "meduim", value: "Meduim" },
+                                    { label: "high", value: "High" }
+                                ]} />
+                            <br />
+                            <h5 className="text-dark">Collaborators</h5>
+                            <div className="d-flex">
+                                <div className="row">
+                                    <div className="col">
+                                        {session.collaborators.map((collaborator) => (
+                                            <CheckboxField
+                                            label={collaborator.username}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="footer mt-4 text-end">
+                    <PrimaryButton children={!id ? "Save a task" : "Upadate Data"} onClick={id ? handleUpdate : handleSubmit} />
+                </div>
                 </>
             )}
         </div>

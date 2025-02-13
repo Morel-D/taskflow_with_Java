@@ -6,8 +6,11 @@ export const useTaskService = () => {
     const {loading, postData, getAllData, getDataByID, upateData, deleteData} = useApiServce();
 
     const endpoint = "protected/task";
+    let activityUid;
     const {session} = useContext(SessionContext);
-    let activityUid = session.activity.uid;
+    if(session.role == "manager" || session.role == "collaborator"){
+        activityUid = session.activity.uid;
+    }
 
     const createTask = (data) => postData(endpoint, data);
     const fetchTasks = () => getAllData(endpoint);

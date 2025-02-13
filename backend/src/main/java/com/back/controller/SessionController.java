@@ -65,10 +65,16 @@ public class SessionController extends HttpServlet {
 
         System.out.print("Path Info --> "+ pathInfo);
 
-        if(pathInfo == null || pathInfo.length() > 1){
+         if(pathInfo.startsWith("/collaborators/")){
+            String uid = pathInfo.substring(15);
+            getCollaborators(uid, res);
+         }
+
+            else if(pathInfo == null || pathInfo.length() > 1){
             String activityId = pathInfo.substring(1);
             getActivityById(activityId, res);
-        }else{
+        }
+        else{
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             Map<String, Object> errorMap = new HashMap<>();
             errorMap.put("status", "false");
@@ -183,6 +189,7 @@ public class SessionController extends HttpServlet {
                         info.put("status", "true");
                         info.put("role", rs.getString("role"));
                         info.put("user", userActivity);
+                        info.put("activity", null);
                         objectMapper.writeValue(res.getWriter(), info);
                     }
                 }
@@ -204,5 +211,44 @@ public class SessionController extends HttpServlet {
             objectMapper.writeValue(res.getWriter(), responseMap);
         }
 
+    }
+
+    private void getCollaborators(String uid, HttpServletResponse res) throws IOException{
+        String query = "SELECT u.*, ua.joinedAt AS joined, ua.status AS userActivityStatus FROM userActivity ua JOIN activity a ON a.uid = ua.activityId JOIN user u ON u.uid = ua.userId WHERE a.created_by = ?";
+        try(PreparedStatement statement = connection.prepareStatement(query)){
+            statement.setString(1, uid);
+            ResultSet rs = statement.executeQuery();
+
+            List<Map<String, Object>> collaborators = new ArrayList<>();
+
+            while (rs.next()) {
+                Map<String, Object> collaborator = new HashMap<>();
+                collaborator.put("uid", rs.getString("uid"));
+                collaborator.put("email", rs.getString("email"));
+                collaborator.put("username", rs.getString("username"));
+                collaborator.put("userStatus", rs.getString("status"));
+                collaborator.put("invited", rs.getString("joined"));
+                collaborator.put("status", rs.getString("userActivityStatus"));
+
+                collaborators.add(collaborator);
+            }
+
+            Map<String, Object> repsoneMap = new HashMap<>();
+            repsoneMap.put("status", "true");
+            repsoneMap.put("data", collaborators);
+
+            objectMapper.writeValue(res.getWriter(), repsoneMap);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            Map<String, String> responseMap = new HashMap<>();
+
+            responseMap.put("status", "false");
+            responseMap.put("message", "Failed to fetch data");
+            responseMap.put("error", e.getMessage());
+
+            objectMapper.writeValue(res.getWriter(), responseMap);
+            
+        }
     }
 }
