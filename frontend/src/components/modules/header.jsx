@@ -3,8 +3,12 @@ import user from "../../assets/icons/user.png";
 import dropdown from "../../assets/icons/expand_arrow.png"
 import dropup from  "../../assets/icons/collapse_arrow.png"
 import { PrimaryButton, SecondaryButton } from "../widgets/button";
+import { useContext } from "react";
+import { AuthContext } from "../context/authContext";
 
 const Header = () => {
+
+  const {user} = useContext(AuthContext);
 
     const headerStyle = {
         display: "flex",
@@ -42,7 +46,7 @@ const Header = () => {
                 <div style={rightSectionStyle}>
                     <SecondaryButton>Team</SecondaryButton>
                     <PrimaryButton>Project</PrimaryButton>
-                    <div style={avatarStyle}>A</div>
+                    <div style={avatarStyle}>{user.username.charAt(0) ?? "A"}</div>
                 </div>
             </div>
         </section>

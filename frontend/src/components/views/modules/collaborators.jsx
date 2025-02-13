@@ -9,24 +9,33 @@ import survey from "../../../assets/icons/survey.png";
 import { useSessionService } from "../../service/sessionService";
 import Skeleton from "react-loading-skeleton";
 import { DateCell, TextTruncate } from "../../widgets/formatDate";
+import { capitalizeFirstLetter, statusDisplay } from "../../utils/helper";
+import { colors } from "../../tools/color";
 
 const Collaborators = () => {
 
     const {session} = useContext(SessionContext);
     const {getCollaborators, loading} = useSessionService();
     const [data, setData] = useState([]);
-    const [load, setLoad] = useState(false);
+    const [load, setLoad] = useState(true);
     let num = 1;
 
     useEffect(() => {
+        setLoad(true);
+
         console.log("The collaborations are ", session);
         // console.log("The collaborations ID ", session.user.userId);
         const getAllCollaborators = async () => {
-            
+            try{
+            setLoad(true);
             const response = await getCollaborators(session.user.userId);
-
             console.log("FINAL RESPONE --> ", response);
             setData(response.data);
+            }catch(error){
+            setLoad(false);
+            }finally{
+            setLoad(false);
+            }
         }
 
         getAllCollaborators();
@@ -35,17 +44,17 @@ const Collaborators = () => {
     return ( 
         <>
         <div>
-            <h2>{loading ? <Skeleton height={30} width={200} /> : "Collaborators"}</h2>
+            <h3 className="fw-bold" style={{color: colors.secondaryColor}}>{load ? <Skeleton height={30} width={200} /> : "Collaborators"}</h3>
             <div className="d-flex mt-4">
                 <div className="col">
-                    <label className=" text-secondary fs-5 fw-bold">{loading ? <Skeleton height={30} width={170} /> : (<>Members - { data.length}</>)}</label>
+                    <label className=" text-secondary fs-5 fw-bold">{load ? <Skeleton height={30} width={170} /> : (<>Members - { data.length}</>)}</label>
                 </div>
                 <div className="col col-4 text-end">
-                {loading ? <Skeleton height={45} width={200} /> : <PrimaryButton children="New Collaborator" />} 
+                {load ? <Skeleton height={45} width={200} /> : <PrimaryButton children="New Collaborator" />} 
                 </div>
             </div>
             {
-                loading ? 
+                load ? 
                 (
                     <>
                     <div className="mt-1">
@@ -89,7 +98,7 @@ const Collaborators = () => {
                                     <td>{coll.email}</td>
                                     <td><DateCell children={coll.invited} /> </td>
                                     <td>12</td>
-                                    <td> <PrimaryBadge children={coll.status}clasname="decline-badge" /> </td>
+                                    <td> <PrimaryBadge children={coll.status == "true" ? "Active" : capitalizeFirstLetter(coll.status)}clasname={statusDisplay(coll.status)} /> </td>
                                     {/* <td><PrimaryBadge children="Suspended" clasname="non-active-badge" /></td> */}
                                     <td>
                                         <div className="d-flex">

@@ -74,6 +74,11 @@ export const useApiServce = () => {
             }
         }catch(error){
             console.log('Err - GET ALL DATA : ', error);
+            let errorData = error.response.data.message;
+            if(errorData == "Token-expire"){
+                localStorage.clear();
+                window.location.reload();
+            }
         }finally{
             setLoading(false);
         }
