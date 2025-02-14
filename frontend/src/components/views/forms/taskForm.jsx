@@ -5,7 +5,7 @@ import {  useTaskService } from "../../service/taskService";
 import { Loading } from "../../widgets/loading";
 import { SessionContext } from "../../context/sessionContext";
 
-const TaskForm = ({closeModal, setLoadingType, status, category, setFetch, setAlert, id}) => {
+const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id}) => {
 
     function generateUniqueId() {
         const now = Date.now(); // Current time in milliseconds
@@ -14,7 +14,7 @@ const TaskForm = ({closeModal, setLoadingType, status, category, setFetch, setAl
     }
     
 
-    const {createTask, fetchTaskById, updateTask} = useTaskService();
+    const {createTask, fetchTaskById, updateTask, getActiveCollaborators} = useTaskService();
 
     const {session} = useContext(SessionContext);
 
@@ -23,8 +23,14 @@ const TaskForm = ({closeModal, setLoadingType, status, category, setFetch, setAl
 
     const [content, setContent] = useState();
     const [title, setTitle] = useState();
+    const [catgory, setCategory] = useState("low");
+    const [selectedCollaborators, setSelectedCollaborators] = useState([]);
+
+
     const [editLoading, setEditLoading] = useState(false);
     const [singledata, setSingleData] = useState({uid: "", title: "", content: "", category: ""});
+
+    const [collaborators, setCollaborators] = useState([]);
 
     useEffect(() => {
         const getSingleTask = async () => {
@@ -49,9 +55,36 @@ const TaskForm = ({closeModal, setLoadingType, status, category, setFetch, setAl
             }
         }
 
+        const getAllActiveCollaborators = async () =>{
+            try{
+                const response = await getActiveCollaborators(session.user.userId);
+                console.log("The active collaborators -> ", response);
+                setCollaborators(response.data);
+            }catch(error){
+                console.log("The active collabporators ain't there --> ", error.message);
+            }
+        } 
+
         getSingleTask();
+        getAllActiveCollaborators();
     }, [id])
 
+
+
+    const handleCheckboxChange = (collaborator) => {
+        setSelectedCollaborators((prevSelected) => {
+            let updatedSelection;
+
+            if(prevSelected.some((item) => item.uid === collaborator.uid)){
+                updatedSelection = prevSelected.filter((item) => item.uid !== collaborator.uid);
+            }else {
+                updatedSelection = [...prevSelected, collaborator];
+            }
+
+            console.log("Selected Collaborators:", updatedSelection);
+            return updatedSelection;
+        })
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -73,32 +106,35 @@ const TaskForm = ({closeModal, setLoadingType, status, category, setFetch, setAl
             "ownerId": session.activity != null ? session.activity.userId : session.user.userId,
             "title": content,
             "description": "Testing the app using Jekins",
-            "category": category,
+            "category": catgory,
             "status": status,
             "dueDate": "2025-02-10T14:30:00",
         };
 
+        console.log("The data her is --> ", data);
+        console.log("The data collaborator is --> ", selectedCollaborators);
+
 
         
-        try{
-            setAlert({showMessage: false, messageType: "", message: ""});
-            setLoadingType({showLoading: true, type: status});
-            const response = await createTask(data);
-            console.log('VIEW : ', response);
-            if(response.status == "true")
-            {
-                setAlert({showMessage: true, messageType: "success", message: "New task created"});
-                setFetch(true);
-                closeModal();
-            }else {
-                setAlert({showMessage: true, messageType: "fail", message: response.error});
-                closeModal();
-            }
-        }catch(error){
-            console.error('Something went wrong: ', error);
-        }finally {
-            setLoadingType({showLoading: false, type: ""});
-        }
+        // try{
+        //     setAlert({showMessage: false, messageType: "", message: ""});
+        //     setLoadingType({showLoading: true, type: status});
+        //     const response = await createTask(data);
+        //     console.log('VIEW : ', response);
+        //     if(response.status == "true")
+        //     {
+        //         setAlert({showMessage: true, messageType: "success", message: "New task created"});
+        //         setFetch(true);
+        //         closeModal();
+        //     }else {
+        //         setAlert({showMessage: true, messageType: "fail", message: response.error});
+        //         closeModal();
+        //     }
+        // }catch(error){
+        //     console.error('Something went wrong: ', error);
+        // }finally {
+        //     setLoadingType({showLoading: false, type: ""});
+        // }
     }
 
 
@@ -193,19 +229,21 @@ const TaskForm = ({closeModal, setLoadingType, status, category, setFetch, setAl
                     </div>
                     <div className="col col-5" style={{borderStyle: "solid", borderWidth: "0px 0px 0px 1px"}}>
                         <div className="px-2">
-                            <SelectField label="Select a category"   options={[
-                                    { label: "low", value: "Low" },
-                                    { label: "meduim", value: "Meduim" },
-                                    { label: "high", value: "High" }
+                            <h5 className="fs-5 mb-2 text-dark"> Category</h5>
+                            <SelectField label="Select a category" value={catgory} onChange={(e) => setCategory(e.target.value)}  options={[
+                                    { label: "Low", value: "low" },
+                                    { label: "Meduim", value: "meduim" },
+                                    { label: "High", value: "high" }
                                 ]} />
                             <br />
                             <h5 className="text-dark">Collaborators</h5>
                             <div className="d-flex">
                                 <div className="row">
                                     <div className="col">
-                                        {session.collaborators.map((collaborator) => (
+                                        {collaborators && collaborators.map((collaborator) => (
                                             <CheckboxField
-                                            label={collaborator.username}
+                                            label={`${collaborator.username} ${collaborator.uid == session.user.userId ? "(You)" : ""}`}
+                                            onChange={() => handleCheckboxChange(collaborator)}
                                             />
                                         ))}
                                     </div>

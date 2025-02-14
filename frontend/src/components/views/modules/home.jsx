@@ -236,7 +236,7 @@ const Home = () => {
                             closeModal={closeTodoModal}
                             onClick={openTodoModal}
                             modalTitle="Todo Task"
-                            modalChildren={<TaskForm closeModal={closeTodoModal} setFetch={setFetch} setLoadingType={setLoadingType} category="high" status="todo" setAlert={setAlert} />}
+                            modalChildren={<TaskForm closeModal={closeTodoModal} setFetch={setFetch} setLoadingType={setLoadingType} status="todo" setAlert={setAlert} />}
                             children={
                                 <div>
                                     {load && loading ? <div>
@@ -289,7 +289,7 @@ const Home = () => {
                             closeModal={closeProgressModal}
                             onClick={openProgressModal}
                             modalTitle="In-Progess task"
-                            modalChildren={<TaskForm closeModal={closeProgressModal} setFetch={setFetch} setLoadingType={setLoadingType} category="meduim" status="progress" setAlert={setAlert} />}
+                            modalChildren={<TaskForm closeModal={closeProgressModal} setFetch={setFetch} setLoadingType={setLoadingType} status="progress" setAlert={setAlert} />}
                             children={
                                 <div>
                                     {load && loading ? <div>
@@ -336,7 +336,7 @@ const Home = () => {
                             closeModal={closeDoneModal}
                             onClick={openDoneModal}
                             modalTitle="Done task"
-                            modalChildren={<TaskForm closeModal={closeDoneModal} setFetch={setFetch} setLoadingType={setLoadingType} category="low" status="done" setAlert={setAlert} />}
+                            modalChildren={<TaskForm closeModal={closeDoneModal} setFetch={setFetch} setLoadingType={setLoadingType}  status="done" setAlert={setAlert} />}
                             children={
                                 <div>
                                 {load && loading ? <div>

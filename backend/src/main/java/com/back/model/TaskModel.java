@@ -1,6 +1,7 @@
 package com.back;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 public class TaskModel {
     // private String id;
@@ -12,10 +13,11 @@ public class TaskModel {
     private String category;
     private String status;
     private Timestamp dueDate;
+    private List<AssignModel> assigned;
 
     public TaskModel(){} // Default constructor for JSON decentralization
 
-    public TaskModel(String uid, String activityId, String ownerId,  String title, String description, String category, String status, Timestamp dueDate){
+    public TaskModel(String uid, String activityId, String ownerId,  String title, String description, String category, String status, Timestamp dueDate, List<AssignModel> assigned){
         this.uid = uid;
         this.activityId = activityId;
         this.ownerId = ownerId;
@@ -24,6 +26,7 @@ public class TaskModel {
         this.category = category;
         this.status = status;
         this.dueDate = dueDate;
+        this.assigned = assigned;
     }
 
     public String getUid(){
@@ -100,5 +103,15 @@ public class TaskModel {
 
     public void setStatus(String status){
         this.status = status;
+    }
+
+
+    
+    public List<AssignModel> getAssigned(){
+        return assigned;
+    }
+
+    public void setAssigned(List<AssignModel> assigned){
+        this.assigned = assigned;
     }
 }

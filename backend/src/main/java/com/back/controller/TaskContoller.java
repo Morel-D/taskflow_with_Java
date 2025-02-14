@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -110,6 +112,9 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
         }else if(pathInfo.startsWith("/done/")){
             String id = pathInfo.substring(6);
             fetchDoneTask(res, id);
+        }else if((pathInfo.startsWith("/get/active/collaborators/"))){
+            String activityUid = pathInfo.substring(26);
+            getActiveCollaborators(res, activityUid);
         }else {
             // Retrive single data by ID
             taskId = Integer.parseInt(pathInfo.substring(1).trim());
@@ -152,6 +157,45 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
                 objectMapper.writeValue(res.getWriter(), responseMap);
                 
             }
+        }
+    }
+
+    private void getActiveCollaborators(HttpServletResponse res, String uid) throws IOException 
+    {
+        String query = "SELECT u.*, ua.joinedAt AS joined, ua.status AS userActivityStatus FROM userActivity ua JOIN activity a ON a.uid = ua.activityId JOIN user u ON u.uid = ua.userId WHERE a.created_by = ? AND ua.status = 'true'";
+
+        try(PreparedStatement statement = connection.prepareStatement(query)){
+         statement.setString(1, uid);
+            ResultSet rs = statement.executeQuery();
+
+            List<Map<String, Object>> collaborators = new ArrayList<>();
+            while (rs.next()) {
+                Map<String, Object> collaborator = new HashMap<>();
+                collaborator.put("uid", rs.getString("uid"));
+                collaborator.put("email", rs.getString("email"));
+                collaborator.put("username", rs.getString("username"));
+                collaborator.put("userStatus", rs.getString("status"));
+                collaborator.put("status", rs.getString("userActivityStatus"));
+                collaborators.add(collaborator);
+            }
+
+            Map<String, Object> repsoneMap = new HashMap<>();
+            repsoneMap.put("status", "true");
+            repsoneMap.put("data", collaborators);
+
+            objectMapper.writeValue(res.getWriter(), repsoneMap);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            Map<String, String> responseMap = new HashMap<>();
+
+            responseMap.put("status", "false");
+            responseMap.put("message", "Failed to get collaborators");
+            responseMap.put("error", e.getMessage());
+
+            objectMapper.writeValue(res.getWriter(), responseMap);
+            
         }
     }
 
@@ -311,8 +355,12 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
         // Set response type
         res.setContentType("application/json");
 
+        // Get the entire JSON object
+        JsonNode rootNode = objectMapper.readTree(req.getReader());
+
+
         // Parse the JSON input into a TaskModel Object
-        TaskModel task = objectMapper.readValue(req.getReader(), TaskModel.class);
+        TaskModel task = objectMapper.treeToValue(rootNode, TaskModel.class);
 
         // Insert task into the database 
         String sql = "INSERT INTO task (uid, activityId, ownerId, title, description, category, status, dueDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -327,15 +375,53 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
             statement.setTimestamp(8, task.getDueDate());
             statement.executeUpdate();
 
-            
+            // Handle the assign ***********************
+            JsonNode assignedNode = rootNode.get("assigned");
 
-            // Creating a JSON response 
-            Map<String, String> responseMap = new HashMap<>();
-            responseMap.put("status", "true");
-            responseMap.put("message", "data-inserted");
+            System.out.print("The JSON --> "+ assignedNode);
 
-            // Write the Json response
-            objectMapper.writeValue(res.getWriter(), responseMap);
+
+            if(assignedNode != null && assignedNode.isArray()){
+                List<AssignModel> assignments = objectMapper.readValue(assignedNode.toString(), new TypeReference<List<AssignModel>>() {});
+
+                String sql2 = "INSERT INTO assign (uid, taskUid, userActivityUid, status) VALUES (?, ?, ?, ?)";
+                try(PreparedStatement statement2 = connection.prepareStatement(sql2)){
+                    
+                    for(AssignModel assign : assignments){
+                    statement2.setString(1, assign.getUid());
+                    statement2.setString(2, assign.getTaskUid());
+                    statement2.setString(3, assign.getUserActivityUid());
+                    statement2.setString(4, assign.getStatus());
+    
+                    statement2.addBatch();
+                    }
+    
+                    int[] rowInserted = statement2.executeBatch();
+    
+    
+                    // Creating a JSON response 
+                    Map<String, Object> responseMap = new HashMap<>();
+                    responseMap.put("status", "true");
+                    responseMap.put("message", "data-inserted");
+                    responseMap.put("Data Inserted", rowInserted.length);
+    
+                    // Write the Json response
+                    objectMapper.writeValue(res.getWriter(), responseMap);
+    
+                }catch (SQLException e) {
+                    e.printStackTrace();
+                    res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                
+                    Map<String, String> errorResponse = new HashMap<>();
+                    errorResponse.put("status", "false");
+                    errorResponse.put("message", "Batch insertion failed");
+                    errorResponse.put("error", e.getMessage());
+                
+                    objectMapper.writeValue(res.getWriter(), errorResponse);
+                }
+    
+            }
+
 
         }catch(SQLException e){
             e.printStackTrace();
