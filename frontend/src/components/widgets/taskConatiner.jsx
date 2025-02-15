@@ -8,8 +8,9 @@ import {ButtonLoading } from "./loading";
 import { useTaskService } from "../service/taskService";
 import Aos from "aos";
 import TaskForm from "../views/forms/taskForm";
+import users from "../../assets/icons/navbar/people.png";
 
-const TaskContainer = ({color, child, id, setFetch, setAlert}) => {
+const TaskContainer = ({color, child, content, id, setFetch, setAlert, category, categoryClassName, num}) => {
 
 
     useEffect(() => {
@@ -68,7 +69,15 @@ const TaskContainer = ({color, child, id, setFetch, setAlert}) => {
                 onMouseLeave={() => setIsHovered(false)}
                 style={{borderColor: color ?? colors.grey2Color, padding: "10px", position: "relative", borderRadius: "5px" }}>                
                     <div className="col-10"><h6> {child}</h6></div>
-                    <p>No action</p>
+                    <p>{content ?? "No action"}</p>
+                    <div className="d-flex">
+                        <div className="col">
+                            <label htmlFor=""><img src={users} className="img-fluid" style={{height: "24px"}} /> <label className=" text-secondary mx-2">{num ?? 0} {num > 1 ? "Collaborators" : "Collaborator"}</label></label>
+                        </div>
+                        <div className="col text-end mt-2">
+                            <span className={categoryClassName ?? "low-active-badge"}>{category ?? "undefine"}</span>
+                        </div>
+                    </div>
                     {isHovered && (
                         <div
                         style={{

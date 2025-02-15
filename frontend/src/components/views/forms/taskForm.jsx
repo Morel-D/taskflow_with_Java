@@ -18,6 +18,10 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id}) 
 
     const {session} = useContext(SessionContext);
 
+    const uniqueId = generateUniqueId();
+
+    const [taskUid, setTaskUid] = useState();
+
     const [error, setError] = useState(false);
     const [titleError, setTitleError] = useState(false);
 
@@ -33,6 +37,7 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id}) 
     const [collaborators, setCollaborators] = useState([]);
 
     useEffect(() => {
+    setTaskUid(uniqueId);
         const getSingleTask = async () => {
             if(id)
             {
@@ -78,7 +83,13 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id}) 
             if(prevSelected.some((item) => item.uid === collaborator.uid)){
                 updatedSelection = prevSelected.filter((item) => item.uid !== collaborator.uid);
             }else {
-                updatedSelection = [...prevSelected, collaborator];
+                const data = {
+                "uid": uniqueId,
+                "taskUid": taskUid,
+                "userActivityUid": collaborator.uid,
+                "status": "true"
+                };
+                updatedSelection = [...prevSelected, data];
             }
 
             console.log("Selected Collaborators:", updatedSelection);
@@ -98,43 +109,43 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id}) 
             return;
         }
 
-        const uniqueId = generateUniqueId();
 
         const data = {
-            "uid": uniqueId,
+            "uid": taskUid,
             "activityId": session.activity != null ? session.activity.uid : null,
             "ownerId": session.activity != null ? session.activity.userId : session.user.userId,
-            "title": content,
-            "description": "Testing the app using Jekins",
+            "title": title,
+            "description": content,
             "category": catgory,
             "status": status,
             "dueDate": "2025-02-10T14:30:00",
+            "assigned": selectedCollaborators
         };
 
         console.log("The data her is --> ", data);
-        console.log("The data collaborator is --> ", selectedCollaborators);
-
-
         
-        // try{
-        //     setAlert({showMessage: false, messageType: "", message: ""});
-        //     setLoadingType({showLoading: true, type: status});
-        //     const response = await createTask(data);
-        //     console.log('VIEW : ', response);
-        //     if(response.status == "true")
-        //     {
-        //         setAlert({showMessage: true, messageType: "success", message: "New task created"});
-        //         setFetch(true);
-        //         closeModal();
-        //     }else {
-        //         setAlert({showMessage: true, messageType: "fail", message: response.error});
-        //         closeModal();
-        //     }
-        // }catch(error){
-        //     console.error('Something went wrong: ', error);
-        // }finally {
-        //     setLoadingType({showLoading: false, type: ""});
-        // }
+        try{
+            setAlert({showMessage: false, messageType: "", message: ""});
+            // setLoadingType({showLoading: true, type: status});
+            const response = await createTask(data);
+            console.log('VIEW : ', response);
+            if(response.status == "true")
+            {
+                setAlert({showMessage: true, messageType: "success", message: "New task created"});
+                setFetch(true);
+                closeModal();
+            }else if(response == undefined) {
+                setAlert({showMessage: true, messageType: "fail", message: response.error});
+                closeModal();
+            }else{
+                setAlert({showMessage: true, messageType: "fail", message: response.error});
+                closeModal();
+            }
+        }catch(error){
+            console.error('Something went wrong: ', error);
+        }finally {
+            setLoadingType({showLoading: false, type: ""});
+        }
     }
 
 

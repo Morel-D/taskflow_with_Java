@@ -14,6 +14,7 @@ import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { StrictModeDroppable } from "../../widgets/StrictModelDroppable";
 import NoNetwork from "../../widgets/noNetwork";
 import { SessionContext } from "../../context/sessionContext";
+import { capitalizeFirstLetter } from "../../utils/helper";
 const Home = () => {
 
     const  {loading, fetchTodoTasks, fetchProgressTasks, fetchDoneTasks, updateTask} = useTaskService();
@@ -101,6 +102,8 @@ const Home = () => {
         const getTodoData = async () => {
             try{
                 const response = await fetchTodoTasks();
+                console.log('The low data is : ', response);
+
                 setDataTodo(response.data);
                 setFetch(false);
                 setLoad(false);
@@ -112,7 +115,7 @@ const Home = () => {
         const getProgressData = async () => {
             try{
                 const response = await fetchProgressTasks();
-                console.log('The meduim data is : ', response);
+                // console.log('The meduim data is : ', response);
                 if(response == "ERR_NETWORK"){
                     setNetwork(true)
                 }else{
@@ -259,7 +262,15 @@ const Home = () => {
                                                 {...provided.draggableProps}
                                                 {...provided.dragHandleProps}
                                                 className="mb-2">
-                                                    <TaskContainer child={data.title} id={data.id} setFetch={setFetch} setAlert={setAlert} />
+                                                    <TaskContainer
+                                                    num={data.assigned.length}
+                                                    category={capitalizeFirstLetter(data.category)}
+                                                    categoryClassName={data.category == "low" ? "low-active-badge" : data.category == "meduim" ? "meduim-active-badge" : "high-active-badge"} 
+                                                    child={data.title} 
+                                                    content={data.description} 
+                                                    id={data.id} 
+                                                    setFetch={setFetch} 
+                                                    setAlert={setAlert} />
                                                 </div>
                                             )}
 
@@ -307,7 +318,14 @@ const Home = () => {
                                                     {...provided.draggableProps}
                                                     {...provided.dragHandleProps}                                                        
                                                     className="mb-2">
-                                                        <TaskContainer child={data.title}  color={colors.secondaryColor} id={data.id} setFetch={setFetch}  setAlert={setAlert} />
+                                                        <TaskContainer
+                                                        category={capitalizeFirstLetter(data.category)}
+                                                        categoryClassName={data.category == "low" ? "low-active-badge" : data.category == "meduim" ? "meduim-active-badge" : "high-active-badge"}                                                          
+                                                        child={data.title}  
+                                                        color={colors.secondaryColor} 
+                                                        id={data.id} 
+                                                        setFetch={setFetch}  
+                                                        setAlert={setAlert} />
                                                     </div>
                                                 )}
                                             </Draggable>
@@ -354,7 +372,14 @@ const Home = () => {
                                             {...provided.draggableProps}
                                             {...provided.dragHandleProps}  
                                             className="mb-2">
-                                                <TaskContainer child={data.title} color={colors.primaryColor} id={data.id} setFetch={setFetch} setAlert={setAlert} />
+                                                <TaskContainer
+                                                category={capitalizeFirstLetter(data.category)}
+                                                categoryClassName={data.category == "low" ? "low-active-badge" : data.category == "meduim" ? "meduim-active-badge" : "high-active-badge"}                                                  
+                                                child={data.title} 
+                                                color={colors.primaryColor} 
+                                                id={data.id} 
+                                                setFetch={setFetch} 
+                                                setAlert={setAlert} />
                                             </div>
                                         )}
                                     </Draggable>

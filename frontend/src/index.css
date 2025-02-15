@@ -369,7 +369,7 @@ li > a {text-decoration: none;}
 .blocked-badge
 {
   background-color: var(--secondaryColor);
-  padding: 6px 10px 8px 10px;
+  padding: 1px 6px 3px 6px;
   border-style: solid;
   border-color: var(--secondaryColor);
   border-width: 1px;
@@ -380,7 +380,7 @@ li > a {text-decoration: none;}
 .pending-badge
 {
   background-color: var(--grey2Color);
-  padding: 6px 10px 8px 10px;
+  padding: 1px 6px 3px 6px;
   border-style: solid;
   border-color: var(--grey2Color);
   border-width: 1px;
@@ -391,7 +391,7 @@ li > a {text-decoration: none;}
 .decline-badge
 {
   background-color: var(--accentBlue);
-  padding: 6px 10px 8px 10px;
+  padding: 1px 6px 3px 6px;
   border-style: solid;
   border-color: var(--secondaryColor);
   border-width: 1px;
@@ -404,12 +404,51 @@ li > a {text-decoration: none;}
 .active-badge
 {
   background-color: var(--primaryColor);
-  padding: 6px 10px 8px 10px;
+  padding: 1px 6px 3px 6px;
   border-style: solid;
   border-color: var(--primaryColor);
   border-width: 1px;
   border-radius: 30px;
   color: var(--whiteColor);
+}
+
+.low-active-badge
+{
+  background-color: rgba(231, 231, 231, 0.185);
+  padding: 1px 6px 3px 6px;
+  border-style: solid;
+  border-color: gray;
+  border-width: 1px;
+  border-radius: 30px;
+  color: gray;
+  font-size: 14px;
+  font-weight: 100;
+}
+
+.meduim-active-badge
+{
+  background-color: rgba(250, 208, 129, 0.185);
+  padding: 1px 6px 3px 6px;
+  border-style: solid;
+  border-color: rgba(209, 148, 35, 0.973);
+  border-width: 1px;
+  border-radius: 30px;
+  color: rgba(209, 148, 35, 0.973);
+  font-size: 14px;
+  font-weight: 100;
+}
+
+.high-active-badge
+{
+  background-color: #ff210434;
+  padding: 1px 6px 3px 6px;
+  border-style: solid;
+  border-color: #ff046d;
+  border-width: 1px;
+  border-radius: 30px;
+  color: #ff046d;
+  font-size: 14px;
+  font-weight: 100;
 }
 
 

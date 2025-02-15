@@ -200,7 +200,10 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
     }
 
     private void fetchTodoTask (HttpServletResponse res, String id) throws IOException {
-        String sql = "SELECT * FROM task WHERE status = 'todo' AND activityId = ? ORDER BY dateof DESC";
+        String sql = "SELECT task.*, assign.uid AS assignUid, assign.taskUid, assign.userActivityUid, assign.status AS assignStatus "+
+                     "FROM task " +
+                     "LEFT JOIN assign ON assign.taskUid = task.uid " + 
+                     "WHERE task.status = 'todo' AND activityId = ? ORDER BY task.dateof DESC";
         try(PreparedStatement statement = connection.prepareStatement(sql)){
             statement.setString(1, id);
             ResultSet rs = statement.executeQuery();
@@ -208,19 +211,46 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
             List<Map<String, Object>> tasks = new ArrayList<>();
 
             while(rs.next()){
-                Map<String, Object> task = new HashMap<>();
-                task.put("id", rs.getInt("id"));
-                task.put("uid", rs.getString("uid"));
-                task.put("activityId", rs.getString("activityId"));
-                task.put("ownerId", rs.getString("ownerId"));
-                task.put("title", rs.getString("title"));
-                task.put("description", rs.getString("description"));
-                task.put("category", rs.getString("category"));
-                task.put("status", rs.getString("status"));
-                task.put("dueDate", rs.getString("dueDate"));
-                task.put("dateof", rs.getString("dateof"));
+                Map<String, Object> task = null;
+                for(Map<String, Object> existingTask : tasks){
+                    if(existingTask.get("uid").equals(rs.getString("uid")))
+                        {
+                            task = existingTask;
+                            break;
+                        }
+                }
 
-                tasks.add(task);
+                if(task == null){
+                    task = new HashMap<>();
+                    task.put("id", rs.getInt("id"));
+                    task.put("uid", rs.getString("uid"));
+                    task.put("activityId", rs.getString("activityId"));
+                    task.put("ownerId", rs.getString("ownerId"));
+                    task.put("title", rs.getString("title"));
+                    task.put("description", rs.getString("description"));
+                    task.put("category", rs.getString("category"));
+                    task.put("status", rs.getString("status"));
+                    task.put("dueDate", rs.getString("dueDate"));
+                    task.put("dateof", rs.getString("dateof"));
+
+                    task.put("assigned", new ArrayList<Map<String, Object>>());
+    
+                    tasks.add(task);
+                }
+
+                // Add assigned data 
+
+                String assignUid = rs.getString("assignUid");
+                if(assignUid != null){
+                    Map<String, String> assignData = new HashMap<>();
+                    assignData.put("uid", assignUid);
+                    assignData.put("taskUid", rs.getString("taskUid"));
+                    assignData.put("userActivityUid", rs.getString("userActivityUid"));
+                    assignData.put("status", rs.getString("assignStatus"));
+
+                    ((List<Map<String, String>>) task.get("assigned")).add(assignData);
+
+                }
                 }
 
                 Map<String, Object> repsoneMap = new HashMap<>();
@@ -373,7 +403,6 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
             statement.setString(6, task.getCategory());
             statement.setString(7, task.getStatus());
             statement.setTimestamp(8, task.getDueDate());
-            statement.executeUpdate();
 
             // Handle the assign ***********************
             JsonNode assignedNode = rootNode.get("assigned");
@@ -397,6 +426,8 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
                     }
     
                     int[] rowInserted = statement2.executeBatch();
+                    statement.executeUpdate();
+
     
     
                     // Creating a JSON response 
