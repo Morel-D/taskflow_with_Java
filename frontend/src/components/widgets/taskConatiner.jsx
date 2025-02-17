@@ -9,8 +9,9 @@ import { useTaskService } from "../service/taskService";
 import Aos from "aos";
 import TaskForm from "../views/forms/taskForm";
 import users from "../../assets/icons/navbar/people.png";
+import { TextTruncate } from "./formatText";
 
-const TaskContainer = ({color, child, content, id, setFetch, setAlert, category, categoryClassName, num}) => {
+const TaskContainer = ({color, child, content, id, uid, setFetch, setAlert, category, categoryClassName, num}) => {
 
 
     useEffect(() => {
@@ -69,7 +70,7 @@ const TaskContainer = ({color, child, content, id, setFetch, setAlert, category,
                 onMouseLeave={() => setIsHovered(false)}
                 style={{borderColor: color ?? colors.grey2Color, padding: "10px", position: "relative", borderRadius: "5px" }}>                
                     <div className="col-10"><h6> {child}</h6></div>
-                    <p>{content ?? "No action"}</p>
+                    <p>{<TextTruncate text={content} maxLength={90} /> ?? "No action"}</p>
                     <div className="d-flex">
                         <div className="col">
                             <label htmlFor=""><img src={users} className="img-fluid" style={{height: "24px"}} /> <label className=" text-secondary mx-2">{num ?? 0} {num > 1 ? "Collaborators" : "Collaborator"}</label></label>
@@ -106,7 +107,7 @@ const TaskContainer = ({color, child, content, id, setFetch, setAlert, category,
 
 
 
-        <Modal isOpen={editModal} onClose={closeEditModal} children={<TaskForm id={id} closeModal={closeEditModal} setFetch={setFetch} setAlert={setAlert} />} title="Quick Edit" col="col-8" />
+        <Modal isOpen={editModal} onClose={closeEditModal} children={<TaskForm id={id} uid={uid} closeModal={closeEditModal} setFetch={setFetch} setAlert={setAlert} />} title="Quick Edit" col="col-8" />
         
         </>
 

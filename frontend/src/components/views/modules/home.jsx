@@ -269,6 +269,7 @@ const Home = () => {
                                                     child={data.title} 
                                                     content={data.description} 
                                                     id={data.id} 
+                                                    uid={data.uid.toString()}
                                                     setFetch={setFetch} 
                                                     setAlert={setAlert} />
                                                 </div>
@@ -319,11 +320,14 @@ const Home = () => {
                                                     {...provided.dragHandleProps}                                                        
                                                     className="mb-2">
                                                         <TaskContainer
+                                                        num={data.assigned.length}
                                                         category={capitalizeFirstLetter(data.category)}
                                                         categoryClassName={data.category == "low" ? "low-active-badge" : data.category == "meduim" ? "meduim-active-badge" : "high-active-badge"}                                                          
-                                                        child={data.title}  
+                                                        child={data.title} 
+                                                        content={data.description}   
                                                         color={colors.secondaryColor} 
                                                         id={data.id} 
+                                                        uid={data.uid}
                                                         setFetch={setFetch}  
                                                         setAlert={setAlert} />
                                                     </div>
@@ -373,11 +377,14 @@ const Home = () => {
                                             {...provided.dragHandleProps}  
                                             className="mb-2">
                                                 <TaskContainer
+                                                num={data.assigned.length}
                                                 category={capitalizeFirstLetter(data.category)}
                                                 categoryClassName={data.category == "low" ? "low-active-badge" : data.category == "meduim" ? "meduim-active-badge" : "high-active-badge"}                                                  
                                                 child={data.title} 
+                                                content={data.description}   
                                                 color={colors.primaryColor} 
                                                 id={data.id} 
+                                                uid={data.uid}
                                                 setFetch={setFetch} 
                                                 setAlert={setAlert} />
                                             </div>

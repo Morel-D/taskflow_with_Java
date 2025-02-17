@@ -5,7 +5,7 @@ import {  useTaskService } from "../../service/taskService";
 import { Loading } from "../../widgets/loading";
 import { SessionContext } from "../../context/sessionContext";
 
-const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id}) => {
+const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id, uid}) => {
 
     function generateUniqueId() {
         const now = Date.now(); // Current time in milliseconds
@@ -14,7 +14,7 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id}) 
     }
     
 
-    const {createTask, fetchTaskById, updateTask, getActiveCollaborators} = useTaskService();
+    const {createTask, getAssignCollaboratorsByUid, fetchTaskById, updateTask, getActiveCollaborators} = useTaskService();
 
     const {session} = useContext(SessionContext);
 
@@ -29,14 +29,16 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id}) 
     const [title, setTitle] = useState();
     const [catgory, setCategory] = useState("low");
     const [selectedCollaborators, setSelectedCollaborators] = useState([]);
+    const [assignedCollaborators, setAssignedCollaborators] = useState([]);
 
 
-    const [editLoading, setEditLoading] = useState(false);
+    const [editLoading, setEditLoading] = useState(id ? true : false);
     const [singledata, setSingleData] = useState({uid: "", title: "", content: "", category: ""});
 
     const [collaborators, setCollaborators] = useState([]);
 
     useEffect(() => {
+        console.log("The uid here is ---> ", uid);
     setTaskUid(uniqueId);
         const getSingleTask = async () => {
             if(id)
@@ -46,7 +48,8 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id}) 
                     setEditLoading(true);
                     const response = await fetchTaskById(id);
                     // if(response.status == "true"){
-                        console.log("The response is present : ", response);
+                        console.log("The response is single : ", response);
+                        setCategory(response.category);
                         setSingleData({uid: response.uid, title: response.title, content: response.description, category: response.category});
                         // console.log('DATA is : ', singledata);
                     // }
@@ -65,11 +68,28 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id}) 
                 const response = await getActiveCollaborators(session.user.userId);
                 console.log("The active collaborators -> ", response);
                 setCollaborators(response.data);
+
+                const response2 = await getAssignCollaboratorsByUid(uid);
+                console.log("The assigned --> ", response2);
+                setAssignedCollaborators(response2.data);
             }catch(error){
                 console.log("The active collabporators ain't there --> ", error.message);
             }
         } 
 
+        // const getAssigned = async () =>  {
+        //     if(uid){
+        //         console.log("The uid here is ---> ", uid);
+        //         try{
+        //             const response = await getAssignCollaboratorsByUid(uid);
+        //             console.log("The assigned --> ", response);
+        //         }catch(error){
+        //             console.log("The active collabporators ain't there --> ", error.message);
+        //         }
+        //     }
+        // }
+
+        // getAssigned();
         getSingleTask();
         getAllActiveCollaborators();
     }, [id])
@@ -230,6 +250,7 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id}) 
                         value={id ? singledata.title : title}
                         />
                         <BordelessTextAreaFeild 
+                            maxLength={250}
                             row={6} 
                             placeholder="Add a task description.." 
                             error={error} 
@@ -253,6 +274,7 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id}) 
                                     <div className="col">
                                         {collaborators && collaborators.map((collaborator) => (
                                             <CheckboxField
+                                            checked={uid && (assignedCollaborators && assignedCollaborators.some((col) => col.userActivityUid == collaborator.uid ? true : false ))}
                                             label={`${collaborator.username} ${collaborator.uid == session.user.userId ? "(You)" : ""}`}
                                             onChange={() => handleCheckboxChange(collaborator)}
                                             />

@@ -13,6 +13,7 @@ export const useTaskService = () => {
     }
 
     const getActiveCollaborators = (id) => getAllData(`${endpoint}/get/active/collaborators/${id}`);
+    const getAssignCollaboratorsByUid = (id) => getAllData(`${endpoint}/get/assign/${id}`);
     const createTask = (data) => postData(endpoint, data);
     const fetchTasks = () => getAllData(endpoint);
     const fetchTodoTasks = () => getAllData(`${endpoint}/todo/${activityUid}`);
@@ -22,5 +23,5 @@ export const useTaskService = () => {
     const updateTask = (id, data) => upateData(`${endpoint}/${id}`, data);
     const deleteTask = (id) => deleteData(`${endpoint}/${id}`);
 
-    return {loading, getActiveCollaborators, createTask, fetchTasks, fetchTodoTasks, fetchProgressTasks, fetchDoneTasks, fetchTaskById, updateTask, deleteTask}
+    return {loading, getActiveCollaborators, getAssignCollaboratorsByUid, createTask, fetchTasks, fetchTodoTasks, fetchProgressTasks, fetchDoneTasks, fetchTaskById, updateTask, deleteTask}
 }

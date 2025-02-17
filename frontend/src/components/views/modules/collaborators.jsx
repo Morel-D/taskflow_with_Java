@@ -8,9 +8,12 @@ import trash from "../../../assets/icons/trash.png";
 import survey from "../../../assets/icons/survey.png";
 import { useSessionService } from "../../service/sessionService";
 import Skeleton from "react-loading-skeleton";
-import { DateCell, TextTruncate } from "../../widgets/formatDate";
+import { DateCell, TextTruncate } from "../../widgets/formatText";
 import { capitalizeFirstLetter, statusDisplay } from "../../utils/helper";
 import { colors } from "../../tools/color";
+import Modal from "../../widgets/modal";
+import CollaboratorForm from "../forms/collaboratorForm";
+import { ErrorMessage, SuccessMessage } from "../../widgets/message";
 
 const Collaborators = () => {
 
@@ -19,6 +22,15 @@ const Collaborators = () => {
     const [data, setData] = useState([]);
     const [load, setLoad] = useState(true);
     let num = 1;
+
+    const [formModal, setFormModal] = useState(false);
+    const opeenFormModal = () => setFormModal(true);
+    const closeFormModal = () => setFormModal(false);
+
+    const [alert, setAlert] = useState({showMessage: false, messageType: "", message: ""});
+    const handleCloseMessage = () => {
+        setAlert({showMessage: false, messageType: "", message: ""});
+    }
 
     useEffect(() => {
         setLoad(true);
@@ -30,6 +42,7 @@ const Collaborators = () => {
             setLoad(true);
             const response = await getCollaborators(session.user.userId);
             console.log("FINAL RESPONE --> ", response);
+            console.log("The message new ---> ", alert);
             setData(response.data);
             }catch(error){
             setLoad(false);
@@ -41,6 +54,14 @@ const Collaborators = () => {
         getAllCollaborators();
     }, [session])
 
+
+    useEffect(() => {
+        console.log('The general laoding is : ', alert.showMessage);
+        console.log('The general type is : ', alert.messageType);
+        console.log("The alert is : ", alert)
+    }, [alert])
+    
+
     return ( 
         <>
         <div>
@@ -50,7 +71,7 @@ const Collaborators = () => {
                     <label className=" text-secondary fs-5 fw-bold">{load ? <Skeleton height={30} width={170} /> : (<>Members - { data.length}</>)}</label>
                 </div>
                 <div className="col col-4 text-end">
-                {load ? <Skeleton height={45} width={200} /> : <PrimaryButton children="New Collaborator" />} 
+                {load ? <Skeleton height={45} width={200} /> : <PrimaryButton children="New Collaborator" onClick={opeenFormModal} />} 
                 </div>
             </div>
             {
@@ -111,10 +132,16 @@ const Collaborators = () => {
                         </tbody>
                     </table>
                 </div>
+                
             </div>
                 )
             }
         </div>
+        <Modal isOpen={formModal} onClose={closeFormModal} children={<CollaboratorForm setAlert={setAlert} closeModal={closeFormModal} />} title="Add a member" col="col-5" />
+        {alert.showMessage && alert.messageType == "fail" ? <ErrorMessage onClick={handleCloseMessage} message={alert.message} /> : null }
+        {alert.showMessage && alert.messageType == "success" ? <SuccessMessage onClick={handleCloseMessage} message={alert.message} /> : null}
+
+        
         </>
      );
 }

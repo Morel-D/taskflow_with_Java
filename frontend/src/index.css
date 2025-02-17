@@ -30,6 +30,10 @@ body {
   min-height: 100vh;
 }
 
+p {
+  line-height: 1.1rem;
+}
+
 .text-green {
   color: var(--primaryColor);
 }
@@ -369,7 +373,7 @@ li > a {text-decoration: none;}
 .blocked-badge
 {
   background-color: var(--secondaryColor);
-  padding: 1px 6px 3px 6px;
+  padding: 8px 6px 9px 6px;
   border-style: solid;
   border-color: var(--secondaryColor);
   border-width: 1px;
@@ -380,7 +384,7 @@ li > a {text-decoration: none;}
 .pending-badge
 {
   background-color: var(--grey2Color);
-  padding: 1px 6px 3px 6px;
+  padding: 8px 6px 9px 6px;
   border-style: solid;
   border-color: var(--grey2Color);
   border-width: 1px;
@@ -391,7 +395,7 @@ li > a {text-decoration: none;}
 .decline-badge
 {
   background-color: var(--accentBlue);
-  padding: 1px 6px 3px 6px;
+  padding: 8px 6px 9px 6px;
   border-style: solid;
   border-color: var(--secondaryColor);
   border-width: 1px;
@@ -404,7 +408,7 @@ li > a {text-decoration: none;}
 .active-badge
 {
   background-color: var(--primaryColor);
-  padding: 1px 6px 3px 6px;
+  padding: 8px 6px 9px 6px;
   border-style: solid;
   border-color: var(--primaryColor);
   border-width: 1px;

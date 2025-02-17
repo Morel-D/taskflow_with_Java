@@ -115,6 +115,9 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
         }else if((pathInfo.startsWith("/get/active/collaborators/"))){
             String activityUid = pathInfo.substring(26);
             getActiveCollaborators(res, activityUid);
+        }else if(pathInfo.startsWith("/get/assign/")){
+            String uid = pathInfo.substring(12);
+            getAssignedCollaboratorsByUID(res, uid);
         }else {
             // Retrive single data by ID
             taskId = Integer.parseInt(pathInfo.substring(1).trim());
@@ -159,6 +162,43 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
             }
         }
     }
+
+
+    private void getAssignedCollaboratorsByUID(HttpServletResponse res, String uid) throws IOException {
+        String query = "SELECT * FROM assign WHERE taskUid = ?";
+        try(PreparedStatement statement = connection.prepareStatement(query)){
+            statement.setString(1, uid);
+            ResultSet rs = statement.executeQuery();
+
+            List<Map<String, Object>> assigned = new ArrayList<>();
+
+            while(rs.next()){
+                Map<String, Object> assignedData = new HashMap<>();
+                assignedData.put("id", rs.getString("id"));
+                assignedData.put("uid", rs.getString("uid"));
+                assignedData.put("taskUid", rs.getString("taskUid"));
+                assignedData.put("userActivityUid", rs.getString("userActivityUid"));
+                assignedData.put("status", rs.getString("status"));
+                assigned.add(assignedData);
+
+            }
+
+            Map<String, Object> repsoneMap = new HashMap<>();
+            repsoneMap.put("status", "true");
+            repsoneMap.put("data", assigned);
+
+            objectMapper.writeValue(res.getWriter(), repsoneMap);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            Map<String, Object> responseMap = new HashMap<>();
+            responseMap.put("status", "false");
+            responseMap.put("message", "failed-to-get-assign");
+            responseMap.put("error", e.getMessage());
+            objectMapper.writeValue(res.getWriter(), responseMap);
+        }
+    }
+
 
     private void getActiveCollaborators(HttpServletResponse res, String uid) throws IOException 
     {
@@ -278,26 +318,57 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
     }
 
     private void fetchProgressTask (HttpServletResponse res, String id) throws IOException {
-        String sql = "SELECT * FROM task WHERE status = 'progress' AND activityId = ? ORDER BY dateof DESC";
+        String sql = "SELECT task.*, assign.uid AS assignUid, assign.taskUid, assign.userActivityUid, assign.status AS assignStatus "+
+                    "FROM task " +
+                    "LEFT JOIN assign ON assign.taskUid = task.uid " + 
+                    "WHERE task.status = 'progress' AND activityId = ? ORDER BY task.dateof DESC";
         try(PreparedStatement statement = connection.prepareStatement(sql)){
-        statement.setString(1, id);   
-        ResultSet rs = statement.executeQuery();
-        
-            List<Map<String, Object>> tasks = new ArrayList<>();
-            while(rs.next()){
-                Map<String, Object> task = new HashMap<>();
-                task.put("id", rs.getInt("id"));
-                task.put("uid", rs.getString("uid"));
-                task.put("activityId", rs.getString("activityId"));
-                task.put("ownerId", rs.getString("ownerId"));
-                task.put("title", rs.getString("title"));
-                task.put("description", rs.getString("description"));
-                task.put("category", rs.getString("category"));
-                task.put("status", rs.getString("status"));
-                task.put("dueDate", rs.getString("dueDate"));
-                task.put("dateof", rs.getString("dateof"));
+            statement.setString(1, id);
+            ResultSet rs = statement.executeQuery();
 
-                tasks.add(task);
+            List<Map<String, Object>> tasks = new ArrayList<>();
+
+            while(rs.next()){
+                Map<String, Object> task = null;
+                for(Map<String, Object> existingTask : tasks){
+                    if(existingTask.get("uid").equals(rs.getString("uid")))
+                        {
+                            task = existingTask;
+                            break;
+                        }
+                }
+
+                if(task == null){
+                    task = new HashMap<>();
+                    task.put("id", rs.getInt("id"));
+                    task.put("uid", rs.getString("uid"));
+                    task.put("activityId", rs.getString("activityId"));
+                    task.put("ownerId", rs.getString("ownerId"));
+                    task.put("title", rs.getString("title"));
+                    task.put("description", rs.getString("description"));
+                    task.put("category", rs.getString("category"));
+                    task.put("status", rs.getString("status"));
+                    task.put("dueDate", rs.getString("dueDate"));
+                    task.put("dateof", rs.getString("dateof"));
+
+                    task.put("assigned", new ArrayList<Map<String, Object>>());
+    
+                    tasks.add(task);
+                }
+
+                // Add assigned data 
+
+                String assignUid = rs.getString("assignUid");
+                if(assignUid != null){
+                    Map<String, String> assignData = new HashMap<>();
+                    assignData.put("uid", assignUid);
+                    assignData.put("taskUid", rs.getString("taskUid"));
+                    assignData.put("userActivityUid", rs.getString("userActivityUid"));
+                    assignData.put("status", rs.getString("assignStatus"));
+
+                    ((List<Map<String, String>>) task.get("assigned")).add(assignData);
+
+                }
                 }
 
                 Map<String, Object> repsoneMap = new HashMap<>();
@@ -310,7 +381,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
                 // return all the task in a JSON array
                 objectMapper.writeValue(res.getWriter(), tasks);
 
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             Map<String, String> responseMap = new HashMap<>();
@@ -325,26 +396,58 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
     }
 
     private void fetchDoneTask (HttpServletResponse res, String id) throws IOException {
-        String sql = "SELECT * FROM task WHERE status = 'done' AND activityId = ? ORDER BY dateof DESC";
-        try(PreparedStatement statement = connection.prepareStatement(sql)){
-            statement.setString(1, id);   
-            ResultSet rs = statement.executeQuery();
-        
-            List<Map<String, Object>> tasks = new ArrayList<>();
-            while(rs.next()){
-                Map<String, Object> task = new HashMap<>();
-                task.put("id", rs.getInt("id"));
-                task.put("uid", rs.getString("uid"));
-                task.put("activityId", rs.getString("activityId"));
-                task.put("ownerId", rs.getString("ownerId"));
-                task.put("title", rs.getString("title"));
-                task.put("description", rs.getString("description"));
-                task.put("category", rs.getString("category"));
-                task.put("status", rs.getString("status"));
-                task.put("dueDate", rs.getString("dueDate"));
-                task.put("dateof", rs.getString("dateof"));
+        String sql = "SELECT task.*, assign.uid AS assignUid, assign.taskUid, assign.userActivityUid, assign.status AS assignStatus "+
+        "FROM task " +
+        "LEFT JOIN assign ON assign.taskUid = task.uid " + 
+        "WHERE task.status = 'done' AND activityId = ? ORDER BY task.dateof DESC";
 
-                tasks.add(task);
+        try(PreparedStatement statement = connection.prepareStatement(sql)){
+            statement.setString(1, id);
+            ResultSet rs = statement.executeQuery();
+
+            List<Map<String, Object>> tasks = new ArrayList<>();
+
+            while(rs.next()){
+                Map<String, Object> task = null;
+                for(Map<String, Object> existingTask : tasks){
+                    if(existingTask.get("uid").equals(rs.getString("uid")))
+                        {
+                            task = existingTask;
+                            break;
+                        }
+                }
+
+                if(task == null){
+                    task = new HashMap<>();
+                    task.put("id", rs.getInt("id"));
+                    task.put("uid", rs.getString("uid"));
+                    task.put("activityId", rs.getString("activityId"));
+                    task.put("ownerId", rs.getString("ownerId"));
+                    task.put("title", rs.getString("title"));
+                    task.put("description", rs.getString("description"));
+                    task.put("category", rs.getString("category"));
+                    task.put("status", rs.getString("status"));
+                    task.put("dueDate", rs.getString("dueDate"));
+                    task.put("dateof", rs.getString("dateof"));
+
+                    task.put("assigned", new ArrayList<Map<String, Object>>());
+    
+                    tasks.add(task);
+                }
+
+                // Add assigned data 
+
+                String assignUid = rs.getString("assignUid");
+                if(assignUid != null){
+                    Map<String, String> assignData = new HashMap<>();
+                    assignData.put("uid", assignUid);
+                    assignData.put("taskUid", rs.getString("taskUid"));
+                    assignData.put("userActivityUid", rs.getString("userActivityUid"));
+                    assignData.put("status", rs.getString("assignStatus"));
+
+                    ((List<Map<String, String>>) task.get("assigned")).add(assignData);
+
+                }
                 }
 
                 Map<String, Object> repsoneMap = new HashMap<>();
