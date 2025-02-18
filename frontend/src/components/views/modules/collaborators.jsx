@@ -21,7 +21,7 @@ const Collaborators = () => {
     const {getCollaborators, loading} = useSessionService();
     const [data, setData] = useState([]);
     const [load, setLoad] = useState(true);
-    let num = 1;
+    let num = 0;
 
     const [formModal, setFormModal] = useState(false);
     const opeenFormModal = () => setFormModal(true);
@@ -113,7 +113,7 @@ const Collaborators = () => {
                         </thead>
                         <tbody>
                            {data.map((coll) => (
-                                <tr className="custom-row">
+                                <tr className={session.user.userId == coll.uid ? "custom-row d-none" : "custom-row"}>
                                     <th>{num ++}</th>
                                     <td>{coll.username}</td>
                                     <td>{coll.email}</td>

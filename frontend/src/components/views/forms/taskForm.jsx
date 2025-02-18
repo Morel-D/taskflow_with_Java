@@ -56,9 +56,6 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id, u
                 }catch(error){
                     console.log('Something went wrong  : ', error);
                     closeModal();
-                }finally {
-                    setEditLoading(false);
-
                 }
             }
         }
@@ -74,6 +71,9 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id, u
                 setAssignedCollaborators(response2.data);
             }catch(error){
                 console.log("The active collabporators ain't there --> ", error.message);
+            }finally {
+                setEditLoading(false);
+
             }
         } 
 

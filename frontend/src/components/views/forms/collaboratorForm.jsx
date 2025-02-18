@@ -2,14 +2,14 @@ import { useContext, useState } from "react";
 import { PrimaryButton } from "../../widgets/button";
 import { TextFeild } from "../../widgets/textFeilds";
 import { generateUniqueId, validateEmail } from "../../utils/helper";
-import { authActivityService } from "../../service/authActivityService";
 import { SessionContext } from "../../context/sessionContext";
+import { useSessionService } from "../../service/sessionService";
 
 const CollaboratorForm = ({setAlert, closeModal}) => {
 
     const [text, setText] = useState();
     const [error, setError] = useState();
-    const {loading, addUsers} = authActivityService();
+    const {loading, addUser} = useSessionService();
     const {session} = useContext(SessionContext);    
 
     const handleInvitation = async () => {
@@ -35,19 +35,25 @@ const CollaboratorForm = ({setAlert, closeModal}) => {
 
         console.log("The added collaborator heree is  --> ", data);
 
-        const response = await addUsers("activity/user/add", data);
+        const response = await addUser(data);
         console.log("COLLABORATORS-PATH --> ", response);
 
-        if(response.status == false){
-            setAlert({showMessage: true, messageType: "fail", message: response.error});
+        if(response != undefined){
+            console.log("Not undefeinf");
+            if(response.status == false){
+                setAlert({showMessage: true, messageType: "fail", message: response.error});
+                closeModal();
+                return;
+            }else if(response.status == "true"){
+                setAlert({showMessage: true, messageType: "success", message: "New collabortor on pending mode added"});
+                console.log("Response data ---> ", data);
+                closeModal();
+                return;
+            }
+        }else{
+            setAlert({showMessage: true, messageType: "fail", message: "Unknown error"});
             closeModal();
-        }else if(response.status == "true"){
-            setAlert({showMessage: true, messageType: "success", message: "New collabortor on pending mode added"});
-            console.log("Response data ---> ", data);
-            closeModal();
-        }else if(response == undefined){
-            setAlert({showMessage: true, messageType: "fail", message: response.error});
-            closeModal();
+            return;
         }
     }
 

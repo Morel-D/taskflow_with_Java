@@ -75,9 +75,9 @@ public class JwtFilter implements Filter {
             .parseClaimsJws(token)
             .getBody();
 
-            System.out.println("UserID : "+ claims.getSubject());
-            System.out.println("email : "+ claims.get("email"));
-            System.out.println("userName : "+ claims.get("username"));
+            // System.out.println("UserID : "+ claims.getSubject());
+            // System.out.println("email : "+ claims.get("email"));
+            // System.out.println("userName : "+ claims.get("username"));
 
 
 

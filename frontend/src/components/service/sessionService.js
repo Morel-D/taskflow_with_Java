@@ -3,12 +3,13 @@ import { useApiServce } from "./apiService"
 import { SessionContext } from "../context/sessionContext";
 
 export const useSessionService = () => {
-    const {loading, getDataByID} = useApiServce();
+    const {loading, getDataByID, postData} = useApiServce();
 
     const endpoint = "protected";
 
     const getActivityById = (id) => getDataByID(`protected/${id}`);
     const getCollaborators = (id) => getDataByID(`${endpoint}/collaborators/${id}`);
+    const addUser = (data) => postData(`${endpoint}/user/add`, data);
 
-    return {loading, getActivityById, getCollaborators}
+    return {loading, getActivityById, getCollaborators, addUser}
 }
