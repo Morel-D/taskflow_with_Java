@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { PrimaryButton } from "../../widgets/button";
 import { BordelessTextAreaFeild, BorderlessTextFeild, CheckboxField, SelectField, TextAreaFeild, TextFeild } from "../../widgets/textFeilds";
 import {  useTaskService } from "../../service/taskService";
-import { Loading } from "../../widgets/loading";
+import { ButtonLoading, Loading } from "../../widgets/loading";
 import { SessionContext } from "../../context/sessionContext";
 
 const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id, uid}) => {
@@ -14,7 +14,7 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id, u
     }
     
 
-    const {createTask, getAssignCollaboratorsByUid, fetchTaskById, updateTask, getActiveCollaborators} = useTaskService();
+    const {createTask, getAssignCollaboratorsByUid, fetchTaskById, updateTask, getActiveCollaborators, loading} = useTaskService();
 
     const {session} = useContext(SessionContext);
 
@@ -77,45 +77,36 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id, u
             }
         } 
 
-        // const getAssigned = async () =>  {
-        //     if(uid){
-        //         console.log("The uid here is ---> ", uid);
-        //         try{
-        //             const response = await getAssignCollaboratorsByUid(uid);
-        //             console.log("The assigned --> ", response);
-        //         }catch(error){
-        //             console.log("The active collabporators ain't there --> ", error.message);
-        //         }
-        //     }
-        // }
-
-        // getAssigned();
         getSingleTask();
         getAllActiveCollaborators();
-    }, [id])
+    }, [id]);
+
+
 
 
 
     const handleCheckboxChange = (collaborator) => {
-        setSelectedCollaborators((prevSelected) => {
+        setAssignedCollaborators((prevSelected) => {
             let updatedSelection;
-
-            if(prevSelected.some((item) => item.uid === collaborator.uid)){
-                updatedSelection = prevSelected.filter((item) => item.uid !== collaborator.uid);
-            }else {
+    
+            if (prevSelected.some((item) => item.userActivityUid === collaborator.uid)) {
+                // If already selected, remove it
+                updatedSelection = prevSelected.filter((item) => item.userActivityUid !== collaborator.uid);
+            } else {
+                // Otherwise, add it
                 const data = {
-                "uid": uniqueId,
-                "taskUid": taskUid,
-                "userActivityUid": collaborator.uid,
-                "status": "true"
+                    uid: uniqueId,
+                    taskUid: taskUid,
+                    userActivityUid: collaborator.uid,
+                    status: "true",
                 };
                 updatedSelection = [...prevSelected, data];
             }
-
-            console.log("Selected Collaborators:", updatedSelection);
+    
+            console.log("Updated Assigned Collaborators:", updatedSelection);
             return updatedSelection;
-        })
-    }
+        });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -139,7 +130,7 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id, u
             "category": catgory,
             "status": status,
             "dueDate": "2025-02-10T14:30:00",
-            "assigned": selectedCollaborators
+            "assigned": assignedCollaborators
         };
 
         console.log("The data her is --> ", data);
@@ -182,9 +173,16 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id, u
         }
 
         const data = {
+            "uid": singledata.uid,
+            "activityId": session.activity != null ? session.activity.uid : null,
+            "ownerId": session.activity != null ? session.activity.userId : session.user.userId,
             "title": singledata.title,
             "description": singledata.content,
             "category": singledata.category,
+            "status": status,
+            "dueDate": "2025-02-10T14:30:00",
+            "assigned": assignedCollaborators
+
         };
 
         try{
@@ -274,7 +272,7 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id, u
                                     <div className="col">
                                         {collaborators && collaborators.map((collaborator) => (
                                             <CheckboxField
-                                            checked={uid && (assignedCollaborators && assignedCollaborators.some((col) => col.userActivityUid == collaborator.uid ? true : false ))}
+                                            checked={uid && (assignedCollaborators && assignedCollaborators.some((col) => col.userActivityUid == collaborator.uid))}
                                             label={`${collaborator.username} ${collaborator.uid == session.user.userId ? "(You)" : ""}`}
                                             onChange={() => handleCheckboxChange(collaborator)}
                                             />
@@ -286,7 +284,7 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id, u
                     </div>
                 </div>
                 <div className="footer mt-4 text-end">
-                    <PrimaryButton children={!id ? "Save a task" : "Upadate Data"} onClick={id ? handleUpdate : handleSubmit} />
+                    {loading ? <ButtonLoading /> : <PrimaryButton children={!id ? "Save a task" : "Upadate Data"} onClick={id ? handleUpdate : handleSubmit} /> }
                 </div>
                 </>
             )}

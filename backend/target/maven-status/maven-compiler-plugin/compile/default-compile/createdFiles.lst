@@ -2,6 +2,7 @@ com\back\TaskContoller$1.class
 com\back\AuthModel.class
 com\back\TaskContoller.class
 com\back\jwtUtil.class
+com\back\TaskContoller$2.class
 com\back\JwtFilter.class
 com\back\UserActivityModel.class
 com\back\TaskModel.class

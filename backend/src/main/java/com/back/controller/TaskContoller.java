@@ -199,7 +199,6 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
         }
     }
 
-
     private void getActiveCollaborators(HttpServletResponse res, String uid) throws IOException 
     {
         String query = "SELECT u.*, ua.joinedAt AS joined, ua.status AS userActivityStatus FROM userActivity ua JOIN activity a ON a.uid = ua.activityId JOIN user u ON u.uid = ua.userId WHERE a.created_by = ? AND ua.status = 'true'";
@@ -601,7 +600,9 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
         }
 
         String taskId = pathInfo.substring(1);
-        TaskModel task = objectMapper.readValue(req.getReader(), TaskModel.class);
+
+        JsonNode rootNode = objectMapper.readTree(req.getReader());
+        TaskModel task = objectMapper.treeToValue(rootNode, TaskModel.class);
 
         
 
@@ -655,8 +656,38 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
             Map<String, String> responseMap = new HashMap<>();
         
             if (rowsUpdated > 0) {
-                responseMap.put("status", "true");
-                responseMap.put("message", "data-updated");
+
+            // handle assigned after the insertion...................
+            JsonNode assignedNode = rootNode.get("assigned");
+
+            if (assignedNode != null && assignedNode.isArray()) {
+                List<AssignModel> assignments = objectMapper.readValue(
+                    assignedNode.toString(), new TypeReference<List<AssignModel>>() {}
+                );
+
+                try (PreparedStatement deleteStatement = connection.prepareStatement(
+                    "DELETE FROM assign WHERE taskUid = ?"
+                )) {
+                    deleteStatement.setString(1, taskId);
+                    deleteStatement.executeUpdate();
+                }
+
+                String insertSql = "INSERT INTO assign (uid, taskUid, userActivityUid, status) VALUES (?, ?, ?, ?)";
+                try (PreparedStatement insertStatement = connection.prepareStatement(insertSql)) {
+                    for (AssignModel assign : assignments) {
+                        insertStatement.setString(1, assign.getUid());
+                        insertStatement.setString(2, taskId);
+                        insertStatement.setString(3, assign.getUserActivityUid());
+                        insertStatement.setString(4, assign.getStatus());
+                        insertStatement.addBatch();
+                    }
+                    insertStatement.executeBatch();
+                }
+            }
+
+            responseMap.put("status", "true");
+            responseMap.put("message", "data-updated");
+                
             } else {
                 responseMap.put("status", "false");
                 responseMap.put("message", "This task doesn't exist");
