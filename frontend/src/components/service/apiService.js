@@ -16,16 +16,17 @@ export const useApiServce = () => {
             console.log('POST DATA : ', response);
             return response.data;
         }catch(error){
+            console.log("Error --> ", error);
             // if backend retrun error 
             if(error.response){
-                const status = error.response.message;
-                return errorMessages[status];
+                const status = error.response.data.message;
+                return {status: false, error: errorMessages[status]};
             }else if (error.request){
                 // Request made but no response was received
-                return errorMessages.NETWORK_ERROR
+                return {status: false, error: errorMessages.NETWORK_ERROR};
             }else {
                 console.log('Hello world : ', error.code)
-                return errorMessages.UNKNOWN_ERROR
+                return {status: false, error: errorMessages.UNKNOWN_ERROR};
             }
         }finally{
             setLoading(false);
@@ -104,16 +105,29 @@ export const useApiServce = () => {
     }
 
     // DELETE DATA BY ID**********************************
-    const deleteData = async (endpoint) => {
+    const deleteData = async (endpoint, data) => {
         try{
             setLoading(true);
-            const response = await axiosInstance.delete(endpoint);
+            console.log('DELETED DATA : ', data);
+            console.log('DELETED ENDPOINT : ', endpoint);
+            const response = await axiosInstance.delete(endpoint, data);
             if(response){
                 console.log('DATA DELETED : ', response);
                 return response.data;
             }
         }catch(error){
-            console.log('Err - DATA DELETED : ', error);
+            console.log("Error --> ", error);
+            // if backend retrun error 
+            if(error.response){
+                const status = error.response.data.message;
+                return {status: false, error: errorMessages[status]};
+            }else if (error.request){
+                // Request made but no response was received
+                return {status: false, error: errorMessages.NETWORK_ERROR};
+            }else {
+                console.log('Hello world : ', error.code)
+                return {status: false, error: errorMessages.UNKNOWN_ERROR};
+            }
         }
     }
 

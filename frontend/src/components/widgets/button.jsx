@@ -3,7 +3,7 @@ import { colors } from "../tools/color"
 const PrimaryButton = ({children, href, onClick}) =>
     {
        return( 
-        <a className="primaryButton" id='prIdMdl'  href={href} onClick={onClick} style={{ '--primaryColor': colors.primaryColor, '--whiteColor': colors.whiteColor }}>{children}</a>
+        <a className="primary-button" id='prIdMdl'  href={href} onClick={onClick} style={{ '--primaryColor': colors.primaryColor, '--whiteColor': colors.whiteColor }}>{children}</a>
        )
     }
 
@@ -11,7 +11,7 @@ const PrimaryButton = ({children, href, onClick}) =>
     const SecondaryButton = ({children, href, onClick}) =>
         {
            return( 
-            <a className="secondaryButton" id='prIdMdl'  href={href} onClick={onClick} style={{ '--primaryColor': colors.primaryColor, '--whiteColor': colors.whiteColor }}>{children}</a>
+            <a className="secondary-button" id='prIdMdl'  href={href} onClick={onClick} style={{ '--primaryColor': colors.primaryColor, '--whiteColor': colors.whiteColor }}>{children}</a>
            )
         }
     
@@ -19,8 +19,16 @@ const PrimaryButton = ({children, href, onClick}) =>
 const DangerButton = ({children, href, onClick}) =>
     {
         return( 
-        <a className="dangerButton" id='prIdMdl'  href={href} onClick={onClick} style={{ '--primaryColor': colors.dangerColor, '--whiteColor': colors.whiteColor }}>{children}</a>
+        <a className="danger-button" id='prIdMdl'  href={href} onClick={onClick} style={{ '--primaryColor': colors.dangerColor, '--whiteColor': colors.whiteColor }}>{children}</a>
         )
     }
 
-export {PrimaryButton, SecondaryButton, DangerButton}
+
+const IconButton = ({icon, children, href, onClick}) =>
+    {
+        return( 
+        <a className="icon-button" id='prIdMdl'  href={href} onClick={onClick} style={{ '--primaryColor': colors.dangerColor, '--whiteColor': colors.whiteColor }}><img src={icon} className="img-fluid" />{children}</a>
+        )
+    }
+
+export {PrimaryButton, SecondaryButton, DangerButton, IconButton}

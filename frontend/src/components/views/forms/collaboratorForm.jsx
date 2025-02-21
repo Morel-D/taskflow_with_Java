@@ -5,7 +5,7 @@ import { generateUniqueId, validateEmail } from "../../utils/helper";
 import { SessionContext } from "../../context/sessionContext";
 import { useSessionService } from "../../service/sessionService";
 
-const CollaboratorForm = ({setAlert, closeModal}) => {
+const CollaboratorForm = ({setAlert, closeModal, setDataLoad}) => {
 
     const [text, setText] = useState();
     const [error, setError] = useState();
@@ -39,7 +39,6 @@ const CollaboratorForm = ({setAlert, closeModal}) => {
         console.log("COLLABORATORS-PATH --> ", response);
 
         if(response != undefined){
-            console.log("Not undefeinf");
             if(response.status == false){
                 setAlert({showMessage: true, messageType: "fail", message: response.error});
                 closeModal();
@@ -47,6 +46,7 @@ const CollaboratorForm = ({setAlert, closeModal}) => {
             }else if(response.status == "true"){
                 setAlert({showMessage: true, messageType: "success", message: "New collabortor on pending mode added"});
                 console.log("Response data ---> ", data);
+                setDataLoad(true);
                 closeModal();
                 return;
             }

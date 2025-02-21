@@ -1,5 +1,6 @@
 package com.back;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -214,7 +215,7 @@ public class SessionController extends HttpServlet {
     }
 
     private void getCollaborators(String uid, HttpServletResponse res) throws IOException{
-        String query = "SELECT u.*, ua.joinedAt AS joined, ua.status AS userActivityStatus FROM userActivity ua JOIN activity a ON a.uid = ua.activityId JOIN user u ON u.uid = ua.userId WHERE a.created_by = ?";
+        String query = "SELECT u.*, ua.joinedAt AS joined, ua.uid AS userActivityUid, ua.status AS userActivityStatus FROM userActivity ua JOIN activity a ON a.uid = ua.activityId JOIN user u ON u.uid = ua.userId WHERE a.created_by = ?";
         try(PreparedStatement statement = connection.prepareStatement(query)){
             statement.setString(1, uid);
             ResultSet rs = statement.executeQuery();
@@ -224,6 +225,7 @@ public class SessionController extends HttpServlet {
             while (rs.next()) {
                 Map<String, Object> collaborator = new HashMap<>();
                 collaborator.put("uid", rs.getString("uid"));
+                collaborator.put("userActivityUid", rs.getString("userActivityUid"));
                 collaborator.put("email", rs.getString("email"));
                 collaborator.put("username", rs.getString("username"));
                 collaborator.put("userStatus", rs.getString("status"));
@@ -413,5 +415,159 @@ public class SessionController extends HttpServlet {
         }
     }
 
+    
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse res) throws IOException{
+            // Set CORS headers
+            res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+            res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
+            res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+            res.setHeader("Access-Control-Max-Age", "3600");
+            res.setStatus(HttpServletResponse.SC_OK);
+    
+            res.setContentType("application/json");
+
+            String pathInfo = req.getPathInfo();
+            
+    
+            if(pathInfo == null || pathInfo.equals("/")){
+                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                Map<String, String> responseMap = new HashMap<>();
+                responseMap.put("status", "false");
+                responseMap.put("message", "This user doesn't exist");
+                return;
+            }
+
+            if(pathInfo.startsWith("/update/")){
+
+            UserActivityModel model = objectMapper.readValue(req.getReader(), UserActivityModel.class);
+
+
+            String sql = "UPDATE useractivity SET status = ? WHERE uid = ?";
+
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, model.getStatus());
+                statement.setString(2, model.getUid());
+        
+                int rowsUpdated = statement.executeUpdate();
+                Map<String, String> responseMap = new HashMap<>();
+        
+                if (rowsUpdated > 0) {
+                    responseMap.put("status", "true");
+                    responseMap.put("message", "user-update");
+                } else {
+                    res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    responseMap.put("status", "false");
+                    responseMap.put("message", "update-failed");
+                }
+        
+                objectMapper.writeValue(res.getWriter(), responseMap);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("status", "false");
+                errorResponse.put("message", "Database error");
+                errorResponse.put("error", e.getMessage());
+        
+                objectMapper.writeValue(res.getWriter(), errorResponse);
+            }
+        }
+
+
+    }
+
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse res) throws IOException{
+
+        // Set CORS headers
+        res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+        res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        res.setHeader("Access-Control-Max-Age", "3600");
+        res.setStatus(HttpServletResponse.SC_OK);
+
+        res.setContentType("application/json");
+
+        
+        UserActivityModel model = objectMapper.readValue(req.getReader(), UserActivityModel.class);
+
+
+        BufferedReader reader = req.getReader();
+        StringBuilder body = new StringBuilder();
+
+        String line;
+        while ((line = reader.readLine()) != null) {
+            body.append(line);
+        }
+        System.out.println("BODY : "+body.toString());
+
+        if(reader.ready()){
+            
+        // delete a task by id
+        String pathInfo = req.getPathInfo();
+        int taskId;
+
+
+        if(pathInfo == null || pathInfo.equals("/")){
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            Map<String, String> responseMap = new HashMap<>();
+            responseMap.put("status", "false");
+            responseMap.put("message", "This user doesn't exist");
+            return;
+        }
+        
+
+        if(pathInfo.equals("/delete")){
+            
+
+        String sql = "DELETE FROM useractivity WHERE uid = ?";
+        try(PreparedStatement statement = connection.prepareStatement(sql)){
+            statement.setString(1, model.getUid());
+
+            Map<String, String> responseMap = new HashMap<>();
+
+            int rowsDeleted = statement.executeUpdate();
+            if(rowsDeleted > 0){
+                responseMap.put("status", "true");
+                responseMap.put("message", "user-deleted");
+                objectMapper.writeValue(res.getWriter(), responseMap);
+            } else {
+                responseMap.put("status", "false");
+                responseMap.put("message", "Task not found");
+                objectMapper.writeValue(res.getWriter(), responseMap);
+
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            Map<String, String> responseMap = new HashMap<>();
+            responseMap.put("status", "false");
+            responseMap.put("message", "Task failed to be deleted");
+            responseMap.put("error", e.getMessage());
+            objectMapper.writeValue(res.getWriter(), responseMap);
+
+        }
+
+    }else{
+        Map<String, String> responseMap = new HashMap<>();
+        responseMap.put("status", "false");
+        responseMap.put("message", "Out of bound");
+        objectMapper.writeValue(res.getWriter(), responseMap);
+        return;
+    }
+
+        } else {
+            res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            Map<String, String> responseMap = new HashMap<>();
+            responseMap.put("status", "false");
+            responseMap.put("message", "no-data");
+            objectMapper.writeValue(res.getWriter(), responseMap);
+            return;
+        }
+
+}
 
 }

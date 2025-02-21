@@ -90,6 +90,7 @@ const Login = ({handleSwitch, exit, setExit}) => {
             setActivity(response.activity);
             navigate("/option/invite");
         }else if(response.message == "user-pending"){
+            localStorage.removeItem("token");
             navigate("/option/collaborate");
         }
 

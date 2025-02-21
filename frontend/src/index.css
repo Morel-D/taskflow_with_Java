@@ -244,16 +244,19 @@ li:hover{ background-color: var(--hoverColor); padding: 12px 12px 12px 12px; bor
 li > a {text-decoration: none;}
 .icon-link{ height: auto; width: 14%;}
 
-.primaryButton { text-decoration: none;  background-color: var(--primaryColor); color: var(--whiteColor); border-style: none; font-size: 18px; border-radius: 8px; padding: 10px 22px 10px 22px; cursor: pointer; transition: background-color 0.8s ease-out, padding 0.3s ease-out;  }
-.primaryButton:hover { background-color: #19abb3; color: white }
+.primary-button { text-decoration: none;  background-color: var(--primaryColor); color: var(--whiteColor); border-style: none; font-size: 18px; border-radius: 8px; padding: 10px 22px 10px 22px; cursor: pointer; transition: background-color 0.8s ease-out, padding 0.3s ease-out;  }
+.primary-button:hover { background-color: #19abb3; color: white }
 
 
-.secondaryButton { text-decoration: none;  background-color: var(--secondaryColor); color: var(--whiteColor); border-style: none; font-size: 18px; border-radius: 8px; padding: 10px 22px 10px 22px; cursor: pointer; transition: background-color 0.8s ease-out, padding 0.3s ease-out;  }
-.secondaryButton:hover { background-color: #626a74; color: white }
+.secondary-button { text-decoration: none;  background-color: var(--secondaryColor); color: var(--whiteColor); border-style: none; font-size: 18px; border-radius: 8px; padding: 10px 22px 10px 22px; cursor: pointer; transition: background-color 0.8s ease-out, padding 0.3s ease-out;  }
+.secondary-button:hover { background-color: #626a74; color: white }
 
-.dangerButton { text-decoration: none;  background-color: var(--dangerColor); color: var(--whiteColor); border-style: none; font-size: 18px; border-radius: 8px; padding: 10px 22px 10px 22px; cursor: pointer; transition: background-color 0.8s ease-out, padding 0.3s ease-out;  }
-.dangerButton:hover { background-color: #ff74a3; color: white }
+.danger-button { text-decoration: none;  background-color: var(--dangerColor); color: var(--whiteColor); border-style: none; font-size: 18px; border-radius: 8px; padding: 10px 22px 10px 22px; cursor: pointer; transition: background-color 0.8s ease-out, padding 0.3s ease-out;  }
+.danger-button:hover { background-color: #ff74a3; color: white }
 
+.icon-button { text-decoration: none;  background-color: var(--whiteColor); color: var(--whiteColor); border-style: solid; border-color: var(--grey2Color); font-size: 18px; border-width: 1px; border-radius: 8px; padding: 9px 12px 9px 12px; cursor: pointer; transition: background-color 0.8s ease-out, padding 0.3s ease-out;  }
+.icon-button:hover { background-color: rgb(248, 248, 248); color: white }
+.icon-button > img {width: 20px; height: auto;}
 
 .add-container {
   border-style: dashed;
