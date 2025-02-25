@@ -135,10 +135,24 @@ p {
 }
 
 
+.parent-container {
+  display: flex;
+  flex-direction: column;
+  height: 70vh; /* Full viewport height */
+}
+
+.lg-num
+{
+  padding-top: 28px;
+  padding-bottom: 14px;
+  color: var(--secondaryColor);
+  font-size: 44px;
+  font-weight: bold;
+}
 
 
 .custom-card-scroll {
-  height: 130px;
+  height: auto;
   line-height: 10px;
   overflow-y: auto; /* Enables vertical scrolling */
   overflow-x: hidden; /* Hides horizontal scroll */
@@ -230,7 +244,7 @@ h2 {
   line-height: 1.1;
 }
 
-.active-link { color: var(--secondaryColor); font-size: 18px; font-weight: 400;}
+.active-link { color: var(--secondaryColor); font-size: 18px; font-weight: 500;}
 .link { font-size: 16px; font-weight: 400; text-decoration: none; }
 
 a, .link{

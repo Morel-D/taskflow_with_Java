@@ -10,8 +10,8 @@ export const useSessionService = () => {
     const getActivityById = (id) => getDataByID(`protected/${id}`);
     const getCollaborators = (id) => getDataByID(`${endpoint}/collaborators/${id}`);
     const addUser = (data) => postData("protected/user/add", data);
-    const upadateStatus = (data) => upateData("protected/update", data);
-    const removeCollaborator = (data) => deleteData("protected/delete", data);
+    const upadateStatus = (id, data) => upateData(`protected/update/${id}`, data);
+    const removeCollaborator = (id) => deleteData(`protected/delete/${id}`);
 
     return {loading, getActivityById, getCollaborators, addUser, upadateStatus, removeCollaborator}
 }

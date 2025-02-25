@@ -32,6 +32,7 @@ export const errorMessages = {
     "activity-already-exist": "This activity already exsit",
     "User-pending": "User already in pending mode",
     "User-exist": "User already belongs to this activity",
-    "no-data": "Frontend data is empty"
+    "no-data": "Frontend data is empty",
+    "user-not-found": "User not found"
 
 }

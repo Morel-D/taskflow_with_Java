@@ -46,9 +46,18 @@ const Organisation = () => {
         const response = await collaboratorActivity("activity/get/user", data);
         console.log("Response --> ", response);
         if(response.status == "true"){
-            const currentPath = window.location.pathname;
-            const modifiedPath = currentPath.replace("/option/organisation", "/");
-            navigate(modifiedPath);
+
+            if(action == "true"){
+                const currentPath = window.location.pathname;
+                const modifiedPath = currentPath.replace("/option/organisation", "/");
+                navigate(modifiedPath);
+            }else if(action == "decline"){
+                localStorage.removeItem("activityUid");
+                const currentPath = window.location.pathname;
+                const modifiedPath = currentPath.replace("/option/organisation", "/option");
+                navigate(modifiedPath);                
+            }
+
         }
     }
 

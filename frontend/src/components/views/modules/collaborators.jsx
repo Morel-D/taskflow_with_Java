@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { SessionContext } from "../../context/sessionContext";
-import { DangerButton, IconButton, PrimaryButton } from "../../widgets/button";
+import { DangerButton, IconButton, PrimaryButton, SecondaryButton } from "../../widgets/button";
 import search from "../../../assets/icons/search.png";
 import { TextIconFeild } from "../../widgets/textFeilds";
 import { PrimaryBadge } from "../../widgets/badges";
@@ -20,7 +20,7 @@ import { ButtonLoading } from "../../widgets/loading";
 const Collaborators = () => {
 
     const {session} = useContext(SessionContext);
-    const {getCollaborators, removeCollaborator} = useSessionService();
+    const {getCollaborators, removeCollaborator, upadateStatus} = useSessionService();
     const [data, setData] = useState([]);
     const [load, setLoad] = useState(true);
     const [dataLoad, setDataLoad] = useState(true);
@@ -30,19 +30,23 @@ const Collaborators = () => {
     const [reloadDelete, setReloadDelete] = useState(false);
     const [deleteLoading, setDeleteLoading] = useState(false);
 
+    const [statusModal, setStatusModal] = useState(false);
+    const [statusInfo, setStatusInfo] = useState({status: "", uid: ""});
+
 
 
     const handleDelete = async () => {
         console.log("The uid is --> ", storeUid);
         try{
-            setDeleteLoading(true);
-            const data = {"uid": storeUid}
-            const response = await removeCollaborator(data);
+
+
+
+            const response = await removeCollaborator(storeUid);
             if(response.status == "true")
             {
             console.log('Data deleted : ', response);
-            setAlert({showMessage: true, messageType: "success", message: "Task deleted"});
-            setReloadDelete(true);
+            setAlert({showMessage: true, messageType: "success", message: "Member deleted"});
+            reloadAllCollaborators();
             closeDeleteModal();
             return;
             }else{
@@ -52,12 +56,43 @@ const Collaborators = () => {
             }
                 }catch(error){
             console.log('Modal data : Something went wrong : ', error);
-            setDeleteLoading(false);
-    }finally{
-        setDeleteLoading(false);
 
     }
     }
+
+
+    const handleStatusChange = async () => {
+        console.log("The uid is --> ", storeUid);
+        try{
+            setDeleteLoading(true);
+            const data = 
+            {
+                "uid": statusInfo.uid,
+                "status": statusInfo.status
+            }
+            console.log("The data is --> ", data);
+            const response = await upadateStatus(statusInfo.uid, {"status": statusInfo.status == "blocked" ? "true" : "blocked"});
+            if(response.status == "true")
+            {
+            console.log('Data change : ', response);
+            setAlert({showMessage: true, messageType: "success", message: "Switch Mode"});
+            reloadAllCollaborators();
+            closeStatusModal();
+            return;
+            }else{
+                console.log("Ne response --> ", response);
+                setAlert({showMessage: true, messageType: "fail", message: response.error});
+                closeStatusModal();
+            }
+                }catch(error){
+            console.log('Modal data : Something went wrong : ', error);
+    }finally{
+        setDeleteLoading(false);
+    }
+    }
+
+    const openStatusModal = () => setStatusModal(true);
+    const closeStatusModal = () => setStatusModal(false);
     
     const openDeleteModal = (uid) => 
         {
@@ -65,6 +100,7 @@ const Collaborators = () => {
             // e.preventDefault();
             setDeletModal(true)
         };
+
     const closeDeleteModal = () => setDeletModal(false);
     let num = 0;
 
@@ -75,6 +111,20 @@ const Collaborators = () => {
     const [alert, setAlert] = useState({showMessage: false, messageType: "", message: ""});
     const handleCloseMessage = () => {
         setAlert({showMessage: false, messageType: "", message: ""});
+    }
+
+    const reloadAllCollaborators = async () => {
+        try{
+        // setLoad(true);
+        const response = await getCollaborators(session.user.userId);
+        console.log("FINAL RESPONE --> ", response);
+        console.log("The message new ---> ", alert);
+        setData(response.data);
+        }catch(error){
+        // setLoad(false);
+        }finally{
+        // setLoad(false);
+        }
     }
 
     useEffect(() => {
@@ -115,7 +165,7 @@ const Collaborators = () => {
         }
 
     
-    }, [session, dataLoad, reload])
+    }, [session, dataLoad, reload, reloadDelete])
 
 
     useEffect(() => {
@@ -198,8 +248,8 @@ const Collaborators = () => {
                                     {/* <td><PrimaryBadge children="Suspended" clasname="non-active-badge" /></td> */}
                                     <td>
                                         <div className="d-flex">
-                                            <a href="#" className="mx-3" onClick={() => {openDeleteModal(coll.userActivityUid)}} style={{width: "22px"}}><img src={trash} alt="image" className="img-fluid" /></a>
-                                            <a href="#" className="mx-0" style={{width: "22px"}}><img src={survey} alt="image" className="img-fluid" /></a>
+                                            <a href="#" className="mx-3" onClick={() => {openDeleteModal(coll.uid)}} style={{width: "22px"}}><img src={trash} alt="image" className="img-fluid" /></a>
+                                            <a href="#" className={coll.status === "pending" ? "d-none" : "mx-0"}  onClick={() => {setStatusInfo({status: coll.status, uid: coll.userActivityUid}); openStatusModal();}} style={{width: "22px"}}><img src={survey} alt="image" className="img-fluid" /></a>
                                         </div>
                                     </td>
                                 </tr>
@@ -219,7 +269,22 @@ const Collaborators = () => {
                     {!deleteLoading ? <DangerButton children={"Delete"} onClick={handleDelete} /> : <ButtonLoading /> }
                 </div>
             </div>} title="Are you sure ?" col="col-3" />
+
+            <Modal isOpen={statusModal} onClose={closeStatusModal} children={
+            <div className="py-2">
+                {
+                    statusInfo.status == "true" ?
+                    (<p style={{lineHeight: "20px"}}>This user is currently Active. Are you willing to suspend him ?</p>):
+                    <p style={{lineHeight: "20px"}}>This user is currently Suspended. Are you willing to enable him ?</p>
+                }
+                <div className="text-end mt-5">
+                    {!deleteLoading ? (statusInfo.status == "true" ? <SecondaryButton children={"Suspend User"} onClick={handleStatusChange} /> : <PrimaryButton children={"Enable User"} onClick={handleStatusChange} />) : <ButtonLoading /> }
+                    
+                </div>
+            </div>} title={"User status"} col="col-3" />
+
         <Modal isOpen={formModal} onClose={closeFormModal} children={<CollaboratorForm setAlert={setAlert} setDataLoad={setDataLoad} closeModal={closeFormModal} />} title="Add a member" col="col-5" />
+        
         {alert.showMessage && alert.messageType == "fail" ? <ErrorMessage onClick={handleCloseMessage} message={alert.message} /> : null }
         {alert.showMessage && alert.messageType == "success" ? <SuccessMessage onClick={handleCloseMessage} message={alert.message} /> : null}
 

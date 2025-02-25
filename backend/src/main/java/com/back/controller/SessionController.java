@@ -427,8 +427,10 @@ public class SessionController extends HttpServlet {
     
             res.setContentType("application/json");
 
+            UserActivityModel model = objectMapper.readValue(req.getReader(), UserActivityModel.class);
+
+
             String pathInfo = req.getPathInfo();
-            
     
             if(pathInfo == null || pathInfo.equals("/")){
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -440,14 +442,13 @@ public class SessionController extends HttpServlet {
 
             if(pathInfo.startsWith("/update/")){
 
-            UserActivityModel model = objectMapper.readValue(req.getReader(), UserActivityModel.class);
-
+            String sessionUid = pathInfo.substring(8);
 
             String sql = "UPDATE useractivity SET status = ? WHERE uid = ?";
 
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, model.getStatus());
-                statement.setString(2, model.getUid());
+                statement.setString(2, sessionUid);
         
                 int rowsUpdated = statement.executeUpdate();
                 Map<String, String> responseMap = new HashMap<>();
@@ -491,24 +492,8 @@ public class SessionController extends HttpServlet {
 
         res.setContentType("application/json");
 
-        
-        UserActivityModel model = objectMapper.readValue(req.getReader(), UserActivityModel.class);
-
-
-        BufferedReader reader = req.getReader();
-        StringBuilder body = new StringBuilder();
-
-        String line;
-        while ((line = reader.readLine()) != null) {
-            body.append(line);
-        }
-        System.out.println("BODY : "+body.toString());
-
-        if(reader.ready()){
-            
-        // delete a task by id
         String pathInfo = req.getPathInfo();
-        int taskId;
+        String taskId;
 
 
         if(pathInfo == null || pathInfo.equals("/")){
@@ -520,26 +505,32 @@ public class SessionController extends HttpServlet {
         }
         
 
-        if(pathInfo.equals("/delete")){
-            
+        // if(pathInfo.equals("/delete/")){
+        String deleteAssignedSQL  = "DELETE FROM assign WHERE userActivityUid = ?";
+        String deleteUserActivitySQL  = "DELETE FROM useractivity WHERE userId = ?";
+        taskId = pathInfo.substring(8);
+        try(PreparedStatement deleteAssignedStmt  = connection.prepareStatement(deleteAssignedSQL);
+            PreparedStatement deleteUserActivityStmt = connection.prepareStatement(deleteUserActivitySQL)
+        ){
+            connection.setAutoCommit(false);
 
-        String sql = "DELETE FROM useractivity WHERE uid = ?";
-        try(PreparedStatement statement = connection.prepareStatement(sql)){
-            statement.setString(1, model.getUid());
+               deleteAssignedStmt.setString(1, taskId);
+               deleteAssignedStmt.executeUpdate();
 
+            // Delete from useractivity table
+            deleteUserActivityStmt.setString(1, taskId);
+            int rowsDeleted = deleteUserActivityStmt.executeUpdate();
             Map<String, String> responseMap = new HashMap<>();
-
-            int rowsDeleted = statement.executeUpdate();
             if(rowsDeleted > 0){
                 responseMap.put("status", "true");
                 responseMap.put("message", "user-deleted");
-                objectMapper.writeValue(res.getWriter(), responseMap);
             } else {
                 responseMap.put("status", "false");
-                responseMap.put("message", "Task not found");
-                objectMapper.writeValue(res.getWriter(), responseMap);
-
+                responseMap.put("message", "user-not-found");
             }
+
+            objectMapper.writeValue(res.getWriter(), responseMap);
+
         }catch(SQLException e){
             e.printStackTrace();
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -551,23 +542,13 @@ public class SessionController extends HttpServlet {
 
         }
 
-    }else{
-        Map<String, String> responseMap = new HashMap<>();
-        responseMap.put("status", "false");
-        responseMap.put("message", "Out of bound");
-        objectMapper.writeValue(res.getWriter(), responseMap);
-        return;
-    }
+    // }else{
+    //     Map<String, String> responseMap = new HashMap<>();
+    //     responseMap.put("status", "false");
+    //     responseMap.put("message", "Out of bound");
+    //     objectMapper.writeValue(res.getWriter(), responseMap);
+    //     return;
+    // }
 
-        } else {
-            res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            Map<String, String> responseMap = new HashMap<>();
-            responseMap.put("status", "false");
-            responseMap.put("message", "no-data");
-            objectMapper.writeValue(res.getWriter(), responseMap);
-            return;
         }
-
-}
-
 }

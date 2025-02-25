@@ -102,7 +102,7 @@ const Home = () => {
         const getTodoData = async () => {
             try{
                 const response = await fetchTodoTasks();
-                console.log('The low data is : ', response);
+                console.log('The todo data is : ', response);
 
                 setDataTodo(response.data);
                 setFetch(false);
