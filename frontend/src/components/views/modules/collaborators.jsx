@@ -249,7 +249,7 @@ const Collaborators = () => {
                                     <td>
                                         <div className="d-flex">
                                             <a href="#" className="mx-3" onClick={() => {openDeleteModal(coll.uid)}} style={{width: "22px"}}><img src={trash} alt="image" className="img-fluid" /></a>
-                                            <a href="#" className={coll.status === "pending" ? "d-none" : "mx-0"}  onClick={() => {setStatusInfo({status: coll.status, uid: coll.userActivityUid}); openStatusModal();}} style={{width: "22px"}}><img src={survey} alt="image" className="img-fluid" /></a>
+                                            <a href="#" className={coll.status === "pending" ? "d-none" : "mx-0"}  onClick={() => {setStatusInfo({status: coll.status, uid: coll.uid}); openStatusModal();}} style={{width: "22px"}}><img src={survey} alt="image" className="img-fluid" /></a>
                                         </div>
                                     </td>
                                 </tr>

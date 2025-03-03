@@ -444,15 +444,84 @@ public class SessionController extends HttpServlet {
 
             String sessionUid = pathInfo.substring(8);
 
-            String sql = "UPDATE useractivity SET status = ? WHERE uid = ?";
+            String sql = "UPDATE useractivity SET status = ? WHERE userId = ?";
 
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, model.getStatus());
                 statement.setString(2, sessionUid);
+
+
+                String statusInfo = model.getStatus();
+
+                System.out.println("Status --> "+ statusInfo);
+
         
                 int rowsUpdated = statement.executeUpdate();
                 Map<String, String> responseMap = new HashMap<>();
-        
+
+                if(statusInfo.equals("blocked")){
+
+                    System.out.println("UID --> "+ sessionUid);
+
+                    String sqlAssign = "UPDATE assign SET status = 'false' WHERE userActivityUid = ?";
+
+                    try (PreparedStatement statementAssign = connection.prepareStatement(sqlAssign)) {
+                        statementAssign.setString(1, sessionUid);
+                        int rowsUpdated2 = statementAssign.executeUpdate();
+
+                        if (rowsUpdated2 > 0) {
+                            responseMap.put("status_assign", "true");
+                        } else {
+                            res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                            responseMap.put("status_assign", "false");
+                        }
+
+                    }catch(SQLException e){
+                        e.printStackTrace();
+                        res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                
+                        Map<String, String> errorResponse = new HashMap<>();
+                        errorResponse.put("status", "false");
+                        errorResponse.put("message", "Database error");
+                
+                        objectMapper.writeValue(res.getWriter(), errorResponse);
+                    }
+                    
+                }
+
+                if(statusInfo.equals("true")){
+
+                    System.out.println("UID --> "+ sessionUid);
+
+                    String sqlAssign2 = "UPDATE assign SET status = 'true' WHERE userActivityUid = ?";
+
+                    try (PreparedStatement statementAssign2 = connection.prepareStatement(sqlAssign2)) {
+                        statementAssign2.setString(1, sessionUid);
+                        int rowsUpdated3 = statementAssign2.executeUpdate();
+
+                        if (rowsUpdated3 > 0) {
+                            responseMap.put("status_assign", "true");
+                        } else {
+                            res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                            responseMap.put("status_assign", "false");
+                            // errorResponse.put("error", e.getMessage());
+                        }
+
+
+                    }catch(SQLException e){
+                        e.printStackTrace();
+                        res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                
+                        Map<String, String> errorResponse = new HashMap<>();
+                        errorResponse.put("status", "false");
+                        errorResponse.put("message", "Database error");
+                        errorResponse.put("error", e.getMessage());
+                
+                        objectMapper.writeValue(res.getWriter(), errorResponse);
+                    }
+                    
+                }
+
                 if (rowsUpdated > 0) {
                     responseMap.put("status", "true");
                     responseMap.put("message", "user-update");

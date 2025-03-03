@@ -103,7 +103,10 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
 
                 objectMapper.writeValue(res.getWriter(), responseMap);
             }
-        }else if(pathInfo.startsWith("/todo/")){
+           } else if(pathInfo.equals("/assign/")){
+                getAllAssigned(res);
+            }
+        else if(pathInfo.startsWith("/todo/")){
             String id = pathInfo.substring(6);
             fetchTodoTask(res, id);
         }else if(pathInfo.startsWith("/progress/")){
@@ -164,8 +167,42 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
     }
 
 
+    private void getAllAssigned(HttpServletResponse res) throws IOException {
+        String query = "SELECT * FROM assign WHERE status = 'true'";
+        try(PreparedStatement statement = connection.prepareStatement(query)){
+            ResultSet rs = statement.executeQuery();
+
+            List<Map<String, Object>> assigned = new ArrayList<>();
+
+            while(rs.next()){
+                Map<String, Object> assignedData = new HashMap<>();
+                assignedData.put("id", rs.getString("id"));
+                assignedData.put("uid", rs.getString("uid"));
+                assignedData.put("taskUid", rs.getString("taskUid"));
+                assignedData.put("userActivityUid", rs.getString("userActivityUid"));
+                assignedData.put("status", rs.getString("status"));
+                assigned.add(assignedData);
+
+            }
+
+            Map<String, Object> repsoneMap = new HashMap<>();
+            repsoneMap.put("status", "true");
+            repsoneMap.put("data", assigned);
+
+            objectMapper.writeValue(res.getWriter(), repsoneMap);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            Map<String, Object> responseMap = new HashMap<>();
+            responseMap.put("status", "false");
+            responseMap.put("message", "failed-to-get-assign");
+            responseMap.put("error", e.getMessage());
+            objectMapper.writeValue(res.getWriter(), responseMap);
+        }
+    }
+
     private void getAssignedCollaboratorsByUID(HttpServletResponse res, String uid) throws IOException {
-        String query = "SELECT * FROM assign WHERE taskUid = ?";
+        String query = "SELECT * FROM assign WHERE taskUid = ? AND status = 'true'";
         try(PreparedStatement statement = connection.prepareStatement(query)){
             statement.setString(1, uid);
             ResultSet rs = statement.executeQuery();
@@ -242,7 +279,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
         String sql = "SELECT task.*, assign.uid AS assignUid, assign.taskUid, assign.userActivityUid, assign.status AS assignStatus "+
                      "FROM task " +
                      "LEFT JOIN assign ON assign.taskUid = task.uid " + 
-                     "WHERE task.status = 'todo' AND activityId = ? ORDER BY task.dateof DESC";
+                     "WHERE task.status = 'todo' AND activityId = ? AND assign.status = 'true' ORDER BY task.dateof DESC";
         try(PreparedStatement statement = connection.prepareStatement(sql)){
             statement.setString(1, id);
             ResultSet rs = statement.executeQuery();
@@ -320,7 +357,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
         String sql = "SELECT task.*, assign.uid AS assignUid, assign.taskUid, assign.userActivityUid, assign.status AS assignStatus "+
                     "FROM task " +
                     "LEFT JOIN assign ON assign.taskUid = task.uid " + 
-                    "WHERE task.status = 'progress' AND activityId = ? ORDER BY task.dateof DESC";
+                    "WHERE task.status = 'progress' AND activityId = ? AND assign.status = 'true' ORDER BY task.dateof DESC";
         try(PreparedStatement statement = connection.prepareStatement(sql)){
             statement.setString(1, id);
             ResultSet rs = statement.executeQuery();
@@ -398,7 +435,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
         String sql = "SELECT task.*, assign.uid AS assignUid, assign.taskUid, assign.userActivityUid, assign.status AS assignStatus "+
         "FROM task " +
         "LEFT JOIN assign ON assign.taskUid = task.uid " + 
-        "WHERE task.status = 'done' AND activityId = ? ORDER BY task.dateof DESC";
+        "WHERE task.status = 'done' AND activityId = ? AND assign.status = 'true' ORDER BY task.dateof DESC";
 
         try(PreparedStatement statement = connection.prepareStatement(sql)){
             statement.setString(1, id);
