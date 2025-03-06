@@ -29,7 +29,6 @@ const Dashboard = () => {
 
         const getAssignedTAskByUsers = async () => {
             const response = await getAllAssinedTaskByUsers();
-            console.log("The users assigned --> ", response);
 
             if(response == undefined){
                 print("Data undefine man");
@@ -54,8 +53,6 @@ const Dashboard = () => {
         inprogress = data.filter(task => task.status === "progress").length;
         todoTask = data.filter(task => task.status === "todo").length;
         doneTask = data.filter(task => task.status === "done").length;
-
-        console.log("done task --> ", doneTask);
 
     return ( 
         <section className="">
@@ -111,7 +108,7 @@ const Dashboard = () => {
                                 <tbody>
                                     {
                                          assigned && assigned.map((assign) => (
-                                            <tr className="custom-row">
+                                            <tr className="custom-row" key={assign.uid}>
                                                 <th>{num++}</th>
                                                 <td>{assign.username}</td>
                                                 <td>{assign.email}</td>

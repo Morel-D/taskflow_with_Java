@@ -266,7 +266,10 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
     }
 
     private void getAssignedCollaboratorsByUID(HttpServletResponse res, String uid) throws IOException {
-        String query = "SELECT * FROM assign WHERE taskUid = ? AND status = 'true'";
+        String query = "SELECT a.id, a.uid, a.taskUid, a.userActivityUid, a.status, u.username, u.email "+
+                        "FROM assign a "+
+                        "JOIN user u ON a.userActivityUid = u.uid "+
+                        "WHERE a.taskUid = ? AND a.status = 'true'";
         try(PreparedStatement statement = connection.prepareStatement(query)){
             statement.setString(1, uid);
             ResultSet rs = statement.executeQuery();
@@ -279,6 +282,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
                 assignedData.put("uid", rs.getString("uid"));
                 assignedData.put("taskUid", rs.getString("taskUid"));
                 assignedData.put("userActivityUid", rs.getString("userActivityUid"));
+                assignedData.put("username", rs.getString("username"));
                 assignedData.put("status", rs.getString("status"));
                 assigned.add(assignedData);
 

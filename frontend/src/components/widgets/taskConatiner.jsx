@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { colors } from "../tools/color";
 import edit from "../../assets/icons/edit.png";
 import trash from "../../assets/icons/delete.png";
@@ -10,6 +10,7 @@ import Aos from "aos";
 import TaskForm from "../views/forms/taskForm";
 import users from "../../assets/icons/navbar/people.png";
 import { TextTruncate } from "./formatText";
+import { SessionContext } from "../context/sessionContext";
 
 const TaskContainer = ({color, child, content, id, uid, setFetch, setAlert, category, categoryClassName, num}) => {
 
@@ -20,6 +21,8 @@ const TaskContainer = ({color, child, content, id, uid, setFetch, setAlert, cate
 
     const {deleteTask} = useTaskService();
     const [deleteLoading, setDeleteLoading] = useState(false);
+
+    const {session} = useContext(SessionContext);
 
     const [isHovered, setIsHovered] = useState(false);
     const [deleteModal, setDeletModal] = useState(false);
@@ -87,12 +90,19 @@ const TaskContainer = ({color, child, content, id, uid, setFetch, setAlert, cate
                             right: "10px",
                         }}
                         className="d-flex"> 
+
                             <div className="col mx-2">
                                 <a href=""><img src={edit} onClick={openEditModal} style={{height: "20px", width: "20px"}} /></a>
                             </div>
-                            <div className="col">
-                                <a href="" onClick={openDeleteModal}><img src={trash} style={{height: "20px", width: "20px"}} /></a>
-                            </div>
+                            {
+                            session.role == "manager" ? 
+                            (
+                                <div className="col">
+                                    <a href="" onClick={openDeleteModal}><img src={trash} style={{height: "20px", width: "20px"}} /></a>
+                                </div>
+                            ) : null
+                        }
+
                         </div>
                     )}
             </div>

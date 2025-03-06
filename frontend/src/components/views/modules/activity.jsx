@@ -19,7 +19,7 @@ const Activity = () => {
         setLoad(true);
         const getActivity = async () => {
             try{
-                const response = await getActivityById(user.uid);
+                const response = await getActivityById(session.activity.userId);
                 console.log("ACTIVITY --> ", response.activity);
                 setActivities(response);
             }catch(error){
@@ -43,7 +43,7 @@ const Activity = () => {
                                 <h3 className="fw-bold" style={{color: colors.secondaryColor}}>Activity</h3>
                             </div>
                             <div className="col text-end mt-2">
-                                <PrimaryButton children="Edit" />
+                                {session.role == "manager" ?  <PrimaryButton children="Edit" /> : null}
                             </div>
                         </div>
                         
@@ -62,7 +62,7 @@ const Activity = () => {
                                         <div className="">
                                             <div className="col my-3">
                                                 <label className="fs-2 mb-4 fw-bold" style={{color: colors.secondaryColor}}>{activities.activity.activity}</label>
-                                                <p className="text-secondary fw-normal mt-2">Owner - <span>{activities.activity.manager} {activities.role === "manager" ? "(You)" : ""}</span></p>
+                                                <p className="text-secondary fw-normal mt-2">Owner - <span>{activities.activity.manager} {session.role === "manager" ? "(You)" : ""}</span></p>
                                                 <label  className="text-secondary">Creation date : 5 Feb at 15/02/2024</label>
                                             </div>
                                         </div>
@@ -113,7 +113,7 @@ const Activity = () => {
                                                         </div>
                                                         <div className="col text-start text-dark">
                                                             <b>{collaborator.username}</b><br />
-                                                            <label className="text-secondary mt-2">mtchaptche@gmail.com</label>
+                                                            <label className="text-secondary mt-2">{collaborator.email}</label>
                                                         </div>
                                                     </div>
                                                 </>

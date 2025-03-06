@@ -6,7 +6,7 @@ import { colors } from "../tools/color";
 
 
 
-const BorderlessTextFeild = ({label, type, placeholder, onChange, value, maxLength, error}) =>
+const BorderlessTextFeild = ({label, type, placeholder, onChange, value, maxLength, error,  disabled = false}) =>
     {
         return (
             <motion.div
@@ -14,7 +14,7 @@ const BorderlessTextFeild = ({label, type, placeholder, onChange, value, maxLeng
             transition={{ duration: 0.5 }}
             >
                 <p className="text-dark">{label}</p>
-                <input type={type} className={error == true ? "form-control input-danger-text" : "form-control borderless-primary-input-text"} maxLength={maxLength ?? 50} placeholder={placeholder} value={value} onChange={onChange} />
+                <input type={type} className={error == true ? "form-control input-danger-text" : "form-control borderless-primary-input-text"} maxLength={maxLength ?? 50} placeholder={placeholder} value={value} onChange={onChange} disabled={disabled} />
             </motion.div>
         )
     }
@@ -86,7 +86,7 @@ const TextFeild = ({label, type, placeholder, onChange, value, maxLength, error}
                 )
             }
 
-            const BordelessTextAreaFeild = ({label, placeholder, onChange, value, maxLength, row, error}) =>
+            const BordelessTextAreaFeild = ({label, placeholder, onChange, value, maxLength, row, error, disabled = false}) =>
                 {
                     return(
                         <motion.div
@@ -94,13 +94,13 @@ const TextFeild = ({label, type, placeholder, onChange, value, maxLength, error}
                         transition={{ duration: 0.5 }}
                         >
                             <p className="text-dark">{label}</p>
-                            <textarea className={error == true ? "form-control input-danger-text" : "form-control borderless-input-text"} value={value} maxLength={maxLength ?? 100} placeholder={placeholder} rows={row} onChange={onChange}></textarea>
+                            <textarea className={error == true ? "form-control input-danger-text" : "form-control borderless-input-text"} value={value} maxLength={maxLength ?? 100} placeholder={placeholder} rows={row} onChange={onChange} disabled={disabled}></textarea>
                         </motion.div>
                     )
                 }
 
 
-                const SelectField = ({ label, options, onChange, value, error }) => {
+                const SelectField = ({ label, options, onChange, value, error, disabled = false }) => {
                     return (
                         <motion.div
                             animate={error ? { x: [-5, 5, -5, 5, 0] } : { x: 0 }} // Shake effect
@@ -111,6 +111,7 @@ const TextFeild = ({label, type, placeholder, onChange, value, maxLength, error}
                                 className={error ? "form-control input-danger-text" : "form-control input-text"} 
                                 value={value} 
                                 onChange={onChange}
+                                disabled={disabled}
                             >
                                 <option value="" disabled>{label}</option>
                                 {options.map((option, index) => (

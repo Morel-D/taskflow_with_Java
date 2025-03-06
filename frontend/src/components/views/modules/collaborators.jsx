@@ -116,7 +116,7 @@ const Collaborators = () => {
     const reloadAllCollaborators = async () => {
         try{
         // setLoad(true);
-        const response = await getCollaborators(session.user.userId);
+        const response = await getCollaborators(session.activity.userId);
         console.log("FINAL RESPONE --> ", response);
         console.log("The message new ---> ", alert);
         setData(response.data);
@@ -135,7 +135,7 @@ const Collaborators = () => {
         const getAllCollaborators = async () => {
             try{
             setLoad(true);
-            const response = await getCollaborators(session.user.userId);
+            const response = await getCollaborators(session.activity.userId);
             console.log("FINAL RESPONE --> ", response);
             console.log("The message new ---> ", alert);
             setData(response.data);
@@ -186,7 +186,7 @@ const Collaborators = () => {
                 </div>
                 <div className="col col-4 text-end">
                 {load ? null : <span className="mx-3"><IconButton icon={reloadImg} onClick={() => setReload(true)} /></span>}
-                {load ? <Skeleton height={45} width={200} /> : <PrimaryButton children="New Collaborator" onClick={opeenFormModal} />} 
+                {session.role == "manager" ? (load ? <Skeleton height={45} width={200} /> : <PrimaryButton children="New Collaborator" onClick={opeenFormModal} />) : null }
                 </div>
             </div>
             {
@@ -222,7 +222,7 @@ const Collaborators = () => {
                                 {/* <th scope="col">Tasks Assigned</th> */}
                                 <th scope="col">Status</th>
                                 {/* <th scope="col">Action</th> */}
-                                <th scope="col">Operation</th>
+                                {session.role == "manager" ? <th scope="col">Operation</th> : null}
 
                             </tr>
                         </thead>
@@ -238,20 +238,22 @@ const Collaborators = () => {
                                 </tr>
                             ) : null}
                            {data.map((coll) => (
-                                <tr className={session.user.userId == coll.uid ? "custom-row d-none" : "custom-row"}>
+                                <tr className={session.role == "manager" ? session.user.userId == coll.uid ? "custom-row d-none" : "custom-row" : "custom-row"}>
                                     <th>{num ++}</th>
-                                    <td>{coll.username}</td>
+                                    <td>{coll.username} {session.activity.userId == coll.uid ? "(Manager)" : ""}</td>
                                     <td>{coll.email}</td>
                                     <td><DateCell children={coll.invited} /> </td>
                                     {/* <td>12</td> */}
                                     <td> <PrimaryBadge children={coll.status == "true" ? "Active" : capitalizeFirstLetter(coll.status)}clasname={statusDisplay(coll.status)} /> </td>
                                     {/* <td><PrimaryBadge children="Suspended" clasname="non-active-badge" /></td> */}
+                                    {session.role == "manager" ?
                                     <td>
                                         <div className="d-flex">
                                             <a href="#" className="mx-3" onClick={() => {openDeleteModal(coll.uid)}} style={{width: "22px"}}><img src={trash} alt="image" className="img-fluid" /></a>
                                             <a href="#" className={coll.status === "pending" ? "d-none" : "mx-0"}  onClick={() => {setStatusInfo({status: coll.status, uid: coll.uid}); openStatusModal();}} style={{width: "22px"}}><img src={survey} alt="image" className="img-fluid" /></a>
                                         </div>
-                                    </td>
+                                    </td> : null
+                                    }
                                 </tr>
                            ))}
                         </tbody>

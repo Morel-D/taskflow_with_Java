@@ -9,7 +9,8 @@ import people_blk from "../../assets/icons/navbar/people_blk.png";
 import folder_blk from "../../assets/icons/navbar/folder_blk.png";
 import { TextIconFeild } from "../widgets/textFeilds";
 import { Link, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { SessionContext } from "../context/sessionContext";
 
 
 

@@ -166,6 +166,7 @@ public class SessionController extends HttpServlet {
                                         collaborator.put("id", rs4.getString("id"));
                                         collaborator.put("userActivityUid", rs4.getString("userActivityUid"));
                                         collaborator.put("username", rs4.getString("username"));
+                                        collaborator.put("email", rs4.getString("email"));
                                         collaborator.put("userStatus", rs4.getString("userStatus")); // Status from user table
                                         collaborator.put("userActivityStatus", rs4.getString("userActivityStatus")); 
                                         collaborators.add(collaborator);

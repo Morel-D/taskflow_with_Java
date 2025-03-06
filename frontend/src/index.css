@@ -336,6 +336,7 @@ li > a {text-decoration: none;}
 .input-text {  border-style: solid;  border-radius: 6px;  padding: 10px 0px 10px 10px; }
 .input-text:focus {  outline: none;  box-shadow: 0 0 0 1px var(--primaryColor);}
 .input-text::placeholder {color: var(--grey2Color);}
+.input-text:disabled {background-color: transparent; border-style: none; font-weight: 600; color: var(--secondaryColor); padding: 10px;}
 
 
 .borderless-primary-input-text{
@@ -343,6 +344,8 @@ li > a {text-decoration: none;}
 }
 .borderless-primary-input-text::placeholder {color: var(--grey2Color);}
 .borderless-primary-input-text:focus {  outline: none;  box-shadow: 0 0 0 1px transparent;}
+.borderless-primary-input-text:disabled {  background-color: transparent;}
+
 .custom-checkbox {
   outline: none;
   box-shadow: 0 0 0 1px transparent !important;
@@ -356,6 +359,7 @@ li > a {text-decoration: none;}
 .borderless-input-text{  border-style: none;  border-radius: 0px;  padding: 10px 0px 10px 10px; }
 .borderless-input-text:focus {  outline: none;  box-shadow: 0 0 0 1px transparent;}
 .borderless-input-text::placeholder {color: var(--grey2Color);}
+.borderless-input-text:disabled{background-color: transparent;}
 
 
 .has-search .form-control {padding-left: 3.375rem;}

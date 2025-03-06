@@ -62,7 +62,7 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id, u
 
         const getAllActiveCollaborators = async () =>{
             try{
-                const response = await getActiveCollaborators(session.user.userId);
+                const response = await getActiveCollaborators(session.activity.userId);
                 console.log("The active collaborators -> ", response);
                 setCollaborators(response.data);
 
@@ -243,6 +243,7 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id, u
                     <div className="col">
                         <BorderlessTextFeild 
                         placeholder="Add a title"
+                        disabled={session.role == "manager" ? false : true}
                         error={titleError} 
                         onChange={id ? handleTitleEdit : handleTitleDefault}  
                         value={id ? singledata.title : title}
@@ -254,13 +255,14 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id, u
                             error={error} 
                             onChange={id ? handleEdit : handleDefault}  
                             value={id ? singledata.content: content}
+                            disabled={session.role == "manager" ? false : true}
                             />
 
                     </div>
                     <div className="col col-5" style={{borderStyle: "solid", borderWidth: "0px 0px 0px 1px"}}>
                         <div className="px-2">
                             <h5 className="fs-5 mb-2 text-dark"> Category</h5>
-                            <SelectField label="Select a category" value={catgory} onChange={(e) => setCategory(e.target.value)}  options={[
+                            <SelectField label="Select a category" value={catgory} disabled={session.role == "manager" ? false : true} onChange={(e) => setCategory(e.target.value)}  options={[
                                     { label: "Low", value: "low" },
                                     { label: "Meduim", value: "meduim" },
                                     { label: "High", value: "high" }
@@ -269,22 +271,35 @@ const TaskForm = ({closeModal, setLoadingType, status, setFetch, setAlert, id, u
                             <h5 className="text-dark">Collaborators</h5>
                             <div className="d-flex">
                                 <div className="row">
-                                    <div className="col">
-                                        {collaborators && collaborators.map((collaborator) => (
-                                            <CheckboxField
-                                            checked={uid && (assignedCollaborators && assignedCollaborators.some((col) => col.userActivityUid == collaborator.uid))}
-                                            label={`${collaborator.username} ${collaborator.uid == session.user.userId ? "(You)" : ""}`}
-                                            onChange={() => handleCheckboxChange(collaborator)}
-                                            />
-                                        ))}
-                                    </div>
+                                    {
+                                        session.role == "manager" ? 
+                                        (
+                                        <div className="col">
+                                            {collaborators && collaborators.map((collaborator) => (
+                                                <CheckboxField
+                                                checked={uid && (assignedCollaborators && assignedCollaborators.some((col) => col.userActivityUid == collaborator.uid))}
+                                                label={`${collaborator.username} ${collaborator.uid == session.user.userId ? "(You)" : ""}`}
+                                                onChange={() => handleCheckboxChange(collaborator)}
+                                                />
+                                            ))}
+                                        </div>
+                                        ) :
+                                        ( <div className="col">
+                                            {assignedCollaborators && assignedCollaborators.map((collaborator) => (
+                                                <>
+                                                <label className="text-secondary mt-3">- {collaborator.username} {collaborator.uid == session.user.userId ? "(You)" : ""}</label><br />
+                                                </>
+                                            ))}
+                                        </div>)
+                                    }
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className="footer mt-4 text-end">
-                    {loading ? <ButtonLoading /> : <PrimaryButton children={!id ? "Save a task" : "Upadate Data"} onClick={id ? handleUpdate : handleSubmit} /> }
+                    {session.role == "manager" ? (loading ? <ButtonLoading /> : <PrimaryButton children={!id ? "Save a task" : "Upadate Data"} onClick={id ? handleUpdate : handleSubmit} /> ) : "Read only"}
                 </div>
                 </>
             )}

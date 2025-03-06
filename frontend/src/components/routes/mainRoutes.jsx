@@ -8,10 +8,6 @@ import { useEffect } from "react";
 
 const MainRoutes = () => {
 
-    useEffect(() => {
-        console.log("The use effect here");
-    }, [])
-
     return ( 
         <SessionProvider>
             <div>

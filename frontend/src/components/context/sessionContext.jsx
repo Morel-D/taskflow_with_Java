@@ -14,10 +14,9 @@ export const SessionProvider = ({children}) =>
         const getActivityInfo = async() =>{
             try{
                 const response = await getActivityById(user.uid);
-                console.log("THE SESSION RESPONSE 1 --> ", session);
                 setSession(response);
                 setSession(response);
-                console.log("THE SESSION RESPONSE 2 --> ", session);
+                console.log("THE SESSION RESPONSE --> ", session);
             }catch(error){
                 console.log("Something went wrong --> ", error);
             }

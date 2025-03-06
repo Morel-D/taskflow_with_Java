@@ -8,8 +8,9 @@ export const useTaskService = () => {
     const endpoint = "protected/task";
     let activityUid;
     const {session} = useContext(SessionContext);
-    console.log("(Task) Session is --> ", session);
-    if(session != undefined){
+    if(session === undefined){
+        // console.log("This is undefine");
+    }else{
         if(session.role == "manager" || session.role == "collaborator"){
             activityUid = session.activity.uid;
         }
