@@ -362,7 +362,7 @@ li > a {text-decoration: none;}
 .has-search-suffix .form-control {padding-left: 3.375rem;}
 
 
-.input-secondary-text {  border-style: none;  border-radius: 30px;  padding: 14px 0px 18px 10px; background-color: #F0F1F5; }
+.input-secondary-text {  border-style: none;  border-radius: 30px;  padding: 10px 0px 14px 10px; background-color: #F0F1F5; }
 .input-secondary-text:focus {  outline: none;  box-shadow: 0 0 0 1px var(--darkColor); background-color: #F0F1F5;}
 .input-secondary-text::placeholder {color: var(--grey2Color);}
 

@@ -66,7 +66,7 @@ const TextFeild = ({label, type, placeholder, onChange, value, maxLength, error}
         {
             return (
                 <div className="form-group has-search">
-                    <span className="fa fa-search form-control-feedback"><img src={icon} className="img-fluid" style={{paddingTop: "5px"}}/></span>
+                    <span className="fa fa-search form-control-feedback"><img src={icon} className="img-fluid" style={{paddingTop: "0px"}}/></span>
                     {/* <p className="text-dark">{label}</p> */}
                     <input type={type} className="form-control input-secondary-text" onChange={onchange} maxLength={maxLength ?? 30} value={value} placeholder={placeholder} />
                 </div>

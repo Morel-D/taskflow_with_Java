@@ -1,7 +1,6 @@
 import dashbaord from "../../assets/icons/navbar/dashbaord.png";
 import tasks from "../../assets/icons/navbar/tasks.png";
 import people from "../../assets/icons/navbar/people.png";
-import search from "../../assets/icons/search.png";
 import folder from "../../assets/icons/navbar/folder.png";
 
 import dashbaord_blk from "../../assets/icons/navbar/dashbaord_blk.png";
@@ -38,10 +37,7 @@ const Navbar = () => {
             <div style={logoStyle} className="mt-4 mb-5">
                 <h2>TaskFlow</h2>
             </div>
-            <div className="mb-4">
-                <TextIconFeild  icon={search} placeholder="Search..."/>
-            </div>
-            <div className="menu mt-2">
+            <div className="menu mt-5">
                 <ul className="list-unstyled"> 
                     <Link to="/dashboard/"><li className=""><a  className={route == "/dashboard/" ? "active-link" : "link"}><img src={route == "/dashboard/" ? dashbaord_blk : dashbaord} className="img-fluid icon-link mb-1" /><span className="mx-1"></span> Dashbaord</a></li></Link>
                     <Link to="/dashboard/task"><li className=""><a  className={route == "/dashboard/task" ? "active-link" : "link"}><img src={route == "/dashboard/task" ? tasks_blk : tasks} className="img-fluid icon-link mb-1" /> <span className="mx-1"></span> Tasks</a></li></Link>

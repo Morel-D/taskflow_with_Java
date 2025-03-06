@@ -7,6 +7,9 @@ export const useSessionService = () => {
 
     const endpoint = "protected";
 
+    // const {session} = useContext(SessionContext);
+    // console.log("(Session) Session is --> ", session);
+
     const getActivityById = (id) => getDataByID(`protected/${id}`);
     const getCollaborators = (id) => getDataByID(`${endpoint}/collaborators/${id}`);
     const addUser = (data) => postData("protected/user/add", data);

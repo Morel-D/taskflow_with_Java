@@ -103,9 +103,11 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
 
                 objectMapper.writeValue(res.getWriter(), responseMap);
             }
-           } else if(pathInfo.equals("/assign/")){
-                getAllAssigned(res);
-            }
+        } else if(pathInfo.equals("/assign/")){
+            getAllAssigned(res);
+        }else if(pathInfo.equals("/get/users/assign/")){
+            getAssignedTaskPerUser(res);
+        }
         else if(pathInfo.startsWith("/todo/")){
             String id = pathInfo.substring(6);
             fetchTodoTask(res, id);
@@ -165,6 +167,68 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
             }
         }
     }
+
+
+    private void getAssignedTaskPerUser(HttpServletResponse res) throws IOException {
+        String query = "SELECT u.uid, u.username, u.email, COUNT(a.userActivityUid) AS tasks " +
+                       "FROM assign a " +
+                       "JOIN user u ON u.uid = a.userActivityUid " +
+                       "WHERE a.status = ? " +
+                       "GROUP BY u.uid, u.username, u.email";
+    
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, "true"); // Ensure proper status comparison
+            ResultSet rs = statement.executeQuery();
+    
+            List<Map<String, Object>> assign = new ArrayList<>();
+    
+            if (!rs.isBeforeFirst()) { // Checks if the ResultSet is empty
+                System.out.println("No results found!");
+            }
+    
+            while (rs.next()) {
+                String uid = rs.getString("uid");
+                String email = rs.getString("email");
+                String username = rs.getString("username");
+                int tasks = rs.getInt("tasks"); // Get as Integer
+    
+                // Debugging output
+                System.out.println("Fetched: " + uid + " | " + username + " | " + email + " | Tasks: " + tasks);
+    
+                Map<String, Object> assignMap = new HashMap<>();
+                assignMap.put("uid", uid);
+                assignMap.put("email", email);
+                assignMap.put("username", username);
+                assignMap.put("tasks", tasks); // Store as Integer
+    
+                assign.add(assignMap);
+            }
+    
+            Map<String, Object> responseMap = new HashMap<>();
+            responseMap.put("status", "true");
+    
+            if (assign.isEmpty()) {
+                responseMap.put("message", "No assigned tasks found!");
+            } else {
+                responseMap.put("data", assign);
+            }
+    
+            objectMapper.writeValue(res.getWriter(), responseMap);
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            Map<String, String> responseMap = new HashMap<>();
+    
+            responseMap.put("status", "false");
+            responseMap.put("message", "Failed to fetch data");
+            responseMap.put("error", e.getMessage());
+    
+            objectMapper.writeValue(res.getWriter(), responseMap);
+        }
+    }
+    
+    
 
 
     private void getAllAssigned(HttpServletResponse res) throws IOException {

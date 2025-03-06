@@ -52,15 +52,57 @@ public class AuthController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
-
+        res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+        res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        res.setHeader("Access-Control-Max-Age", "3600");
+        res.setStatus(HttpServletResponse.SC_OK);
+        
         // Set response type
         res.setContentType("application/json");
 
-        Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("Status", "true");
-        responseMap.put("message", "This is the response for sure");
+        String pathInfo = req.getPathInfo();
 
-        objectMapper.writeValue(res.getWriter(), responseMap);
+        if(pathInfo.startsWith("/get/user/")){
+            String uid = pathInfo.substring(10);
+            getSingUser(uid, res);
+        }
+    }
+
+
+    private void getSingUser(String userUid, HttpServletResponse res) throws IOException{
+        String query = "SELECT * FROM user WHERE uid = ?";
+        try(PreparedStatement statement = connection.prepareStatement(query)){
+            statement.setString(1, userUid);
+            ResultSet rs = statement.executeQuery();  
+            
+            Map<String, Object> userInfo = new HashMap<>();
+            
+            if(rs.next()){
+                Map<String, Object> userData = new HashMap<>();
+                userData.put("id", rs.getString("id"));
+                userData.put("uid", rs.getString("uid"));
+                userData.put("username", rs.getString("username"));
+                userData.put("email", rs.getString("email"));
+                userData.put("id", rs.getString("id"));
+
+                userInfo.put("status", "true");
+                userInfo.put("data", userData);
+
+                objectMapper.writeValue(res.getWriter(), userInfo);
+
+    }
+
+}        catch (SQLException e) {
+    e.printStackTrace();
+    res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    Map<String, Object> responseMap = new HashMap<>();
+    responseMap.put("status", "false");
+    responseMap.put("message", "failed-to-get");
+    responseMap.put("error", e.getMessage());
+    objectMapper.writeValue(res.getWriter(), responseMap);
+}
+
     }
 
     @Override
@@ -355,5 +397,73 @@ public class AuthController extends HttpServlet {
             responseMap.put("error", e.getMessage());
             objectMapper.writeValue(res.getWriter(), responseMap);
         }
+    }
+
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse res) throws IOException{
+
+        res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+        res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        res.setHeader("Access-Control-Max-Age", "3600");
+        res.setStatus(HttpServletResponse.SC_OK);
+
+        res.setContentType("application/json");
+
+        AuthModel auth = objectMapper.readValue(req.getReader(), AuthModel.class);
+
+        String pathInfo = req.getPathInfo();
+
+        if(pathInfo == null || pathInfo.equals("/")){
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            Map<String, String> responseMap = new HashMap<>();
+            responseMap.put("status", "false");
+            responseMap.put("message", "This user doesn't exist");
+            return;
+        }
+
+        if(pathInfo.startsWith("/update/")){
+
+            String authId = pathInfo.substring(8);  
+            String sql = "UPDATE user SET username = ?, email = ?, password = ?, status = ? WHERE uid = ?";
+
+            try(PreparedStatement statement = connection.prepareStatement(sql)){
+                statement.setString(1, auth.getUsername());
+                statement.setString(2, auth.getEmail());
+                statement.setString(3, auth.getPassword());
+                statement.setString(4, auth.getStatus());
+                statement.setString(5, authId);
+
+                String statusInfo = auth.getStatus();
+
+                int rowsUpdated = statement.executeUpdate();
+                Map<String, String> responseMap = new HashMap<>();
+
+                if (rowsUpdated > 0) {
+                    responseMap.put("status", "true");
+                    responseMap.put("message", "user-update");
+                } else {
+                    res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    responseMap.put("status", "false");
+                    responseMap.put("message", "update-failed");
+                }
+                objectMapper.writeValue(res.getWriter(), responseMap);
+                
+            }catch (SQLException e) {
+                e.printStackTrace();
+                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        
+                Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("status", "false");
+                errorResponse.put("message", "Database error");
+                errorResponse.put("error", e.getMessage());
+        
+                objectMapper.writeValue(res.getWriter(), errorResponse);
+            }
+
+        }
+
+
     }
 }
