@@ -77,6 +77,8 @@ const AuthActivity = () => {
             "status": "true"
         }
 
+        console.log("The creted activity is  --> ", data);
+
         const response = await createActivity("activity", data);
         console.log("THE DATA --> ", response);
 

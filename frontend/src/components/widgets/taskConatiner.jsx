@@ -76,7 +76,7 @@ const TaskContainer = ({color, child, content, id, uid, setFetch, setAlert, cate
                     <p>{<TextTruncate text={content} maxLength={90} /> ?? "No action"}</p>
                     <div className="d-flex">
                         <div className="col">
-                            <label htmlFor=""><img src={users} className="img-fluid" style={{height: "24px"}} /> <label className=" text-secondary mx-2">{num ?? 0} {num > 1 ? "Collaborators" : "Collaborator"}</label></label>
+                            {num > 0 ? <label htmlFor=""><img src={users} className="img-fluid" style={{height: "24px"}} /> <label className=" text-secondary mx-2">{num ?? 0} {num > 1 ? "Collaborators" : "Collaborator"}</label></label> : <div className="mb-4"></div>  }
                         </div>
                         <div className="col text-end mt-2">
                             <span className={categoryClassName ?? "low-active-badge"}>{category ?? "undefine"}</span>

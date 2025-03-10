@@ -60,53 +60,27 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
 
         // Retrive all the data 
         if(pathInfo == null || pathInfo.equals("/")){
-            String sql = "SELECT * FROM task ORDER BY dateof DESC";
 
-            try(PreparedStatement statement = connection.prepareStatement(sql); 
-                ResultSet rs = statement.executeQuery()){
-                
-                List<Map<String, Object>> tasks  = new ArrayList<>();
+        Map<String, String> responseMap = new HashMap<>();
 
-                while (rs.next()) {
-                    Map<String, Object> task = new HashMap<>();
-                    task.put("id", rs.getInt("id"));
-                    task.put("uid", rs.getString("uid"));
-                    task.put("activityId", rs.getString("activityId"));
-                    task.put("ownerId", rs.getString("ownerId"));
-                    task.put("title", rs.getString("title"));
-                    task.put("description", rs.getString("description"));
-                    task.put("category", rs.getString("category"));
-                    task.put("status", rs.getString("status"));
-                    task.put("dueDate", rs.getString("dueDate"));
-                    task.put("dateof", rs.getString("dateof"));
+        responseMap.put("status", "false");
+        responseMap.put("message", "In complete Path");
 
-                    tasks.add(task);
-                }
-
-                Map<String, Object> repsoneMap = new HashMap<>();
-                repsoneMap.put("status", "true");
-                repsoneMap.put("data", tasks);
-
-                objectMapper.writeValue(res.getWriter(), repsoneMap);
-
-
-                // return all the task in a JSON array
-                objectMapper.writeValue(res.getWriter(), tasks);
-            }catch(SQLException e){
-                e.printStackTrace();
-                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                Map<String, String> responseMap = new HashMap<>();
-
-                responseMap.put("status", "false");
-                responseMap.put("message", "Failed to fetch data");
-                responseMap.put("error", e.getMessage());
-
-                objectMapper.writeValue(res.getWriter(), responseMap);
-            }
-        } else if(pathInfo.equals("/assign/")){
-            getAllAssigned(res);
-        }else if(pathInfo.equals("/get/users/assign/")){
-            getAssignedTaskPerUser(res);
+        objectMapper.writeValue(res.getWriter(), responseMap);
+            
+        }else if(pathInfo.startsWith("/get/all/"))
+        {
+            String id = pathInfo.substring(9);
+            // System.out.println("We are here --->");
+            fetchAllTask(res, id);
+        }
+        
+        else if(pathInfo.startsWith("/assign/")){
+            String id = pathInfo.substring(8);
+            getAllAssigned(res, id);
+        }else if(pathInfo.startsWith("/get/users/assign/")){
+            String id = pathInfo.substring(18);
+            getAssignedTaskPerUser(res, id);
         }
         else if(pathInfo.startsWith("/todo/")){
             String id = pathInfo.substring(6);
@@ -168,16 +142,16 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
         }
     }
 
-
-    private void getAssignedTaskPerUser(HttpServletResponse res) throws IOException {
+    private void getAssignedTaskPerUser(HttpServletResponse res, String id) throws IOException {
         String query = "SELECT u.uid, u.username, u.email, COUNT(a.userActivityUid) AS tasks " +
-                       "FROM assign a " +
-                       "JOIN user u ON u.uid = a.userActivityUid " +
-                       "WHERE a.status = ? " +
-                       "GROUP BY u.uid, u.username, u.email";
+        "FROM assign a " +
+        "JOIN user u ON u.uid = a.userActivityUid " +
+        "JOIN task t ON a.taskUid = t.uid " +  
+        "WHERE a.status = 'true' AND t.activityId = ? " + 
+        "GROUP BY u.uid, u.username, u.email";
     
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, "true"); // Ensure proper status comparison
+            statement.setString(1, id); // Ensure proper status comparison
             ResultSet rs = statement.executeQuery();
     
             List<Map<String, Object>> assign = new ArrayList<>();
@@ -228,12 +202,10 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
         }
     }
     
-    
-
-
-    private void getAllAssigned(HttpServletResponse res) throws IOException {
-        String query = "SELECT * FROM assign WHERE status = 'true'";
+    private void getAllAssigned(HttpServletResponse res, String id) throws IOException {
+        String query =  "SELECT a.* FROM assign a " + "JOIN task t ON a.taskUid = t.uid " + "WHERE a.status = 'true' AND t.activityId = ?";
         try(PreparedStatement statement = connection.prepareStatement(query)){
+            statement.setString(1, id);
             ResultSet rs = statement.executeQuery();
 
             List<Map<String, Object>> assigned = new ArrayList<>();
@@ -343,11 +315,58 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
         }
     }
 
+    private void fetchAllTask(HttpServletResponse res, String id) throws IOException  {
+        String sql = "SELECT * FROM task WHERE activityId = ?";
+
+        try(PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, id);
+            ResultSet rs = statement.executeQuery();
+            
+            List<Map<String, Object>> tasks  = new ArrayList<>();
+
+            while (rs.next()) {
+                Map<String, Object> task = new HashMap<>();
+                task.put("id", rs.getInt("id"));
+                task.put("uid", rs.getString("uid"));
+                task.put("activityId", rs.getString("activityId"));
+                task.put("ownerId", rs.getString("ownerId"));
+                task.put("title", rs.getString("title"));
+                task.put("description", rs.getString("description"));
+                task.put("category", rs.getString("category"));
+                task.put("status", rs.getString("status"));
+                task.put("dueDate", rs.getString("dueDate"));
+                task.put("dateof", rs.getString("dateof"));
+
+                tasks.add(task);
+            }
+
+            Map<String, Object> repsoneMap = new HashMap<>();
+            repsoneMap.put("status", "true");
+            repsoneMap.put("data", tasks);
+
+            objectMapper.writeValue(res.getWriter(), repsoneMap);
+
+
+            // return all the task in a JSON array
+            objectMapper.writeValue(res.getWriter(), tasks);
+        }catch(SQLException e){
+            e.printStackTrace();
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            Map<String, String> responseMap = new HashMap<>();
+
+            responseMap.put("status", "false");
+            responseMap.put("message", "Failed to fetch data");
+            responseMap.put("error", e.getMessage());
+
+            objectMapper.writeValue(res.getWriter(), responseMap);
+        }
+    }
+
     private void fetchTodoTask (HttpServletResponse res, String id) throws IOException {
         String sql = "SELECT task.*, assign.uid AS assignUid, assign.taskUid, assign.userActivityUid, assign.status AS assignStatus "+
                      "FROM task " +
                      "LEFT JOIN assign ON assign.taskUid = task.uid " + 
-                     "WHERE task.status = 'todo' AND activityId = ? AND assign.status = 'true' ORDER BY task.dateof DESC";
+                     "WHERE task.status = 'todo' AND activityId = ? AND (assign.status = 'true' OR assign.status IS NULL) ORDER BY task.dateof DESC";
         try(PreparedStatement statement = connection.prepareStatement(sql)){
             statement.setString(1, id);
             ResultSet rs = statement.executeQuery();
@@ -423,9 +442,9 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
 
     private void fetchProgressTask (HttpServletResponse res, String id) throws IOException {
         String sql = "SELECT task.*, assign.uid AS assignUid, assign.taskUid, assign.userActivityUid, assign.status AS assignStatus "+
-                    "FROM task " +
-                    "LEFT JOIN assign ON assign.taskUid = task.uid " + 
-                    "WHERE task.status = 'progress' AND activityId = ? AND assign.status = 'true' ORDER BY task.dateof DESC";
+        "FROM task " +
+        "LEFT JOIN assign ON assign.taskUid = task.uid " + 
+        "WHERE task.status = 'progress' AND activityId = ? AND (assign.status = 'true' OR assign.status IS NULL) ORDER BY task.dateof DESC";
         try(PreparedStatement statement = connection.prepareStatement(sql)){
             statement.setString(1, id);
             ResultSet rs = statement.executeQuery();
@@ -503,7 +522,7 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
         String sql = "SELECT task.*, assign.uid AS assignUid, assign.taskUid, assign.userActivityUid, assign.status AS assignStatus "+
         "FROM task " +
         "LEFT JOIN assign ON assign.taskUid = task.uid " + 
-        "WHERE task.status = 'done' AND activityId = ? AND assign.status = 'true' ORDER BY task.dateof DESC";
+        "WHERE task.status = 'done' AND activityId = ? AND (assign.status = 'true' OR assign.status IS NULL) ORDER BY task.dateof DESC";
 
         try(PreparedStatement statement = connection.prepareStatement(sql)){
             statement.setString(1, id);
@@ -658,6 +677,13 @@ protected void doOptions(HttpServletRequest req, HttpServletResponse res) throws
                     objectMapper.writeValue(res.getWriter(), errorResponse);
                 }
     
+            }else {
+                statement.executeUpdate();
+
+                Map<String, Object> responseMap = new HashMap<>();
+                responseMap.put("status", "true");
+                responseMap.put("message", "data-inserted");
+                objectMapper.writeValue(res.getWriter(), responseMap);
             }
 
 

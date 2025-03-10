@@ -15,6 +15,9 @@ import { StrictModeDroppable } from "../../widgets/StrictModelDroppable";
 import NoNetwork from "../../widgets/noNetwork";
 import { SessionContext } from "../../context/sessionContext";
 import { capitalizeFirstLetter } from "../../utils/helper";
+import empty from "../../../assets/icons/empty.png";
+import { PrimaryButton } from "../../widgets/button";
+
 const Home = () => {
 
     const  {loading, fetchTodoTasks, fetchProgressTasks, fetchDoneTasks, updateTask} = useTaskService();
@@ -32,6 +35,8 @@ const Home = () => {
     const [dataTodo, setDataTodo] = useState([]);
     const [dataProgress, setDataProgress] = useState([]);
     const [dataDone, setDataDone] = useState([]);
+
+    const [tasks, setTask] = useState(0);
 
 
 
@@ -94,6 +99,8 @@ const Home = () => {
         getProgressData();
         getDoneData();
 
+        setTask(dataTodo.length + dataProgress.length + dataDone.length);
+
     }
 
 
@@ -148,7 +155,9 @@ const Home = () => {
         getProgressData();
         getDoneData();
 
-    }, [fetch])
+        setTask(dataTodo.length + dataProgress.length + dataDone.length);
+
+    }, [fetch, tasks])
 
 
     useEffect(() => {
@@ -218,7 +227,26 @@ const Home = () => {
 
     return ( 
       <>
-      {network == true ? 
+        <div className="row">
+            <div className="col">
+                <h3 className="fw-bold" style={{color: colors.secondaryColor}}>Tasks</h3>
+            </div>
+            <div className="col">
+
+            </div>
+
+            {tasks == 0 ? 
+            (
+                <div className="text-center mt-5">
+                    <img src={empty} className="img-fluid mt-5" style={{height: "10rem"}} />
+                    <p className="fs-2 text-dark mb-5">No record found</p>
+                    <PrimaryButton children="Add a task" onClick={openDoneModal} />
+                </div>
+            ):
+
+            (
+                <>
+                  {network == true ? 
         <NoNetwork onClick={handleReload} /> :
         (
             <DragDropContext onDragEnd={handleDragEnd} >
@@ -411,6 +439,12 @@ const Home = () => {
     </DragDropContext>
         )
         }
+                </>
+            )
+        
+        }
+         
+        </div>
       </>
      );
 }

@@ -1,14 +1,20 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { colors } from "../../tools/color";
 import { useTaskService } from "../../service/taskService";
 import {PieChart} from "react-minimal-pie-chart";
+import { useSessionService } from "../../service/sessionService";
+import { SessionContext } from "../../context/sessionContext";
+import empty from "../../../assets/icons/empty.png";
 
 const Dashboard = () => {
 
     const {fetchTasks, getAllAssinedTask, getAllAssinedTaskByUsers} = useTaskService();
+    const {getCollaborators} = useSessionService();
 
+    const {session} = useContext(SessionContext);
     const [data, setData] = useState([]);
     const [assigned, setAssigned] = useState([]);
+    const [collaborators, setCollaborators] = useState();
 
     let todoTask, inprogress, doneTask;
     let num = 1;
@@ -18,12 +24,15 @@ const Dashboard = () => {
         // Get data ....................................
         const getAllTask = async () => {
             const response = await fetchTasks();
-
+            console.log("THE TASK --> ", response);
             setData(response.data);
+            console.log("THE TASK --> ", data);
+
         }
 
         const getAssignedTask = async () => {
             const response = await getAllAssinedTask();
+            // console.log("Assigned --> ", response.data.length);
             setAssigned(response.data);
         }
 
@@ -31,23 +40,26 @@ const Dashboard = () => {
             const response = await getAllAssinedTaskByUsers();
 
             if(response == undefined){
-                print("Data undefine man");
+                // print("Data undefine man");
             }else if(response.status == "true"){
                 setAssigned(response.data);
             }
         }
 
+        const getCollaboratorsCount = async () => {
+            const response = await getCollaborators(session.activity.userId);
+            console.log("response --> ", response);
+            setCollaborators(response.data.length  - 1)
+
+        }
+
+        getCollaboratorsCount();
         getAssignedTAskByUsers();
         getAssignedTask();
         getAllTask();
 
     }, []);
 
-    const unassignedTasks = data.filter(
-        task => !assigned.some(assign => assign.taskUid === task.uid)
-      );
-
-      const unassignedCount = unassignedTasks.length;
 
     
         inprogress = data.filter(task => task.status === "progress").length;
@@ -70,8 +82,8 @@ const Dashboard = () => {
                     </div>
                     <div className="col">
                         <div className="custom-card">
-                            <label className="fs-5">Assisgned Task</label>
-                            <p className="lg-num" >{unassignedCount}</p>
+                            <label className="fs-5">Collaborators</label>
+                            <p className="lg-num" >{collaborators ?? 0}</p>
                         </div>
                     </div>
                     <div className="col">
@@ -83,13 +95,22 @@ const Dashboard = () => {
                     <div className="col">
                         <div className="custom-card">
                             <label className="fs-5">Overdue Tasks</label>
-                            <p className="lg-num" >4</p>
+                            <p className="lg-num" >0</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="row mt-4">
+            {data.length == 0 ?
+            (
+            <div className="text-center mt-5">
+                <img src={empty} className="img-fluid mt-5" style={{height: "10rem"}} />
+                <p className="fs-2 text-dark">No record found</p>
+            </div>
+            )
+            :
+            (
+                <div className="row mt-4">
                 <div className="col col-6">
                     <div className="custom-card">
                         <h5 className="fw-bold" style={{color: colors.secondaryColor}}>Assigned Tasks</h5>
@@ -157,6 +178,8 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
+            )
+            }
         </section>
      );
 }

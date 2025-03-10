@@ -6,6 +6,7 @@ import { useSessionService } from "../../service/sessionService";
 import { AuthContext } from "../../context/authContext";
 import city from "../../../assets/icons/city.png";
 import Skeleton from "react-loading-skeleton";
+import empty from "../../../assets/icons/empty.png";
 
 const Activity = () => {
 
@@ -87,7 +88,15 @@ const Activity = () => {
                                         <div className="custom-card vh-100">
                                             <h5 className="fw-bold" style={{color: colors.secondaryColor}}>Collaborators</h5>
                                             <hr />
-                                            <div className="custom-card-scroll  px-4">
+                                            {
+                                                activities.collaborators.length == 0 ? 
+                                                (
+                                                    <div className="text-center mt-5">
+                                                        <img src={empty} className="img-fluid mt-5" style={{height: "10rem"}} />
+                                                        <p className="fs-2 text-dark">No member found</p>
+                                                    </div>
+                                                ): (
+                                                    <div className="custom-card-scroll  px-4">
                                             {activities.collaborators.map((collaborator) => (
                                                 <>
                                                     <div className="row py-1 align-items-center">
@@ -119,6 +128,8 @@ const Activity = () => {
                                                 </>
                                             ))}
                                             </div>
+                                                )
+                                            }
                                         </div>
                                    </div>
                             }

@@ -18,10 +18,10 @@ export const useTaskService = () => {
 
     const getActiveCollaborators = (id) => getAllData(`${endpoint}/get/active/collaborators/${id}`);
     const getAssignCollaboratorsByUid = (id) => getAllData(`${endpoint}/get/assign/${id}`);
-    const getAllAssinedTask = () => getAllData(`${endpoint}/assign/`);
-    const getAllAssinedTaskByUsers = () => getAllData(`${endpoint}/get/users/assign/`);
+    const getAllAssinedTask = () => getAllData(`${endpoint}/assign/${activityUid}`);
+    const getAllAssinedTaskByUsers = () => getAllData(`${endpoint}/get/users/assign/${activityUid}`);
     const createTask = (data) => postData(endpoint, data);
-    const fetchTasks = () => getAllData(endpoint);
+    const fetchTasks = () => getAllData(`${endpoint}/get/all/${activityUid}`);
     const fetchTodoTasks = () => getAllData(`${endpoint}/todo/${activityUid}`);
     const fetchProgressTasks = () => getAllData(`${endpoint}/progress/${activityUid}`);
     const fetchDoneTasks = () => getAllData(`${endpoint}/done/${activityUid}`);

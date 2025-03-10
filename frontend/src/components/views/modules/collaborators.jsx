@@ -16,6 +16,7 @@ import CollaboratorForm from "../forms/collaboratorForm";
 import { ErrorMessage, SuccessMessage } from "../../widgets/message";
 import reloadImg from "../../../assets/icons/reset.png";
 import { ButtonLoading } from "../../widgets/loading";
+import empty from "../../../assets/icons/empty.png";
 
 const Collaborators = () => {
 
@@ -137,8 +138,9 @@ const Collaborators = () => {
             setLoad(true);
             const response = await getCollaborators(session.activity.userId);
             console.log("FINAL RESPONE --> ", response);
-            console.log("The message new ---> ", alert);
             setData(response.data);
+            console.log("FINAL DATA RESPONE --> ", data);
+
             }catch(error){
             setLoad(false);
             }finally{
@@ -211,7 +213,17 @@ const Collaborators = () => {
                     </>
                 ): (
                     <div className="custom-card p-4 mt-3">
-                <div className="table-responsive scrollable-tbody">
+                        {
+                            data.length <= 1 ? 
+                            (
+                                           <div className="text-center mt-5 mb-5">
+                                               <img src={empty} className="img-fluid " style={{height: "10rem"}} />
+                                               <p className="fs-2 text-dark">No record found</p>
+                                           </div> 
+                            ):
+                            (
+                                <>
+                                <div className="table-responsive scrollable-tbody">
                     <table className="table table-hover custom-table">
                         <thead>
                             <tr className="custom-row-head">
@@ -226,7 +238,7 @@ const Collaborators = () => {
 
                             </tr>
                         </thead>
-                        <tbody>
+                            <tbody>
                             {dataLoad ? (
                                 <tr className="custom-row">
                                     <th> </th>
@@ -259,8 +271,11 @@ const Collaborators = () => {
                         </tbody>
                     </table>
                 </div>
+                                </>
+                            )
+                        }
                 
-            </div>
+                    </div>
                 )
             }
         </div>

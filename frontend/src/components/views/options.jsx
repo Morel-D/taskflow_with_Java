@@ -59,7 +59,7 @@ const Options = () => {
                 <div className="mobile-auth-title mt-2 mb-5 text-center">
                     <h2>TaskFlow</h2>
                 </div>
-                <div className="col col-lg-7">
+                <div className="col col-lg-7 mt-lg-5">
                     <h2 style={{paddingLeft: "20px"}}>How would you like to participate ?</h2>
                     <div className="options-container mt-3">
                         <motion.div
@@ -76,7 +76,7 @@ const Options = () => {
                                 and manage tasks as the organizer.</span>
                             </a>
                         </motion.div>
-                        <motion.div
+                        {/* <motion.div
                           whileHover={{ x: 30 }} // Moves 10px to the right on hover
                           transition={{ type: "spring", stiffness: 300 }} // Smooth spring effect                        
                          className="btn-container">
@@ -85,7 +85,7 @@ const Options = () => {
                             <span className="text-secondary">manage the activity entirely on your own. This is ideal for personal tasks 
                                 where no collaboration is needed.</span>
                             </a>
-                        </motion.div>
+                        </motion.div> */}
                         <motion.div
                           whileHover={{ x: 30 }} // Moves 10px to the right on hover
                           transition={{ type: "spring", stiffness: 300 }} // Smooth spring effect                        
