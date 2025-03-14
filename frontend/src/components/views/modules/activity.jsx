@@ -53,7 +53,7 @@ const Activity = () => {
 
 
                     <div className="row">
-                        <div className="col">
+                        <div className="col col-lg-6 col-12">
                                 {
                                 load ?
                                 <Skeleton height={230} /> :
@@ -64,12 +64,12 @@ const Activity = () => {
                                             <div className="col my-3">
                                                 <label className="fs-2 mb-4 fw-bold" style={{color: colors.secondaryColor}}>{activities.activity.activity}</label>
                                                 <p className="text-secondary fw-normal mt-2">Owner - <span>{activities.activity.manager} {session.role === "manager" ? "(You)" : ""}</span></p>
-                                                <label  className="text-secondary">Creation date : 5 Feb at 15/02/2024</label>
+                                                <label  className="text-secondary" style={{lineHeight: "20px"}}>Creation date : 5 Feb at 15/02/2024</label>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="col" >
-                                        <div className=" mt-5">
+                                        <div className=" mt-lg-5">
                                         <h5 className="fw-bold" style={{color: colors.secondaryColor}}>Description</h5>
                                         <p style={{lineHeight: "1.3rem"}}>{activities.activity.description}</p>
                                         </div>
@@ -78,7 +78,7 @@ const Activity = () => {
                             }
                         </div>
 
-                        <div className="col">
+                        <div className="col mt-lg-0 mt-4">
                                 {
                                 load ?
                                 <div className="mt-3">
@@ -91,9 +91,9 @@ const Activity = () => {
                                             {
                                                 activities.collaborators.length == 0 ? 
                                                 (
-                                                    <div className="text-center mt-5">
-                                                        <img src={empty} className="img-fluid mt-5" style={{height: "10rem"}} />
-                                                        <p className="fs-2 text-dark">No member found</p>
+                                                    <div className="text-center mt-lg-5">
+                                                        <img src={empty} className="img-fluid mt-lg-5" style={{height: "10rem"}} />
+                                                        <p className="fs-lg-2 fs-5 text-dark">No member found</p>
                                                     </div>
                                                 ): (
                                                     <div className="custom-card-scroll  px-4">

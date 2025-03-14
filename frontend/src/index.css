@@ -588,6 +588,9 @@ li > a {text-decoration: none;}
     padding-left: 0 !important;
     padding-top: 0 !important;
   }
+
+  .icon-link{ height: auto; width: 40%;}
+
   .col-9 {
     width: 100% !important; /* or remove the class dynamically */
   }

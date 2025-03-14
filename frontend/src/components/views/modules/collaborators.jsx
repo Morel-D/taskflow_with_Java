@@ -183,10 +183,10 @@ const Collaborators = () => {
         <div>
             <h3 className="fw-bold" style={{color: colors.secondaryColor}}>{load ? <Skeleton height={30} width={200} /> : "Collaborators"}</h3>
             <div className="d-flex mt-4">
-                <div className="col">
+                <div className="col d-none d-lg-block">
                     <label className=" text-secondary fs-5 fw-bold">{load ? <Skeleton height={30} width={170} /> : (<>Members - { data.length -1 }</>)}</label>
                 </div>
-                <div className="col col-4 text-end">
+                <div className="col col-lg-4 text-end">
                 {load ? null : <span className="mx-3"><IconButton icon={reloadImg} onClick={() => setReload(true)} /></span>}
                 {session.role == "manager" ? (load ? <Skeleton height={45} width={200} /> : <PrimaryButton children="New Collaborator" onClick={opeenFormModal} />) : null }
                 </div>

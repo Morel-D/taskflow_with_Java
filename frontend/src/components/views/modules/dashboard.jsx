@@ -73,28 +73,28 @@ const Dashboard = () => {
                 <h3 className="fw-bold" style={{color: colors.secondaryColor}}>Dashboard</h3>
             </div>
             <div className="task">
-                <div className="row">
+                <div className="row row-cols-2 row-cols-lg-4 g-3">
                     <div className="col">
                         <div className="custom-card">
-                            <label className="fs-5">Total Tasks</label>
+                            <label className="fs-5" style={{lineHeight: "20px"}}>Total Tasks</label>
                             <p className="lg-num" >{data.length}</p>
                         </div>
                     </div>
                     <div className="col">
                         <div className="custom-card">
-                            <label className="fs-5">Collaborators</label>
+                            <label className="fs-5" style={{lineHeight: "20px"}}>Collaborators</label>
                             <p className="lg-num" >{collaborators ?? 0}</p>
                         </div>
                     </div>
                     <div className="col">
                         <div className="custom-card">
-                            <label className="fs-5">Completed Task</label>
+                            <label className="fs-5" style={{lineHeight: "20px"}}>Completed Task</label>
                             <p className="lg-num" >{doneTask}</p>
                         </div>
                     </div>
                     <div className="col">
                         <div className="custom-card">
-                            <label className="fs-5">Overdue Tasks</label>
+                            <label className="fs-5" style={{lineHeight: "20px"}}>Overdue Tasks</label>
                             <p className="lg-num" >0</p>
                         </div>
                     </div>
@@ -103,8 +103,8 @@ const Dashboard = () => {
 
             {data.length == 0 ?
             (
-            <div className="text-center mt-5">
-                <img src={empty} className="img-fluid mt-5" style={{height: "10rem"}} />
+            <div className="text-center mt-lg-5">
+                <img src={empty} className="img-fluid mt-lg-5 mt-4" style={{height: "10rem"}} />
                 <p className="fs-2 text-dark">No record found</p>
             </div>
             )

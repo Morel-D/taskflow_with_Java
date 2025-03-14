@@ -53,7 +53,7 @@ const Header = () => {
     return ( 
         <section className="">
             <div className="header-container bg-white" style={headerStyle}>
-                   <div className="col-4"> <TextIconFeild icon={search} placeholder="Search..." /></div>
+                   <div className="col-8 col-lg-4"> <TextIconFeild icon={search} placeholder="Search..." /></div>
                 <div style={rightSectionStyle}>
                     {/* <TextIconFeild  icon={search} placeholder="Search..."/> */}
                     <div onClick={openModal} style={avatarStyle}>{user.username.charAt(0) ?? "A"}</div>
